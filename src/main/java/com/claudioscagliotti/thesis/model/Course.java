@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -15,8 +17,11 @@ import lombok.ToString;
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     @Column(name = "title", nullable = false)
-    public String title;
+    private String title;
+
+    @ManyToMany
+    private List<Goal> goalList;
 }

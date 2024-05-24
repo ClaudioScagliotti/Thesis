@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Set;
+
 
 @Getter
 @Setter
@@ -15,21 +17,29 @@ import lombok.ToString;
 public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
-    public Course course;
+    private Course course;
 
     @Column(name = "title", nullable = false)
-    public String title;
+    private String title;
 
     @Column(name = "content", columnDefinition = "TEXT")
-    public String content;
+    private String content;
 
     @Column(name = "type", length = 50)
-    public String type;
+    private String type;
 
     @Column(name = "total_cards", nullable = false)
-    public int totalCards;
+    private Integer totalCards;
+
+    @ManyToMany
+    @JoinTable(
+            name = "lesson_image",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "image_id")
+    )
+    private Set<Image> images;
 }

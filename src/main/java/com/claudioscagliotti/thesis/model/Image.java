@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Set;
+
 
 @Getter
 @Setter
@@ -15,14 +17,17 @@ import lombok.ToString;
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     @Column(name = "url",  nullable = false)
-    public String url;
+    private String url;
 
     @Column(name = "description", columnDefinition = "TEXT")
-    public String description;
+    private String description;
 
     @Column(name = "base64_data", columnDefinition = "TEXT")
-    public String base64Data;
+    private String base64Data;
+
+    @ManyToMany(mappedBy = "images")
+    private Set<Lesson> lessons;
 }

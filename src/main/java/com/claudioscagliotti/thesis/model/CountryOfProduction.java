@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -21,4 +23,7 @@ public class CountryOfProduction {
 
     @Column(name = "country_code", length = 5)
     private String countryCode;
+
+    @ManyToMany
+    private List<Goal> goalList;
 }

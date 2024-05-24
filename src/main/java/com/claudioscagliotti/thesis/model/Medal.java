@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -15,8 +17,11 @@ import lombok.ToString;
 public class Medal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     @Column(name = "name", length = 100, nullable = false)
-    public String name;
+    private String name;
+
+    @ManyToMany(mappedBy = "medals")
+    private List<User> userList;
 }

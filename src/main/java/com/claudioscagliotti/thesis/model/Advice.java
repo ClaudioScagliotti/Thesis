@@ -11,31 +11,31 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor
 @Entity
-@Table(name = "recommendation")
-public class Recommendation {
+@Table(name = "advice")
+public class Advice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "app_user_id", nullable = false)
-    public User user;
+    private User user;
 
-    @Column(name = "recommendation_type", length = 50, nullable = false)
-    public String recommendationType;
+    @Column(name = "advice_type", length = 50, nullable = false)
+    private String adviceType;
 
     @Column(name = "status", length = 50, nullable = false)
-    public String status;
+    private String status;
 
     @Column(name = "creation_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    public LocalDateTime creationDate;
+    private LocalDateTime creationDate;
 
     @Column(name = "deadline")
-    public LocalDateTime deadline;
+    private LocalDateTime deadline;
 
     @Column(name = "points", nullable = false)
-    public int points;
+    private Integer points;
 
     @Column(name = "quiz_result", length = 50)
-    public String quizResult;
+    private String quizResult;
 }

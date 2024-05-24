@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -19,4 +21,7 @@ public class Theme {
 
     @Column(name = "name", length = 100)
     private String name;
+
+    @ManyToMany
+    private List<Goal> goalList;
 }
