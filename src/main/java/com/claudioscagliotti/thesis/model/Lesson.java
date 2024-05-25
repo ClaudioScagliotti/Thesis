@@ -1,4 +1,5 @@
 package com.claudioscagliotti.thesis.model;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,7 @@ public class Lesson {
     @Column(name = "total_cards", nullable = false)
     private Integer totalCards;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "lesson_image",
             joinColumns = @JoinColumn(name = "lesson_id"),

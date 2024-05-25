@@ -1,4 +1,5 @@
 package com.claudioscagliotti.thesis.model;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,6 @@ public class CountryOfProduction {
     @Column(name = "country_code", length = 5)
     private String countryCode;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Goal> goalList;
 }

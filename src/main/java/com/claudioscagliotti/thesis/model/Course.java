@@ -1,4 +1,5 @@
 package com.claudioscagliotti.thesis.model;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,6 @@ public class Course {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Goal> goalList;
 }

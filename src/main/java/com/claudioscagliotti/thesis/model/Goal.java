@@ -1,4 +1,5 @@
 package com.claudioscagliotti.thesis.model;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +35,7 @@ public class Goal {
     @Column(name = "points", nullable = false)
     private Integer points;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "goal_genre",
             joinColumns = @JoinColumn(name = "goal_id"),
@@ -42,7 +43,7 @@ public class Goal {
     )
     private List<Genre> genreList;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "goal_theme",
             joinColumns = @JoinColumn(name = "goal_id"),
@@ -50,7 +51,7 @@ public class Goal {
     )
     private List<Theme> themeList;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "goal_country_of_production",
             joinColumns = @JoinColumn(name = "goal_id"),
@@ -58,7 +59,7 @@ public class Goal {
     )
     private List<CountryOfProduction> countryOfProductionList;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "goal_course",
             joinColumns = @JoinColumn(name = "goal_id"),

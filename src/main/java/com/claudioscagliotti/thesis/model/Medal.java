@@ -1,4 +1,5 @@
 package com.claudioscagliotti.thesis.model;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,6 @@ public class Medal {
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "medals")
+    @ManyToMany(mappedBy = "medalList", fetch = FetchType.EAGER)
     private List<User> userList;
 }

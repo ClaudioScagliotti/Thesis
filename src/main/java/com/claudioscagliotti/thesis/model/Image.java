@@ -1,4 +1,5 @@
 package com.claudioscagliotti.thesis.model;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ public class Image {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "url",  nullable = false)
+    @Column(name = "url", nullable = false)
     private String url;
 
     @Column(name = "description", columnDefinition = "TEXT")
@@ -28,6 +29,6 @@ public class Image {
     @Column(name = "base64_data", columnDefinition = "TEXT")
     private String base64Data;
 
-    @ManyToMany(mappedBy = "images")
+    @ManyToMany(mappedBy = "images", fetch = FetchType.LAZY)
     private Set<Lesson> lessons;
 }
