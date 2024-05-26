@@ -2,6 +2,7 @@ package com.claudioscagliotti.thesis.proxy.tmdb;
 
 import com.claudioscagliotti.thesis.ThesisApplication;
 import com.claudioscagliotti.thesis.dto.tmdb.response.AuthenticationResponse;
+import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,5 +40,15 @@ class TmdbApiClientTest {
         assertThat(response.success()).isNotNull();
         assertThat(response.statusCode()).isNotNull();
         assertThat(response.statusMessage()).isNotNull();
+    }
+    @Test
+    public void testTopRated() throws Exception {
+        TmdbApiClient apiClient= client;
+        MovieResponse response = apiClient.topRated();
+
+        // Add assertions to verify the response
+        assertThat(response.page()).isNotNull();
+        assertThat(response.totalResults()).isNotNull();
+        assertThat(response.results()).isNotNull();
     }
 }

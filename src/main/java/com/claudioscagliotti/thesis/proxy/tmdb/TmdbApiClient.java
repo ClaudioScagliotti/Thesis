@@ -1,6 +1,7 @@
 package com.claudioscagliotti.thesis.proxy.tmdb;
 
 import com.claudioscagliotti.thesis.dto.tmdb.response.AuthenticationResponse;
+import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
 import com.claudioscagliotti.thesis.exception.InvalidApiKeyException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,6 +45,26 @@ public class TmdbApiClient {
             return authResponse;
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while authenticating with TMDB API", e);
+        }
+    }
+
+    public MovieResponse topRated() {
+        String url = TMDB_API_BASE_URL + "/movie/top_rated";
+        try{
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("accept", "application/json");
+            headers.set("Authorization", "Bearer " + this.apiToken);
+
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            MovieResponse response= objectMapper.readValue(exchange.getBody(), MovieResponse.class);
+
+            return response;
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while trying to retrieve data from the TMDB API", e);
         }
     }
 
