@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.repository;
 
 import com.claudioscagliotti.thesis.ThesisApplication;
-import com.claudioscagliotti.thesis.model.User;
+import com.claudioscagliotti.thesis.model.UserEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ThesisApplication.class)
-class UserRepositoryTest {
+class UserEntityRepositoryTest {
 
     @BeforeEach
     void setUp() {
@@ -35,7 +35,7 @@ class UserRepositoryTest {
     @Test
     public void testFindUser() {
         // Trova l'utente per ID
-        Optional<User> foundUser = userRepository.findById(7L);
+        Optional<UserEntity> foundUser = userRepository.findById(7L);
 
         // Verifica che l'utente sia stato trovato e che i dati corrispondano
         assertThat(foundUser).isPresent();
@@ -47,10 +47,10 @@ class UserRepositoryTest {
     @Test
     public void testFindAllUser() {
         // Trova l'utente per ID
-        List<User> foundUser = userRepository.findAll();
+        List<UserEntity> foundUserEntity = userRepository.findAll();
 
         // Verifica che l'utente sia stato trovato e che i dati corrispondano
-        assertThat((long) foundUser.size()).isEqualTo(3L);
+        assertThat((long) foundUserEntity.size()).isEqualTo(3L);
     }
 
 }

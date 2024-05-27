@@ -14,16 +14,17 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @Entity
-@Table(name = "genre")
-public class Genre {
+@Table(name = "country_of_production")
+public class CountryOfProductionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "name", length = 100)
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<Goal> goalList;
+    @Column(name = "country_code", length = 5)
+    private String countryCode;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<GoalEntity> goalEntityList;
 }

@@ -16,14 +16,14 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "app_user")
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "goal_id", unique = true)
-    private Goal goal;
+    private GoalEntity goalEntity;
 
     @Column(name = "first_name", length = 100, nullable = false)
     private String firstName;
@@ -52,7 +52,7 @@ public class User {
             joinColumns = @JoinColumn(name = "app_user_id"),
             inverseJoinColumns = @JoinColumn(name = "medal_id")
     )
-    private Set<Medal> medalList;
+    private Set<MedalEntity> medalEntityList;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -60,10 +60,10 @@ public class User {
             joinColumns = @JoinColumn(name = "app_user_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
-    private List<Course> courseList;
+    private List<CourseEntity> courseEntityList;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Advice> adviceList;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<LessonProgress> lessonProgressList;
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<AdviceEntity> adviceEntityList;
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<LessonProgressEntity> lessonProgressEntityList;
 }

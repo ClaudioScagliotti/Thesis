@@ -1,10 +1,10 @@
 package com.claudioscagliotti.thesis.repository;
 
-import com.claudioscagliotti.thesis.model.Goal;
+import com.claudioscagliotti.thesis.model.GoalEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GoalRepository extends JpaRepository<Goal, Long> {
+public interface GoalRepository extends JpaRepository<GoalEntity, Long> {
     
 }

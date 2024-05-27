@@ -15,14 +15,14 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "lesson")
-public class Lesson {
+public class LessonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
-    private Course course;
+    private CourseEntity courseEntity;
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -42,5 +42,5 @@ public class Lesson {
             joinColumns = @JoinColumn(name = "lesson_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
-    private Set<Image> images;
+    private Set<ImageEntity> imageEntities;
 }

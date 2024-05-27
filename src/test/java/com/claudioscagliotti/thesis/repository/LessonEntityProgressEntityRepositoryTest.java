@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.repository;
 
 import com.claudioscagliotti.thesis.ThesisApplication;
-import com.claudioscagliotti.thesis.model.Medal;
+import com.claudioscagliotti.thesis.model.LessonProgressEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,9 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ThesisApplication.class)
-class MedalRepositoryTest {
+class LessonEntityProgressEntityRepositoryTest {
+
     @Autowired
-    private MedalRepository medalRepository;
+    private LessonProgressRepository lessonProgressRepository;
 
     @BeforeEach
     void setUp() {
@@ -32,7 +33,7 @@ class MedalRepositoryTest {
 
     @Test
     public void testFindAll() {
-        List<Medal> list = medalRepository.findAll();
-        assertThat(list.size()).isEqualTo(4L);
+        List<LessonProgressEntity> list = lessonProgressRepository.findAll();
+        assertThat(list.size()).isEqualTo(2L);
     }
 }

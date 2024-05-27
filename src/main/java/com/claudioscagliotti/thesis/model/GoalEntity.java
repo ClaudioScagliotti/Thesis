@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "goal")
-public class Goal {
+public class GoalEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,8 +26,10 @@ public class Goal {
     @Column(name = "goal_type", nullable = false)
     private String goalType;
 
-    @Column(name = "year", nullable = false)
-    private Integer year;
+    @Column(name = "min_year", nullable = false)
+    private Integer minYear;
+    @Column(name = "max_year", nullable = false)
+    private Integer maxYear;
 
     @Column(name = "deadline")
     private LocalDateTime deadline;
@@ -41,7 +43,7 @@ public class Goal {
             joinColumns = @JoinColumn(name = "goal_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private List<Genre> genreList;
+    private List<GenreEntity> genreEntityList;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -49,7 +51,7 @@ public class Goal {
             joinColumns = @JoinColumn(name = "goal_id"),
             inverseJoinColumns = @JoinColumn(name = "theme_id")
     )
-    private List<Theme> themeList;
+    private List<KeywordEntity> keywordEntityList;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -57,7 +59,7 @@ public class Goal {
             joinColumns = @JoinColumn(name = "goal_id"),
             inverseJoinColumns = @JoinColumn(name = "country_of_production_id")
     )
-    private List<CountryOfProduction> countryOfProductionList;
+    private List<CountryOfProductionEntity> countryOfProductionEntityList;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -65,5 +67,5 @@ public class Goal {
             joinColumns = @JoinColumn(name = "goal_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
-    private List<Course> courseList;
+    private List<CourseEntity> courseEntityList;
 }

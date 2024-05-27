@@ -1,4 +1,4 @@
-package com.claudioscagliotti.thesis.dto.tmdb.response;
+package com.claudioscagliotti.thesis.dto.tmdb.response.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

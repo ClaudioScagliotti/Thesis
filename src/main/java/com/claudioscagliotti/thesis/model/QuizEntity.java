@@ -12,21 +12,22 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @Entity
-@Table(name = "app_user_lesson_progress")
-public class LessonProgress {
-
+@Table(name = "quiz")
+public class QuizEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "lesson_id", nullable = false)
-    private Lesson lesson;
+    private LessonEntity lessonEntity;
 
-    @ManyToOne
-    @JoinColumn(name = "app_user_id", nullable = false)
-    private User user;
+    @Column(name = "type")
+    private String type;
 
-    private Integer progress;
-    private Integer completedCards;
+    @Column(name = "question", columnDefinition = "TEXT")
+    private String question;
+
+    @Column(name = "answer", columnDefinition = "TEXT")
+    private String answer;
 }

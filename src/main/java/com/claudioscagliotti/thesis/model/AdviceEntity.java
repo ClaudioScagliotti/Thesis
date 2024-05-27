@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "advice")
-public class Advice {
+public class AdviceEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "app_user_id", nullable = false)
-    private User user;
+    private UserEntity userEntity;
 
     @Column(name = "advice_type", length = 50, nullable = false)
     private String adviceType;

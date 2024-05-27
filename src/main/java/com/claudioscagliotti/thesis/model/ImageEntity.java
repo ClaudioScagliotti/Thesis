@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "image")
-public class Image {
+public class ImageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,6 +29,6 @@ public class Image {
     @Column(name = "base64_data", columnDefinition = "TEXT")
     private String base64Data;
 
-    @ManyToMany(mappedBy = "images", fetch = FetchType.LAZY)
-    private Set<Lesson> lessons;
+    @ManyToMany(mappedBy = "imageEntities", fetch = FetchType.LAZY)
+    private Set<LessonEntity> lessonEntities;
 }

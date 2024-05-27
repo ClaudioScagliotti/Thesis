@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "course")
-public class Course {
+public class CourseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,5 +24,5 @@ public class Course {
     private String title;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private List<Goal> goalList;
+    private List<GoalEntity> goalEntityList;
 }

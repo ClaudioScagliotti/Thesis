@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.repository;
 
 import com.claudioscagliotti.thesis.ThesisApplication;
-import com.claudioscagliotti.thesis.model.Course;
+import com.claudioscagliotti.thesis.model.KeywordEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,17 +11,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ThesisApplication.class)
-class CourseRepositoryTest {
+class KeywordEntityRepositoryTest {
 
     @Autowired
-    private CourseRepository courseRepository;
+    private ThemeRepository themeRepository;
 
     @BeforeEach
     void setUp() {
@@ -32,10 +32,9 @@ class CourseRepositoryTest {
     }
 
     @Test
-    void testFindCourse() {
-        Optional<Course> foundCourse = courseRepository.findById(1L);
-
-        assertThat(foundCourse).isPresent();
-        assertThat(foundCourse.get().getTitle()).isEqualTo("Introduction to film directing");
+    public void testFindAll() {
+        List<KeywordEntity> list = themeRepository.findAll();
+        assertThat(list.size()).isEqualTo(2L);
     }
+
 }

@@ -14,15 +14,15 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @Entity
-@Table(name = "theme")
-public class Theme {
+@Table(name = "medal")
+public class MedalEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name", length = 100)
+    @Column(name = "name", length = 100, nullable = false)
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<Goal> goalList;
+    @ManyToMany(mappedBy = "medalEntityList", fetch = FetchType.EAGER)
+    private List<UserEntity> userEntityList;
 }
