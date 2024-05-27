@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ThesisApplication.class)
-class UserEntityRepositoryTest {
+class UserRepositoryTest {
 
     @BeforeEach
     void setUp() {

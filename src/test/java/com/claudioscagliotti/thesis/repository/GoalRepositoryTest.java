@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.repository;
 
 import com.claudioscagliotti.thesis.ThesisApplication;
-import com.claudioscagliotti.thesis.model.CountryOfProductionEntity;
+import com.claudioscagliotti.thesis.model.GoalEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ThesisApplication.class)
-class CountryOfProductionEntityRepositoryTest {
+class GoalRepositoryTest {
 
     @Autowired
-    private CountryOfProductionRepository repository;
+    private GoalRepository goalRepository;
 
     @BeforeEach
     void setUp() {
@@ -33,7 +33,7 @@ class CountryOfProductionEntityRepositoryTest {
 
     @Test
     public void testFindAll() {
-        List<CountryOfProductionEntity> list = repository.findAll();
-        assertThat(list.size()).isEqualTo(2L);
+        List<GoalEntity> list = goalRepository.findAll();
+        assertThat(list.size()).isEqualTo(4L);
     }
 }

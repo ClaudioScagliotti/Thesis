@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.repository;
 
 import com.claudioscagliotti.thesis.ThesisApplication;
-import com.claudioscagliotti.thesis.model.ImageEntity;
+import com.claudioscagliotti.thesis.model.AdviceEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ThesisApplication.class)
-class ImageEntityRepositoryTest {
+class AdviceRepositoryTest {
 
     @Autowired
-    private ImageRepository repository;
+    private AdviceRepository adviceRepository;
 
     @BeforeEach
     void setUp() {
@@ -32,8 +32,8 @@ class ImageEntityRepositoryTest {
     }
 
     @Test
-    public void testFindAll() {
-        List<ImageEntity> list = repository.findAll();
-        assertThat(list.size()).isEqualTo(2L);
+    public void testGetAllAdvices() {
+        List<AdviceEntity> adviceEntities = adviceRepository.findAll();
+        assertThat(adviceEntities).hasSize(4);
     }
 }

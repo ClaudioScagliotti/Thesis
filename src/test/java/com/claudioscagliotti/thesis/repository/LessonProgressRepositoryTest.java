@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ThesisApplication.class)
-class LessonEntityProgressEntityRepositoryTest {
+class LessonProgressRepositoryTest {
 
     @Autowired
     private LessonProgressRepository lessonProgressRepository;
