@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class KeywordRepositoryTest {
 
     @Autowired
-    private ThemeRepository themeRepository;
+    private KeywordRepository keywordRepository;
 
     @BeforeEach
     void setUp() {
@@ -33,7 +33,7 @@ class KeywordRepositoryTest {
 
     @Test
     public void testFindAll() {
-        List<KeywordEntity> list = themeRepository.findAll();
+        List<KeywordEntity> list = keywordRepository.findAll();
         assertThat(list.size()).isEqualTo(2L);
     }
 

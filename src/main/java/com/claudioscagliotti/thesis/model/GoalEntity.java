@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -30,13 +29,6 @@ public class GoalEntity {
     private Integer minYear;
     @Column(name = "max_year", nullable = false)
     private Integer maxYear;
-
-    @Column(name = "deadline")
-    private LocalDateTime deadline;
-
-    @Column(name = "points", nullable = false)
-    private Integer points;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "goal_genre",
@@ -47,9 +39,9 @@ public class GoalEntity {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "goal_theme",
+            name = "goal_keyword",
             joinColumns = @JoinColumn(name = "goal_id"),
-            inverseJoinColumns = @JoinColumn(name = "theme_id")
+            inverseJoinColumns = @JoinColumn(name = "keyword_id")
     )
     private List<KeywordEntity> keywordEntityList;
 

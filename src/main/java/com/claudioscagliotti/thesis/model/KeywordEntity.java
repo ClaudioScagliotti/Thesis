@@ -14,7 +14,7 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @Entity
-@Table(name = "theme")
+@Table(name = "keyword")
 public class KeywordEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
