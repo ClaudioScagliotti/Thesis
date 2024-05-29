@@ -1,5 +1,9 @@
 package com.claudioscagliotti.thesis.enumeration.tmdb;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public enum GenreEnum {
     ACTION(28, "Action"),
     ADVENTURE(12, "Adventure"),
@@ -53,6 +57,12 @@ public enum GenreEnum {
             }
         }
         throw new IllegalArgumentException("No genre found with name: " + name);
+    }
+
+    public static List<String> getAllNames() {
+        return Arrays.stream(values())
+                .map(GenreEnum::getName)
+                .collect(Collectors.toList());
     }
 }
 

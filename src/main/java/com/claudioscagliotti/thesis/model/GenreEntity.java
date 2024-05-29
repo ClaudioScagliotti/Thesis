@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
-
 
 @Getter
 @Setter
@@ -23,7 +21,10 @@ public class GenreEntity {
     @Column(name = "name", length = 100)
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<GoalEntity> goalEntityList;
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    private List<GoalEntity> goalEntityList;
 
+    public GenreEntity(String name) {
+        this.name = name;
+    }
 }

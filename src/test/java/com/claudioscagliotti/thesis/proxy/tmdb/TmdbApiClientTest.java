@@ -34,20 +34,21 @@ class TmdbApiClientTest {
 
     @Test
     public void testAuthenticate() throws Exception {
-        TmdbApiClient apiClient= client;
+        TmdbApiClient apiClient = client;
         AuthenticationResponse response = apiClient.authenticate();
 
-        // Add assertions to verify the response
+
         assertThat(response.success()).isNotNull();
         assertThat(response.statusCode()).isNotNull();
         assertThat(response.statusMessage()).isNotNull();
     }
-    @Test
-    public void testGetMovies() throws Exception {//TODO UPDATE TEST
-        TmdbApiClient apiClient= client;
-        MovieResponse response = apiClient.getMovies("");
 
-        // Add assertions to verify the response
+    @Test
+    public void testGetMovies() throws Exception {
+        TmdbApiClient apiClient = client;
+        MovieResponse response = apiClient.getMovies("/discover/movie?language=en%7Cit&primary_release_date.gte=2000-01-01&primary_release_date.lte=2020-01-01&with_genres=80,28&with_origin_country=IT");
+
+
         assertThat(response.page()).isNotNull();
         assertThat(response.totalResults()).isNotNull();
         assertThat(response.results()).isNotNull();
@@ -55,10 +56,10 @@ class TmdbApiClientTest {
 
     @Test
     public void testGenres() throws Exception {
-        TmdbApiClient apiClient= client;
+        TmdbApiClient apiClient = client;
         GenreResponse response = apiClient.getGenres();
 
-        // Add assertions to verify the response
+
         assertThat(response.genres()).isNotNull();
         assertThat(response.genres().size()).isNotNull();
     }
