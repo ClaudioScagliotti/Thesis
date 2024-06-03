@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @ActiveProfiles("test")
@@ -49,13 +48,12 @@ class GoalServiceTest {
         goalEntity.setGoalType("top-rated"); // Tipo di obiettivo
         goalEntity.setMinYear(2000); // Anno minimo
         goalEntity.setMaxYear(2020); // Anno massimo
-        goalEntity.setDeadline(LocalDateTime.now().plusDays(30)); // Scadenza (tra 30 giorni dalla data corrente)
-        goalEntity.setPoints(100); // Punteggio
         goalEntity.setGenreEntityList(genreEntities); // Lista di generi
         goalEntity.setKeywordEntityList(lk); // Lista di parole chiave
         goalEntity.setCountryOfProductionEntityList(lc); // Lista di paesi di produzione
 
         String s = goalService.composeParams(goalEntity);
+        System.out.println(s);
 
 
     }
