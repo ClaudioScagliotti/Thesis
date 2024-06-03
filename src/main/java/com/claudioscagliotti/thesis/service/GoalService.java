@@ -1,6 +1,8 @@
 package com.claudioscagliotti.thesis.service;
 
-import com.claudioscagliotti.thesis.enumeration.tmdb.QueryParamEnum;
+import com.claudioscagliotti.thesis.dto.response.GoalDto;
+import com.claudioscagliotti.thesis.enumeration.tmdb.*;
+import com.claudioscagliotti.thesis.mapper.GoalMapper;
 import com.claudioscagliotti.thesis.model.GoalEntity;
 import com.claudioscagliotti.thesis.model.KeywordEntity;
 import com.claudioscagliotti.thesis.repository.GoalRepository;
@@ -14,13 +16,19 @@ public class GoalService {
     private final GoalRepository goalRepository;
     private final CountryOfProductionService countryOfProductionService;
     private final GenreService genreService;
+    private final GoalMapper goalMapper;
 
-    public GoalService(GoalRepository goalRepository, CountryOfProductionService countryOfProductionService, GenreService genreService) {
+    public GoalService(GoalRepository goalRepository, CountryOfProductionService countryOfProductionService, GenreService genreService, GoalMapper goalMapper) {
         this.goalRepository = goalRepository;
         this.countryOfProductionService = countryOfProductionService;
         this.genreService = genreService;
+        this.goalMapper = goalMapper;
     }
 
+    public GoalDto createGoal(GoalDto request) {
+        GoalEntity goalEntity= goalMapper.INSTANCE.toGoalEntity(request);
+        return goalMapper.INSTANCE.toGoalDto(goalRepository.save(goalEntity));
+    }
 
     public String composeParams(GoalEntity goalEntity) {
         String result;
@@ -67,16 +75,16 @@ public class GoalService {
         LocalDate gte;
         if (goalEntity.getMinYear() != null) {
             gte = createDate(goalEntity.getMinYear());
-            result = "&" + QueryParamEnum.PRIMARY_RELEASE_DATE_GTE.getValue() + gte.toString();
+            result = "&" + QueryParamEnum.PRIMARY_RELEASE_DATE_GTE.getValue() + gte;
         }
         if (goalEntity.getMaxYear() != null) {
             lte = createDate(goalEntity.getMaxYear());
-            result += "&" + QueryParamEnum.PRIMARY_RELEASE_DATE_LTE.getValue() + lte.toString();
+            result += "&" + QueryParamEnum.PRIMARY_RELEASE_DATE_LTE.getValue() + lte;
         }
         return result;
     }
 
     private static LocalDate createDate(Integer year) {
-        return LocalDate.of(year, 01, 01);
+        return LocalDate.of(year, 1, 1);
     }
 }

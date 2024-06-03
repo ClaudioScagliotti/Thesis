@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.service;
 
-import com.claudioscagliotti.thesis.enumeration.tmdb.GenreEnum;
 import com.claudioscagliotti.thesis.enumeration.tmdb.QueryParamEnum;
+import com.claudioscagliotti.thesis.enumeration.tmdb.GenreEnum;
 import com.claudioscagliotti.thesis.model.GenreEntity;
 import com.claudioscagliotti.thesis.model.GoalEntity;
 import org.springframework.stereotype.Service;
