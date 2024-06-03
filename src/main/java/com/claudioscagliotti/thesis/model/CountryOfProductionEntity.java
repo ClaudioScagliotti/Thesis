@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
-
 
 @Getter
 @Setter
@@ -24,9 +22,6 @@ public class CountryOfProductionEntity {
 
     @Column(name = "country_code", length = 5)//iso_3166_1
     private String countryCode;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    private List<GoalEntity> goalEntityList;
 
     public CountryOfProductionEntity(String countryCode) {
         this.countryCode = countryCode;
