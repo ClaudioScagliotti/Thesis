@@ -3,12 +3,17 @@ package com.claudioscagliotti.thesis.service;
 import com.claudioscagliotti.thesis.dto.response.GoalDto;
 import com.claudioscagliotti.thesis.enumeration.tmdb.*;
 import com.claudioscagliotti.thesis.mapper.GoalMapper;
+import com.claudioscagliotti.thesis.model.CountryOfProductionEntity;
+import com.claudioscagliotti.thesis.model.GenreEntity;
 import com.claudioscagliotti.thesis.model.GoalEntity;
 import com.claudioscagliotti.thesis.model.KeywordEntity;
+import com.claudioscagliotti.thesis.repository.CountryOfProductionRepository;
 import com.claudioscagliotti.thesis.repository.GoalRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,17 +22,18 @@ public class GoalService {
     private final CountryOfProductionService countryOfProductionService;
     private final GenreService genreService;
     private final GoalMapper goalMapper;
+    private final CountryOfProductionRepository countryOfProductionRepository;
 
-    public GoalService(GoalRepository goalRepository, CountryOfProductionService countryOfProductionService, GenreService genreService, GoalMapper goalMapper) {
+    public GoalService(GoalRepository goalRepository, CountryOfProductionService countryOfProductionService, GenreService genreService, GoalMapper goalMapper, CountryOfProductionRepository countryOfProductionRepository) {
         this.goalRepository = goalRepository;
         this.countryOfProductionService = countryOfProductionService;
         this.genreService = genreService;
         this.goalMapper = goalMapper;
+        this.countryOfProductionRepository = countryOfProductionRepository;
     }
 
     public GoalDto createGoal(GoalDto request) {
-        GoalEntity goalEntity= goalMapper.INSTANCE.toGoalEntity(request);
-        return goalMapper.INSTANCE.toGoalDto(goalRepository.save(goalEntity));
+        return goalMapper.INSTANCE.toGoalDto(saveGoal(request));
     }
 
     public String composeParams(GoalEntity goalEntity) {
@@ -86,5 +92,29 @@ public class GoalService {
 
     private static LocalDate createDate(Integer year) {
         return LocalDate.of(year, 1, 1);
+    }
+    @Transactional
+    public GoalEntity saveGoal(GoalDto dto) {
+        GoalEntity goalEntity = goalMapper.INSTANCE.toGoalEntity(dto);
+        //COUNTRY OF PRODUCTIONS
+        goalEntity.getCountryOfProductionEntityList().forEach(c -> countryOfProductionRepository.getCountryOfProductionByCountryCode(c.getCountryCode()));
+        List<CountryOfProductionEntity> countryEntities = goalEntity.getCountryOfProductionEntityList().stream()
+                .map(c -> countryOfProductionRepository.getCountryOfProductionByCountryCode(c.getCountryCode()))
+                .toList();
+        goalEntity.setCountryOfProductionEntityList(countryEntities);
+
+
+
+        List<GenreEntity> savedGenreEntities = goalEntity.getGenreEntityList().stream()
+                .map(genreService::getGenreByNameAndSaveIfNotExists)
+                .collect(Collectors.toList());
+        goalEntity.setGenreEntityList(savedGenreEntities);
+
+
+        goalEntity.getKeywordEntityList();//TODO collegarmi alla api esterna
+        goalEntity.getCourseEntityList();//TODO
+
+        // Salva l'entità GoalEntity
+        return goalRepository.save(goalEntity);
     }
 }
