@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class KeywordDto {
-    private Long id;
     private String name;
     private Integer tmdbId;
 }

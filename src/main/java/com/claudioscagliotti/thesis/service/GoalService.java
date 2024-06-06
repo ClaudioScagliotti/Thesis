@@ -23,13 +23,15 @@ public class GoalService {
     private final GenreService genreService;
     private final GoalMapper goalMapper;
     private final CountryOfProductionRepository countryOfProductionRepository;
+    private final KeywordService keywordService;
 
-    public GoalService(GoalRepository goalRepository, CountryOfProductionService countryOfProductionService, GenreService genreService, GoalMapper goalMapper, CountryOfProductionRepository countryOfProductionRepository) {
+    public GoalService(GoalRepository goalRepository, CountryOfProductionService countryOfProductionService, GenreService genreService, GoalMapper goalMapper, CountryOfProductionRepository countryOfProductionRepository, KeywordService keywordService) {
         this.goalRepository = goalRepository;
         this.countryOfProductionService = countryOfProductionService;
         this.genreService = genreService;
         this.goalMapper = goalMapper;
         this.countryOfProductionRepository = countryOfProductionRepository;
+        this.keywordService = keywordService;
     }
 
     public GoalDto createGoal(GoalDto request) {
@@ -96,23 +98,22 @@ public class GoalService {
     @Transactional
     public GoalEntity saveGoal(GoalDto dto) {
         GoalEntity goalEntity = goalMapper.INSTANCE.toGoalEntity(dto);
-        //COUNTRY OF PRODUCTIONS
+
         goalEntity.getCountryOfProductionEntityList().forEach(c -> countryOfProductionRepository.getCountryOfProductionByCountryCode(c.getCountryCode()));
         List<CountryOfProductionEntity> countryEntities = goalEntity.getCountryOfProductionEntityList().stream()
                 .map(c -> countryOfProductionRepository.getCountryOfProductionByCountryCode(c.getCountryCode()))
                 .toList();
         goalEntity.setCountryOfProductionEntityList(countryEntities);
 
-
-
         List<GenreEntity> savedGenreEntities = goalEntity.getGenreEntityList().stream()
                 .map(genreService::getGenreByNameAndSaveIfNotExists)
                 .collect(Collectors.toList());
         goalEntity.setGenreEntityList(savedGenreEntities);
 
+        goalEntity.setKeywordEntityList(keywordService.saveAll(goalEntity.getKeywordEntityList()));
+        // mi arrivano già gli id di tmdb perchè questo processo lo faccio prima
 
-        goalEntity.getKeywordEntityList();//TODO collegarmi alla api esterna
-        goalEntity.getCourseEntityList();//TODO
+        //goalEntity.getCourseEntityList();//TODO course
 
         // Salva l'entità GoalEntity
         return goalRepository.save(goalEntity);
