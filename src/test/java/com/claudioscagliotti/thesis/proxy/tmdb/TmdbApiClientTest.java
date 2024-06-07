@@ -3,7 +3,6 @@ package com.claudioscagliotti.thesis.proxy.tmdb;
 import com.claudioscagliotti.thesis.ThesisApplication;
 import com.claudioscagliotti.thesis.dto.tmdb.response.authentication.AuthenticationResponse;
 import com.claudioscagliotti.thesis.dto.tmdb.response.genre.GenreResponse;
-import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,12 +45,11 @@ class TmdbApiClientTest {
     @Test
     public void testGetMovies() throws Exception {
         TmdbApiClient apiClient = client;
-        MovieResponse response = apiClient.getMovies("/discover/movie?language=en%7Cit&primary_release_date.gte=2000-01-01&primary_release_date.lte=2020-01-01&with_genres=80,28&with_origin_country=IT");
-
+        var response = apiClient.getMovies("/discover/movie?language=en%7Cit&primary_release_date.gte=2000-01-01&primary_release_date.lte=2020-01-01&with_genres=80,28&with_origin_country=IT");
 
         assertThat(response.page()).isNotNull();
-        assertThat(response.totalResults()).isNotNull();
         assertThat(response.results()).isNotNull();
+        assertThat(response.totalPages()).isNotNull();
     }
 
     @Test
