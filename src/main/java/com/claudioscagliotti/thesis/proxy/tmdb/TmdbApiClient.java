@@ -5,6 +5,7 @@ import com.claudioscagliotti.thesis.dto.tmdb.response.genre.GenreResponse;
 import com.claudioscagliotti.thesis.dto.tmdb.response.keyword.KeywordResponse;
 import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
 import com.claudioscagliotti.thesis.exception.InvalidApiKeyException;
+import com.claudioscagliotti.thesis.exception.NoMovieException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -49,24 +50,33 @@ public class TmdbApiClient {
         }
     }
 
-    public MovieResponse getMovies(String pathVariable) {
-        String url = TMDB_API_BASE_URL + pathVariable;
+    public MovieResponse getMovies(String pathVariable) {//TODO TEST
+        MovieResponse response;
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.set("accept", "application/json");
             headers.set("Authorization", "Bearer " + this.apiToken);
-
+            ObjectMapper objectMapper = new ObjectMapper();
             HttpEntity<String> entity = new HttpEntity<>(headers);
 
-            ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-            if (exchange.getStatusCode() == HttpStatusCode.valueOf(401)) {
-                throw new InvalidApiKeyException(); //TODO gestione eccezioni
-            }
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(exchange.getBody(), MovieResponse.class);
+
+                String url = TMDB_API_BASE_URL + pathVariable;
+
+                ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+                response = objectMapper.readValue(exchange.getBody(), MovieResponse.class);
+                if (exchange.getStatusCode() == HttpStatusCode.valueOf(401)) {
+                    throw new InvalidApiKeyException(); //TODO gestione eccezioni
+                }
+                if(response.results().isEmpty()){
+                    throw new NoMovieException();
+                }
+
         } catch (Exception e) {
             throw new RuntimeException("An error occurred while trying to retrieve data from the TMDB API", e);
+        } catch (NoMovieException e) {
+            throw new RuntimeException("No movie with this filters", e);
         }
+        return response;
     }
 
     public KeywordResponse searchKeywords(String keyword) {
@@ -102,9 +112,8 @@ public class TmdbApiClient {
             ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
             ObjectMapper objectMapper = new ObjectMapper();
-            GenreResponse response = objectMapper.readValue(exchange.getBody(), GenreResponse.class);
 
-            return response;
+            return objectMapper.readValue(exchange.getBody(), GenreResponse.class);
         } catch (Exception e) {
             throw new RuntimeException("An error occurred while trying to retrieve data from the TMDB API", e);
         }

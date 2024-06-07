@@ -1,6 +1,7 @@
 package com.claudioscagliotti.thesis.service;
 
 import com.claudioscagliotti.thesis.dto.response.GoalDto;
+import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
 import com.claudioscagliotti.thesis.enumeration.tmdb.*;
 import com.claudioscagliotti.thesis.mapper.GoalMapper;
 import com.claudioscagliotti.thesis.model.CountryOfProductionEntity;
@@ -55,6 +56,9 @@ public class GoalService {
                 .map(KeywordEntity::getTmdbId)
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
+
+        result += "&"+ QueryParamEnum.PAGE.getValue()+goalEntity.getPage();
+
         return result;
     }
 
@@ -117,5 +121,14 @@ public class GoalService {
 
         // Salva l'entità GoalEntity
         return goalRepository.save(goalEntity);
+    }
+    public GoalEntity updateGoal(GoalEntity entity){
+        return goalRepository.save(entity);
+    }
+    public void updatePage(GoalEntity goalEntity, MovieResponse response) {
+        if(response.totalPages()- response.page()>1){
+            goalEntity.setPage(goalEntity.getPage()+1);
+            updateGoal(goalEntity);
+        }
     }
 }

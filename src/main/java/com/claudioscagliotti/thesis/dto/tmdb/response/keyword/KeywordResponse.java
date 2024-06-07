@@ -8,6 +8,6 @@ import java.util.List;
 public record KeywordResponse(
 		@JsonProperty("page") Integer page,
 		@JsonProperty("total_pages") Integer totalPages,
-		List<Keyword> results,
+		List<KeywordDto> results,
 		@JsonProperty("total_results") Integer totalResults
 ) {}

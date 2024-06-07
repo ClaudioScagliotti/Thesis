@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 
 @Getter
 @Setter
@@ -23,6 +25,8 @@ public class GenreEntity {
 
 //    @ManyToMany(fetch = FetchType.EAGER)
 //    private List<GoalEntity> goalEntityList;
+    @ManyToMany(mappedBy = "genreEntities")
+    private List<MovieEntity> movies;
 
     public GenreEntity(String name) {
         this.name = name;

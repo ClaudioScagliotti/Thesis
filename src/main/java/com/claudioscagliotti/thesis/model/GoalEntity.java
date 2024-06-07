@@ -18,9 +18,11 @@ public class GoalEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "page", columnDefinition = "1")
+    private Integer page;
 
     @Column(name = "time_to_dedicate", nullable = false)
-    private Integer timeToDedicate;
+    private Float timeToDedicate;
 
     @Column(name = "goal_type", nullable = false)
     private String goalType;

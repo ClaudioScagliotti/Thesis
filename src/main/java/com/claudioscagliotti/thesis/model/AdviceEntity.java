@@ -23,8 +23,9 @@ public class AdviceEntity {
     @JoinColumn(name = "app_user_id", nullable = false)
     private UserEntity userEntity;
 
-    @Column(name = "advice_type", length = 50, nullable = false)
-    private String adviceType;
+    @ManyToOne
+    @JoinColumn(name = "movie_id", nullable = false)
+    private MovieEntity movie;
 
     @Column(name = "status", length = 50, nullable = false)
     private String status;
