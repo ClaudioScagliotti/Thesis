@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class GoalService {
+    private final UserService userService;
     private final GoalRepository goalRepository;
     private final CountryOfProductionService countryOfProductionService;
     private final GenreService genreService;
@@ -26,7 +27,8 @@ public class GoalService {
     private final CountryOfProductionRepository countryOfProductionRepository;
     private final KeywordService keywordService;
 
-    public GoalService(GoalRepository goalRepository, CountryOfProductionService countryOfProductionService, GenreService genreService, GoalMapper goalMapper, CountryOfProductionRepository countryOfProductionRepository, KeywordService keywordService) {
+    public GoalService(UserService userService, GoalRepository goalRepository, CountryOfProductionService countryOfProductionService, GenreService genreService, GoalMapper goalMapper, CountryOfProductionRepository countryOfProductionRepository, KeywordService keywordService) {
+        this.userService = userService;
         this.goalRepository = goalRepository;
         this.countryOfProductionService = countryOfProductionService;
         this.genreService = genreService;
@@ -35,8 +37,10 @@ public class GoalService {
         this.keywordService = keywordService;
     }
 
-    public GoalDto createGoal(GoalDto request) {
-        return goalMapper.INSTANCE.toGoalDto(saveGoal(request));
+    public GoalDto createGoal(GoalDto request, String username) {
+        GoalEntity goalEntity = saveGoal(request);
+        userService.updateUserGoal(username, goalEntity);
+        return goalMapper.INSTANCE.toGoalDto(goalEntity);
     }
 
     public String composeParams(GoalEntity goalEntity) {
@@ -116,9 +120,7 @@ public class GoalService {
 
         goalEntity.setKeywordEntityList(keywordService.saveAll(goalEntity.getKeywordEntityList()));
         // mi arrivano già gli id di tmdb perchè questo processo lo faccio prima
-
         //goalEntity.getCourseEntityList();//TODO course
-
         // Salva l'entità GoalEntity
         return goalRepository.save(goalEntity);
     }
