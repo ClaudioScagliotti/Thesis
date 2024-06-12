@@ -3,11 +3,9 @@ package com.claudioscagliotti.thesis.mapper;
 import com.claudioscagliotti.thesis.dto.response.CountryOfProductionDto;
 import com.claudioscagliotti.thesis.dto.response.GoalDto;
 import com.claudioscagliotti.thesis.dto.response.KeywordDto;
+import com.claudioscagliotti.thesis.enumeration.GoalTypeEnum;
 import com.claudioscagliotti.thesis.enumeration.tmdb.GenreEnum;
-import com.claudioscagliotti.thesis.model.CountryOfProductionEntity;
-import com.claudioscagliotti.thesis.model.GenreEntity;
-import com.claudioscagliotti.thesis.model.GoalEntity;
-import com.claudioscagliotti.thesis.model.KeywordEntity;
+import com.claudioscagliotti.thesis.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -20,16 +18,17 @@ public interface GoalMapper {
 
     GoalMapper INSTANCE = Mappers.getMapper(GoalMapper.class);
 
-      @Mapping(source = "keywordList", target = "keywordEntityList")
-      @Mapping(source = "genreEnumList", target = "genreEntityList", qualifiedByName = "mapGenreEnumListToEntityList")
-      @Mapping(source = "countryOfProductionList", target = "countryOfProductionEntityList")
-      GoalEntity toGoalEntity(GoalDto dto);
+    @Mapping(source = "goalType", target = "goalType", qualifiedByName = "mapStringToGoalType")
+    @Mapping(source = "keywordList", target = "keywordEntityList")
+    @Mapping(source = "genreEnumList", target = "genreEntityList", qualifiedByName = "mapGenreEnumListToEntityList")
+    @Mapping(source = "countryOfProductionList", target = "countryOfProductionEntityList")
+    GoalEntity toGoalEntity(GoalDto dto);
 
-      @Mapping(source = "keywordEntityList", target = "keywordList")
-      @Mapping(source = "genreEntityList", target = "genreEnumList", qualifiedByName = "mapEntityListToGenreEnumList")
-      @Mapping(source = "countryOfProductionEntityList", target = "countryOfProductionList")
-      GoalDto toGoalDto(GoalEntity goalEntity);
-
+    @Mapping(source = "goalType", target = "goalType", qualifiedByName = "mapGoalTypeToString") // Aggiungi questa riga
+    @Mapping(source = "keywordEntityList", target = "keywordList")
+    @Mapping(source = "genreEntityList", target = "genreEnumList", qualifiedByName = "mapEntityListToGenreEnumList")
+    @Mapping(source = "countryOfProductionEntityList", target = "countryOfProductionList")
+    GoalDto toGoalDto(GoalEntity goalEntity);
 
     KeywordEntity toKeywordEntity(KeywordDto dto);
 
@@ -39,7 +38,6 @@ public interface GoalMapper {
 
     CountryOfProductionDto toCountryOfProductionDto(CountryOfProductionEntity entity);
 
-    // Metodi aggiuntivi per mappare le liste di KeywordDto e CountryOfProductionDto
     default List<KeywordEntity> mapKeywordListToEntity(List<KeywordDto> keywordDtos) {
         if (keywordDtos == null) {
             return null;
@@ -75,9 +73,9 @@ public interface GoalMapper {
                 .map(this::toCountryOfProductionDto)
                 .collect(Collectors.toList());
     }
+
     @Named("mapGenreEnumListToEntityList")
     default List<GenreEntity> mapGenreEnumListToEntityList(List<GenreEnum> genreEnumList) {
-        // Implementa la logica di mappatura da GenreEnum a GenreEntity
         return genreEnumList.stream()
                 .map(genreEnum -> new GenreEntity((long) genreEnum.getId(), genreEnum.getName()))
                 .collect(Collectors.toList());
@@ -85,9 +83,28 @@ public interface GoalMapper {
 
     @Named("mapEntityListToGenreEnumList")
     default List<GenreEnum> mapEntityListToGenreEnumList(List<GenreEntity> genreEntityList) {
-        // Implementa la logica di mappatura da GenreEntity a GenreEnum
         return genreEntityList.stream()
                 .map(genreEntity -> GenreEnum.getByName(genreEntity.getName()))
                 .collect(Collectors.toList());
+    }
+
+    @Named("mapStringToGoalType")
+    default GoalTypeEntity mapStringToGoalType(String value) {
+        if (value == null) {
+            return null;
+        }
+        GoalTypeEnum goalTypeEnum = GoalTypeEnum.valueOf(value.toUpperCase());
+        GoalTypeEntity goalType = new GoalTypeEntity();
+        goalType.setType(goalTypeEnum);
+        goalType.setId(goalTypeEnum.getValue());
+        return goalType;
+    }
+
+    @Named("mapGoalTypeToString")
+    default String mapGoalTypeToString(GoalTypeEntity goalType) {
+        if (goalType == null || goalType.getType() == null) {
+            return null;
+        }
+        return goalType.getType().name();
     }
 }

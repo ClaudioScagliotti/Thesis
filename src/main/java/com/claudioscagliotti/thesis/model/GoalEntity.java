@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "goal")
-public class GoalEntity {
+public class GoalEntity { // TODO errore di progettazione: goal type deve essere una tabella. in modo che course si riferisca a goal type e non a goal.
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,8 +27,9 @@ public class GoalEntity {
     @Column(name = "time_to_dedicate", nullable = false)
     private Float timeToDedicate;
 
-    @Column(name = "goal_type", nullable = false)
-    private String goalType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "type_id", nullable = false)
+    private GoalTypeEntity goalType;
 
     @Column(name = "min_year", nullable = false)
     private Integer minYear;

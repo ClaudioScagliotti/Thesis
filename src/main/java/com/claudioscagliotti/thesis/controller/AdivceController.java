@@ -1,6 +1,6 @@
 package com.claudioscagliotti.thesis.controller;
 
-import com.claudioscagliotti.thesis.model.AdviceEntity;
+import com.claudioscagliotti.thesis.dto.response.AdviceDto;
 import com.claudioscagliotti.thesis.service.AdviceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -26,11 +26,12 @@ private final AdviceService adviceService;
     public ResponseEntity<?> createAdviceList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        List<AdviceEntity> adviceList = adviceService.createAdviceList(userDetails.getUsername());
+        List<AdviceDto> adviceList = adviceService.getAdviceResponse(userDetails.getUsername());
+
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(adviceList.stream().findFirst().orElseThrow().getId())
                 .toUri();
-        return ResponseEntity.created(location).body(adviceList.stream().findFirst());
+        return ResponseEntity.created(location).body(adviceList);
     }//TODO exceptions
 }

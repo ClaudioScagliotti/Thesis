@@ -25,7 +25,7 @@ public class GoalController {
     public GoalController(GoalService goalService) {
         this.goalService = goalService;
     }
-    @PostMapping
+    @PostMapping//TODO bloccare la creazione di più goal per singolo utente
     public ResponseEntity<?> createGoal(@Valid @RequestBody GoalDto createGoalRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();

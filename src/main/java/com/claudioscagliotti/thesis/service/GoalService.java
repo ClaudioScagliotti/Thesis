@@ -2,7 +2,8 @@ package com.claudioscagliotti.thesis.service;
 
 import com.claudioscagliotti.thesis.dto.response.GoalDto;
 import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
-import com.claudioscagliotti.thesis.enumeration.tmdb.*;
+import com.claudioscagliotti.thesis.enumeration.tmdb.MetohdEnum;
+import com.claudioscagliotti.thesis.enumeration.tmdb.QueryParamEnum;
 import com.claudioscagliotti.thesis.mapper.GoalMapper;
 import com.claudioscagliotti.thesis.model.CountryOfProductionEntity;
 import com.claudioscagliotti.thesis.model.GenreEntity;
@@ -68,18 +69,20 @@ public class GoalService {
 
     private static String setGoalType(GoalEntity goalEntity) {
         String result;
-        switch (goalEntity.getGoalType()) {
-            case ("now-playing"): {
-                result = "/movie/now_playing";
+        final String formattedString;
+
+        switch (goalEntity.getGoalType().getType()) {
+            case NOW_PLAYING: {
+                result = MetohdEnum.NOW_PLAYING.getValue();
             }
-            case ("most-popular"): {
-                result = "/movie/popular";
+            case MOST_POPULAR: {
+                result = MetohdEnum.MOST_POPULAR.getValue();
             }
-            case ("top-rated"): {
-                result = "/movie/top_rated";
+            case TOP_RATED: {
+                result = MetohdEnum.TOP_RATED.getValue();
             }
             default: {
-                result = "/discover/movie";
+                result = MetohdEnum.DISCOVER.getValue();
             }
         }
         return result;

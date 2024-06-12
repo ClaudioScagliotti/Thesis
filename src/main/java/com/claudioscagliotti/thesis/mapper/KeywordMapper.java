@@ -10,5 +10,5 @@ public interface KeywordMapper {
     KeywordMapper INSTANCE = Mappers.getMapper(KeywordMapper.class);
 
     KeywordEntity toKeywordEntity(KeywordDto dto);
-    KeywordDto toKeywordDto(KeywordEntity KeywordEntity);
+    KeywordDto toKeywordDto(KeywordEntity keywordEntity);
 }

@@ -1,9 +1,11 @@
 package com.claudioscagliotti.thesis.service;
 
+import com.claudioscagliotti.thesis.dto.response.AdviceDto;
 import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieDto;
 import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
 import com.claudioscagliotti.thesis.enumeration.QuizResultEnum;
 import com.claudioscagliotti.thesis.enumeration.StatusEnum;
+import com.claudioscagliotti.thesis.mapper.AdviceMapper;
 import com.claudioscagliotti.thesis.mapper.GoalMapper;
 import com.claudioscagliotti.thesis.mapper.MovieMapper;
 import com.claudioscagliotti.thesis.model.AdviceEntity;
@@ -25,6 +27,7 @@ import java.util.Optional;
 public class AdviceService {
 
     private final AdviceRepository adviceRepository;
+    private final AdviceMapper adviceMapper;
     private final GoalService goalService;
     private final TmdbApiClient client;
     private final MovieMapper movieMapper;
@@ -32,8 +35,9 @@ public class AdviceService {
     private final GoalMapper goalMapper;
     private final UserService userService;
 
-    public AdviceService(AdviceRepository adviceRepository, GoalService goalService, TmdbApiClient client, MovieMapper movieMapper, GoalMapper goalMapper, UserDetailsServiceImpl userDetailsService, MovieService movieService, UserService userService) {
+    public AdviceService(AdviceRepository adviceRepository, AdviceMapper adviceMapper, GoalService goalService, TmdbApiClient client, MovieMapper movieMapper, GoalMapper goalMapper, UserDetailsServiceImpl userDetailsService, MovieService movieService, UserService userService) {
         this.adviceRepository = adviceRepository;
+        this.adviceMapper = adviceMapper;
         this.goalService = goalService;
         this.client = client;
         this.movieMapper = movieMapper;
@@ -41,6 +45,12 @@ public class AdviceService {
         this.movieService = movieService;
         this.userService = userService;
     }
+
+    public List<AdviceDto> getAdviceResponse(String username){
+        List<AdviceEntity> adviceList = createAdviceList(username);
+        return adviceMapper.toAdviceDtoList(adviceList);
+    }
+
     public List<AdviceEntity> createAdviceList(String username) {
         Optional<UserEntity> userEntity= userService.findByUsername(username);
         if (userEntity.isEmpty()) {
