@@ -8,7 +8,7 @@ import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.claudioscagliotti.thesis.enumeration.Role;
+import com.claudioscagliotti.thesis.enumeration.RoleEnum;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +34,7 @@ public class UserEntity implements UserDetails {
     @Column(name = "last_name", length = 100, nullable = false)
     private String lastName;
     @Enumerated(value = EnumType.STRING)
-    private Role role;
+    private RoleEnum role;
     @Column(name = "username", length = 100, nullable = false, unique = true)
     private String username;
     @Column(name = "points", nullable = false)

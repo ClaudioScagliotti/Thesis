@@ -59,7 +59,7 @@ public class GoalService {
         result += "&" + QueryParamEnum.WITH_KEYWORDS.getValue() + goalEntity.getKeywordEntityList().stream()
                 .map(KeywordEntity::getTmdbId)
                 .map(String::valueOf)
-                .collect(Collectors.joining(","));
+                .collect(Collectors.joining("|"));
 
         result += "&"+ QueryParamEnum.PAGE.getValue()+goalEntity.getPage();
 
@@ -132,5 +132,9 @@ public class GoalService {
             goalEntity.setPage(goalEntity.getPage()+1);
             updateGoal(goalEntity);
         }
+    }
+
+    public GoalEntity getGoalById(Long id){
+        return goalRepository.getReferenceById(id);
     }
 }

@@ -26,7 +26,7 @@ public class GenreService {
                         .map(GenreEnum::getByName)
                         .map(GenreEnum::getId)
                         .map(Object::toString)
-                        .collect(Collectors.joining(","));
+                        .collect(Collectors.joining("|"));
     }
     @Transactional
     GenreEntity getGenreByNameAndSaveIfNotExists(GenreEntity entity){

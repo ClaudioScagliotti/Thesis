@@ -32,6 +32,10 @@ public class AdviceEntity {
 
     @Column(name = "creation_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime creationDate;
+    @PrePersist
+    protected void onCreate() {
+        this.creationDate = LocalDateTime.now();
+    }
 
     @Column(name = "deadline")
     private LocalDateTime deadline;

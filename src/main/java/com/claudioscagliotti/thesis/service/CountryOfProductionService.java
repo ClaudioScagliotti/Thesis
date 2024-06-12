@@ -12,6 +12,6 @@ public class CountryOfProductionService {
     public String getCountryCodesAsString(List<CountryOfProductionEntity> countryEntities) {
         return "&" + QueryParamEnum.WITH_ORIGIN_COUNTRY.getValue() + countryEntities.stream()
                 .map(CountryOfProductionEntity::getCountryCode)
-                .collect(Collectors.joining(","));
+                .collect(Collectors.joining("|"));
     }
 }
