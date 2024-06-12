@@ -1,7 +1,9 @@
 package com.claudioscagliotti.thesis.repository;
 
 import com.claudioscagliotti.thesis.ThesisApplication;
+import com.claudioscagliotti.thesis.enumeration.GoalTypeEnum;
 import com.claudioscagliotti.thesis.model.GoalEntity;
+import com.claudioscagliotti.thesis.model.GoalTypeEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +36,26 @@ class GoalRepositoryTest {
     @Test
     public void testFindAll() {
         List<GoalEntity> list = goalRepository.findAll();
-        assertThat(list.size()).isEqualTo(4L);
+        assertThat(list.size()).isEqualTo(2L);
     }
+
+    @Test
+    void getGoalTypeByGoalId() {
+        GoalTypeEntity goalTypeByGoalId = goalRepository.getGoalTypeById(1L);
+        assertThat(goalTypeByGoalId).isNotNull();
+    }
+    @Test
+    void getTGoalType() {
+        List<GoalTypeEnum> enums= goalRepository.findGoalTypesById(1L);
+
+        assertThat(enums).isNotNull();
+
+    }
+    @Test
+    void getTGoalTypeEntiy() {
+        List<GoalTypeEntity> entity = goalRepository.findGoalTypesById2(1L);
+        assertThat(entity).isNotNull();
+
+    }
+
 }

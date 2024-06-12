@@ -1,10 +1,8 @@
 package com.claudioscagliotti.thesis.service;
 
 import com.claudioscagliotti.thesis.ThesisApplication;
-import com.claudioscagliotti.thesis.model.CountryOfProductionEntity;
-import com.claudioscagliotti.thesis.model.GenreEntity;
-import com.claudioscagliotti.thesis.model.GoalEntity;
-import com.claudioscagliotti.thesis.model.KeywordEntity;
+import com.claudioscagliotti.thesis.enumeration.GoalTypeEnum;
+import com.claudioscagliotti.thesis.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,9 +41,12 @@ class GoalServiceTest {
         List<GenreEntity> genreEntities = List.of(g1, g2);
         List<CountryOfProductionEntity> lc = List.of(c1);
 
+        GoalTypeEntity goalTypeEntity= new GoalTypeEntity();
+        goalTypeEntity.setId(1L);
+        goalTypeEntity.setType(GoalTypeEnum.NOW_PLAYING);
         GoalEntity goalEntity = new GoalEntity();
-        goalEntity.setTimeToDedicate(2); // Tempo dedicato in minuti
-        goalEntity.setGoalType("top-rated"); // Tipo di obiettivo
+        goalEntity.setTimeToDedicate(2F); // Tempo dedicato in minuti
+        goalEntity.setGoalType(goalTypeEntity); // Tipo di obiettivo
         goalEntity.setMinYear(2000); // Anno minimo
         goalEntity.setMaxYear(2020); // Anno massimo
         goalEntity.setGenreEntityList(genreEntities); // Lista di generi
