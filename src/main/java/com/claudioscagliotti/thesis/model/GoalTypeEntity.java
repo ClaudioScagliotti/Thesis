@@ -28,4 +28,13 @@ public class GoalTypeEntity {
     @OneToMany(mappedBy = "goalType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<GoalEntity> goals;
+
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "goal_type_course",
+            joinColumns = @JoinColumn(name = "goal_type_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private List<CourseEntity> courseEntityList;
 }

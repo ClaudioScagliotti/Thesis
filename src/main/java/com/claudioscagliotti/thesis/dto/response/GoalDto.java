@@ -25,6 +25,5 @@ public class GoalDto {
     private List<KeywordDto> keywordList;
     private List<GenreEnum> genreEnumList;
     private List<CountryOfProductionDto> countryOfProductionList;
-    //TODO COURSE
 
 }

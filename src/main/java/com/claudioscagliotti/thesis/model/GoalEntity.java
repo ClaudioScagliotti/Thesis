@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "goal")
-public class GoalEntity { // TODO errore di progettazione: goal type deve essere una tabella. in modo che course si riferisca a goal type e non a goal.
+public class GoalEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -59,11 +59,5 @@ public class GoalEntity { // TODO errore di progettazione: goal type deve essere
     )
     private List<CountryOfProductionEntity> countryOfProductionEntityList;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "goal_course",
-            joinColumns = @JoinColumn(name = "goal_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
-    private List<CourseEntity> courseEntityList;
+
 }
