@@ -3,7 +3,7 @@ package com.claudioscagliotti.thesis.dto.tmdb.response.movie;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
-public record MovieDto(
+public record MovieResource(
 		String overview,
 		@JsonProperty("original_language") String originalLanguage,
 		@JsonProperty("original_title") String originalTitle,
