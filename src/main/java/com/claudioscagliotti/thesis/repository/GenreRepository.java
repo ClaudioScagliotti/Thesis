@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface GenreRepository extends JpaRepository<GenreEntity, Long> {
 
     GenreEntity getGenreEntityByName(String name);
+    GenreEntity getGenreEntityByTmdbId(Integer tmdbId);
     
 }

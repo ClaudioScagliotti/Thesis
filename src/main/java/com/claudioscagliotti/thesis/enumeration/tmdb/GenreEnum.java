@@ -25,16 +25,16 @@ public enum GenreEnum {
     WAR(10752, "War"),
     WESTERN(37, "Western");
 
-    private final int id;
+    private final int tmdb_id;
     private final String name;
 
-    GenreEnum(int id, String name) {
-        this.id = id;
+    GenreEnum(int tmdb_id, String name) {
+        this.tmdb_id = tmdb_id;
         this.name = name;
     }
 
-    public int getId() {
-        return id;
+    public int getTmdbId() {
+        return tmdb_id;
     }
 
     public String getName() {
@@ -43,7 +43,7 @@ public enum GenreEnum {
 
     public static GenreEnum getById(int id) {
         for (GenreEnum genre : values()) {
-            if (genre.id == id) {
+            if (genre.tmdb_id == id) {
                 return genre;
             }
         }
@@ -63,6 +63,15 @@ public enum GenreEnum {
         return Arrays.stream(values())
                 .map(GenreEnum::getName)
                 .collect(Collectors.toList());
+    }
+
+    public static GenreEnum fromTmdbId(int tmdbId) {
+        for (GenreEnum genre : values()) {
+            if (genre.getTmdbId() == tmdbId) {
+                return genre;
+            }
+        }
+        throw new IllegalArgumentException("Unknown TMDB ID: " + tmdbId);
     }
 }
 

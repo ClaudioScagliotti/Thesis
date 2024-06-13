@@ -1,6 +1,6 @@
 package com.claudioscagliotti.thesis.proxy.tmdb;
 
-import com.claudioscagliotti.thesis.dto.tmdb.response.authentication.AuthenticationResponse;
+import com.claudioscagliotti.thesis.dto.tmdb.response.authentication.AuthenticationResource;
 import com.claudioscagliotti.thesis.dto.tmdb.response.genre.GenreResponse;
 import com.claudioscagliotti.thesis.dto.tmdb.response.keyword.KeywordResponse;
 import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
@@ -28,7 +28,7 @@ public class TmdbApiClient {
     }
 
 
-    public AuthenticationResponse authenticate() {
+    public AuthenticationResource authenticate() {
         String url = TMDB_API_BASE_URL + "/authentication";
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -40,7 +40,7 @@ public class TmdbApiClient {
             ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
             ObjectMapper objectMapper = new ObjectMapper();
-            AuthenticationResponse authResponse = objectMapper.readValue(exchange.getBody(), AuthenticationResponse.class);
+            AuthenticationResource authResponse = objectMapper.readValue(exchange.getBody(), AuthenticationResource.class);
             if (authResponse.statusCode() == 7) {
                 throw new InvalidApiKeyException(authResponse.statusMessage());
             }

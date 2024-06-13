@@ -1,6 +1,5 @@
 package com.claudioscagliotti.thesis.dto.response;
 
-import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieDto;
 import lombok.Getter;
 import lombok.Setter;
 

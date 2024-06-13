@@ -77,7 +77,7 @@ public interface GoalMapper {
     @Named("mapGenreEnumListToEntityList")
     default List<GenreEntity> mapGenreEnumListToEntityList(List<GenreEnum> genreEnumList) {
         return genreEnumList.stream()
-                .map(genreEnum -> new GenreEntity((long) genreEnum.getId(), genreEnum.getName()))
+                .map(genreEnum -> new GenreEntity(genreEnum.getName(), genreEnum.getTmdbId()))
                 .collect(Collectors.toList());
     }
 

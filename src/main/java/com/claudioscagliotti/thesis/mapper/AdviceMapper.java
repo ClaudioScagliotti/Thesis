@@ -8,7 +8,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = MovieMapper.class)
 public interface AdviceMapper {
     AdviceMapper INSTANCE = Mappers.getMapper(AdviceMapper.class);
 
@@ -16,5 +16,6 @@ public interface AdviceMapper {
     @Mapping(source = "movie", target = "movieDto")
     AdviceDto toAdviceDto(AdviceEntity entity);
 
+    @Mapping(source = "movie", target = "movieDto")
     List<AdviceDto> toAdviceDtoList(List<AdviceEntity> entityList);
 }

@@ -46,6 +46,6 @@ private final AdviceService adviceService;
                 .path("/{id}")
                 .buildAndExpand(advice.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(advice);
+        return ResponseEntity.ok(advice);
     }
 }

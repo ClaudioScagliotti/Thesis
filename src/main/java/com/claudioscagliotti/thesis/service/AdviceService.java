@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.service;
 
 import com.claudioscagliotti.thesis.dto.response.AdviceDto;
-import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieDto;
+import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResource;
 import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
 import com.claudioscagliotti.thesis.enumeration.QuizResultEnum;
 import com.claudioscagliotti.thesis.enumeration.StatusEnum;
@@ -15,10 +15,11 @@ import com.claudioscagliotti.thesis.model.UserEntity;
 import com.claudioscagliotti.thesis.proxy.tmdb.TmdbApiClient;
 import com.claudioscagliotti.thesis.repository.AdviceRepository;
 import com.claudioscagliotti.thesis.utility.TimeToDedicateConverter;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,11 @@ public class AdviceService {
     private final MovieMapper movieMapper;
     private final MovieService movieService;
     private final GoalMapper goalMapper;
+
+    private final GenreService genreService;
     private final UserService userService;
 
-    public AdviceService(AdviceRepository adviceRepository, AdviceMapper adviceMapper, GoalService goalService, TmdbApiClient client, MovieMapper movieMapper, GoalMapper goalMapper, UserDetailsServiceImpl userDetailsService, MovieService movieService, UserService userService) {
+    public AdviceService(AdviceRepository adviceRepository, AdviceMapper adviceMapper, GoalService goalService, TmdbApiClient client, MovieMapper movieMapper, GoalMapper goalMapper, UserDetailsServiceImpl userDetailsService, MovieService movieService, GenreService genreService, UserService userService) {
         this.adviceRepository = adviceRepository;
         this.adviceMapper = adviceMapper;
         this.goalService = goalService;
@@ -44,6 +47,7 @@ public class AdviceService {
         this.movieMapper = movieMapper;
         this.goalMapper = goalMapper;
         this.movieService = movieService;
+        this.genreService = genreService;
         this.userService = userService;
     }
 
@@ -68,9 +72,10 @@ public class AdviceService {
         goalService.updatePage(goalEntity, response);
 
         List<AdviceEntity> adviceList = new ArrayList<>();
-        List<MovieDto> movieList = response.results();
+        List<MovieResource> movieList = response.results();
+
         List<MovieEntity> movieEntityList = movieList.stream()
-                .map(movieMapper::toMovieEntity)
+                .map(movieDto -> movieMapper.toMovieEntity(movieDto, genreService))
                 .toList();
         List<MovieEntity> savedMovie= movieService.saveAllMovie(movieEntityList);
         for (MovieEntity movie : savedMovie) {

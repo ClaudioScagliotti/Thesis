@@ -8,6 +8,6 @@ import java.util.List;
 public record MovieResponse(
 		@JsonProperty("page") Integer page,
 		@JsonProperty("total_pages") Integer totalPages,
-		List<MovieDto> results,
+		List<MovieResource> results,
 		@JsonProperty("total_results") Integer totalResults
 ) {}

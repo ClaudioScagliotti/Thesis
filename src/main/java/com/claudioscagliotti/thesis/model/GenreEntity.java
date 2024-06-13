@@ -25,13 +25,15 @@ public class GenreEntity {
 
     @ManyToMany(mappedBy = "genreEntities")
     private List<MovieEntity> movies;
+    @Column(name = "tmdb_id", unique = true)
+    private Integer tmdbId;
 
     public GenreEntity(String name) {
         this.name = name;
     }
 
-    public GenreEntity(Long id, String name) {
-        this.id = id;
+    public GenreEntity(String name, Integer tmdbId) {
         this.name = name;
+        this.tmdbId = tmdbId;
     }
 }

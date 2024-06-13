@@ -8,6 +8,7 @@ import com.claudioscagliotti.thesis.repository.GenreRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +25,7 @@ public class GenreService {
                 goalEntity.getGenreEntityList().stream()
                         .map(GenreEntity::getName)
                         .map(GenreEnum::getByName)
-                        .map(GenreEnum::getId)
+                        .map(GenreEnum::getTmdbId)
                         .map(Object::toString)
                         .collect(Collectors.joining("|"));
     }
@@ -36,4 +37,24 @@ public class GenreService {
         }
         return genreEntityByName;
     }
+
+
+    public List<GenreEntity> mapGenreIdsToEntities(List<Integer> genreIds) {
+        if (genreIds == null || genreIds.isEmpty()) {
+            return null;
+        }
+        return genreIds.stream()
+                .map(genreRepository::getGenreEntityByTmdbId)
+                .collect(Collectors.toList());
+    }
+
+    public List<Integer> mapGenreEntitiesToIds(List<GenreEntity> genreEntities) {
+        if (genreEntities == null || genreEntities.isEmpty()) {
+            return null;
+        }
+        return genreEntities.stream()
+                .map(GenreEntity::getTmdbId)
+                .collect(Collectors.toList());
+    }
+
 }

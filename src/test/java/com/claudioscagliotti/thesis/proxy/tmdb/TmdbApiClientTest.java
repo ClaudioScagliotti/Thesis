@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.proxy.tmdb;
 
 import com.claudioscagliotti.thesis.ThesisApplication;
-import com.claudioscagliotti.thesis.dto.tmdb.response.authentication.AuthenticationResponse;
+import com.claudioscagliotti.thesis.dto.tmdb.response.authentication.AuthenticationResource;
 import com.claudioscagliotti.thesis.dto.tmdb.response.genre.GenreResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ class TmdbApiClientTest {
     @Test
     public void testAuthenticate() throws Exception {
         TmdbApiClient apiClient = client;
-        AuthenticationResponse response = apiClient.authenticate();
+        AuthenticationResource response = apiClient.authenticate();
 
 
         assertThat(response.success()).isNotNull();
