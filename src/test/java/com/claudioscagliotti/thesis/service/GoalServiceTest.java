@@ -45,13 +45,13 @@ class GoalServiceTest {
         goalTypeEntity.setId(1L);
         goalTypeEntity.setType(GoalTypeEnum.NOW_PLAYING);
         GoalEntity goalEntity = new GoalEntity();
-        goalEntity.setTimeToDedicate(2F); // Tempo dedicato in minuti
-        goalEntity.setGoalType(goalTypeEntity); // Tipo di obiettivo
-        goalEntity.setMinYear(2000); // Anno minimo
-        goalEntity.setMaxYear(2020); // Anno massimo
-        goalEntity.setGenreEntityList(genreEntities); // Lista di generi
-        goalEntity.setKeywordEntityList(lk); // Lista di parole chiave
-        goalEntity.setCountryOfProductionEntityList(lc); // Lista di paesi di produzione
+        goalEntity.setTimeToDedicate(2F);
+        goalEntity.setGoalType(goalTypeEntity);
+        goalEntity.setMinYear(2000);
+        goalEntity.setMaxYear(2020);
+        goalEntity.setGenreEntityList(genreEntities);
+        goalEntity.setKeywordEntityList(lk);
+        goalEntity.setCountryOfProductionEntityList(lc);
 
         String s = goalService.composeParams(goalEntity);
         System.out.println(s);

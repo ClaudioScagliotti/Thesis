@@ -93,7 +93,7 @@ public class AuthenticationService {
         token.setUser(user);
         tokenRepository.save(token);
     }
-    public ResponseEntity refreshToken(
+    public ResponseEntity refreshToken( //TODO approfondire il refresh token
             HttpServletRequest request,
             HttpServletResponse response) {
         // extract the token from authorization header

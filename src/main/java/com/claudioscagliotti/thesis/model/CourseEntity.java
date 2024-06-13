@@ -24,5 +24,5 @@ public class CourseEntity {
     private String title;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private List<GoalEntity> goalEntityList;
+    private List<GoalTypeEntity> goalTypeEntityList;
 }

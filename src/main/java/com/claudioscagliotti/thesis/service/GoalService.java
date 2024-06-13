@@ -123,8 +123,7 @@ public class GoalService {
 
         goalEntity.setKeywordEntityList(keywordService.saveAll(goalEntity.getKeywordEntityList()));
         // mi arrivano già gli id di tmdb perchè questo processo lo faccio prima
-        //goalEntity.getCourseEntityList();//TODO course
-        // Salva l'entità GoalEntity
+
         return goalRepository.save(goalEntity);
     }
     public GoalEntity updateGoal(GoalEntity entity){

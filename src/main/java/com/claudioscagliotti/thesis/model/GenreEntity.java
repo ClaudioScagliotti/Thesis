@@ -23,8 +23,6 @@ public class GenreEntity {
     @Column(name = "name", length = 100)
     private String name;
 
-//    @ManyToMany(fetch = FetchType.EAGER)
-//    private List<GoalEntity> goalEntityList;
     @ManyToMany(mappedBy = "genreEntities")
     private List<MovieEntity> movies;
 
