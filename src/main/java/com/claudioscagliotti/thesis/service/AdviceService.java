@@ -17,7 +17,8 @@ import com.claudioscagliotti.thesis.repository.AdviceRepository;
 import com.claudioscagliotti.thesis.utility.TimeToDedicateConverter;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +47,14 @@ public class AdviceService {
         this.userService = userService;
     }
 
-    public List<AdviceDto> getAdviceResponse(String username){
+    public List<AdviceDto> getAdviceListResponse(String username){
         List<AdviceEntity> adviceList = createAdviceList(username);
         return adviceMapper.toAdviceDtoList(adviceList);
+    }
+    public AdviceDto getNextAdvice(String username){
+        Pageable pageable = PageRequest.of(0, 1);
+        List<AdviceEntity> adviceEntities = adviceRepository.findUncompletedAdviceByUsername(username, pageable);
+        return adviceEntities.isEmpty() ? null : adviceMapper.toAdviceDto(adviceEntities.get(0));
     }
 
     public List<AdviceEntity> createAdviceList(String username) {
