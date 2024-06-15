@@ -12,22 +12,28 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "quiz")
 public class QuizEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "lesson_id", nullable = false)
-    private LessonEntity lessonEntity;
+    private String title;
 
-    @Column(name = "type")
-    private String type;
+//    @Column(nullable = false, length = 50)
+//    @Enumerated(EnumType.STRING)
+//    private QuizTypeEnum type;
 
-    @Column(name = "question", columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String question;
 
-    @Column(name = "answer", columnDefinition = "TEXT")
-    private String answer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lesson_id")
+    private LessonEntity lesson;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "advice_id")
+    private AdviceEntity advice;
 }
