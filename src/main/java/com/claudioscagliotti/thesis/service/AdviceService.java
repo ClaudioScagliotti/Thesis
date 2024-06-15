@@ -14,7 +14,9 @@ import com.claudioscagliotti.thesis.model.MovieEntity;
 import com.claudioscagliotti.thesis.model.UserEntity;
 import com.claudioscagliotti.thesis.proxy.tmdb.TmdbApiClient;
 import com.claudioscagliotti.thesis.repository.AdviceRepository;
+import com.claudioscagliotti.thesis.repository.UserRepository;
 import com.claudioscagliotti.thesis.utility.TimeToDedicateConverter;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,11 +37,12 @@ public class AdviceService {
     private final MovieMapper movieMapper;
     private final MovieService movieService;
     private final GoalMapper goalMapper;
+    private final UserRepository userRepository;
 
     private final GenreService genreService;
     private final UserService userService;
 
-    public AdviceService(AdviceRepository adviceRepository, AdviceMapper adviceMapper, GoalService goalService, TmdbApiClient client, MovieMapper movieMapper, GoalMapper goalMapper, UserDetailsServiceImpl userDetailsService, MovieService movieService, GenreService genreService, UserService userService) {
+    public AdviceService(AdviceRepository adviceRepository, AdviceMapper adviceMapper, GoalService goalService, TmdbApiClient client, MovieMapper movieMapper, GoalMapper goalMapper, UserDetailsServiceImpl userDetailsService, MovieService movieService, UserRepository userRepository, GenreService genreService, UserService userService) {
         this.adviceRepository = adviceRepository;
         this.adviceMapper = adviceMapper;
         this.goalService = goalService;
@@ -47,6 +50,7 @@ public class AdviceService {
         this.movieMapper = movieMapper;
         this.goalMapper = goalMapper;
         this.movieService = movieService;
+        this.userRepository = userRepository;
         this.genreService = genreService;
         this.userService = userService;
     }
@@ -58,7 +62,19 @@ public class AdviceService {
     public AdviceDto getNextAdvice(String username){
         Pageable pageable = PageRequest.of(0, 1);
         List<AdviceEntity> adviceEntities = adviceRepository.findUncompletedAdviceByUsername(username, pageable);
-        return adviceEntities.isEmpty() ? null : adviceMapper.toAdviceDto(adviceEntities.get(0));
+        if(!adviceEntities.isEmpty()){
+            AdviceEntity adviceEntity = adviceEntities.get(0);
+            GoalEntity goalEntity = userRepository.getGoalEntityByUsername(username);
+            int daysUntilDeadline = TimeToDedicateConverter.convertTimeToDedicateToDays(goalEntity.getTimeToDedicate());
+            adviceRepository.updateAdviceDeadline(adviceEntity.getId(),LocalDateTime.now().plusDays(daysUntilDeadline));
+            Optional<AdviceEntity> adviceEntityUpdated = adviceRepository.findById(adviceEntity.getId());
+            if(adviceEntityUpdated.isPresent()){
+                return adviceMapper.toAdviceDto(adviceEntityUpdated.get());
+            }
+        }
+        //TODO GESTIRE CASO IN CUI SIANO FINITI GLI ADVICE
+        return null;
+
     }
 
     public List<AdviceEntity> createAdviceList(String username) {
@@ -82,9 +98,6 @@ public class AdviceService {
             AdviceEntity adviceEntity = new AdviceEntity();
             adviceEntity.setUserEntity(userEntity.get());
 
-            int daysUntilDeadline = TimeToDedicateConverter.convertTimeToDedicateToDays(goalEntity.getTimeToDedicate());
-            adviceEntity.setDeadline(LocalDateTime.now().plusDays(daysUntilDeadline));
-
             adviceEntity.setPoints(100);//TODO ADD ALGORITM TO CALCULATE POINTS
 
             adviceEntity.setMovie(movie);
@@ -93,6 +106,21 @@ public class AdviceService {
             adviceList.add(adviceEntity);
         }
         return adviceRepository.saveAll(adviceList);
+    }
+
+    public AdviceDto completeAdvice(String username, Long adviceId){
+        Optional<AdviceEntity> adviceEntity = adviceRepository.findById(adviceId);
+        if(adviceEntity.isPresent()){
+            //TODO QUI CONTROLLO CHE NON SIA SCADUTO E CHE I QUIZ SIANO COMPLETATI
+            return adviceMapper.toAdviceDto(adviceEntity.get());
+        }else throw new EntityNotFoundException();
+    }
+    public AdviceDto skipAdvice(String username, Long adviceId){
+        Optional<AdviceEntity> adviceEntity = adviceRepository.findById(adviceId);
+        if(adviceEntity.isPresent()){
+            //TODO QUI modifico lo stato a skipped e lo salvo
+            return adviceMapper.toAdviceDto(adviceEntity.get());
+        }else throw new EntityNotFoundException();
     }
 
 

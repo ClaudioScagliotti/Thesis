@@ -18,7 +18,7 @@ public interface GoalRepository extends JpaRepository<GoalEntity, Long> {
     @Query("SELECT gt.type FROM GoalEntity g JOIN g.goalType gt WHERE g.id = :id")
     List<GoalTypeEnum> findGoalTypesById(@Param("id") Long id);
     @Query("SELECT gt FROM GoalEntity g JOIN g.goalType gt WHERE g.id = :id")
-    List<GoalTypeEntity> findGoalTypesById2(@Param("id") Long id);
+    List<GoalTypeEntity> findGoalTypesById2(@Param("id") Long id);//TODO REFACTOR
 
 
 

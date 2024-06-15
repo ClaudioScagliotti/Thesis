@@ -28,7 +28,6 @@ public interface MovieMapper {
     @Mapping(source = "genreEntities", target = "genreIds", qualifiedByName = "mapGenreEntitiesToIds")
     MovieResource toMovieResource(MovieEntity movieEntity, @Context GenreService genreService);
 
-    @Mapping(source = "tmdbId", target = "id")
     @Mapping(source = "genreEntities", target = "genreIds", qualifiedByName = "mapGenreEntitiesToEnums")
     MovieDto toMovieDto(MovieEntity movieEntity);
     @Named("mapGenreIdsToEntities")

@@ -15,7 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 @RestController
-@RequestMapping("/advices")
+@RequestMapping("/advice")
 public class AdivceController {
 private final AdviceService adviceService;
 
@@ -34,6 +34,30 @@ private final AdviceService adviceService;
                 .buildAndExpand(adviceList.stream().findFirst().orElseThrow().getId())
                 .toUri();
         return ResponseEntity.created(location).body(adviceList);
+    }//TODO exceptions
+
+    @PostMapping("/skip/{adviceId}")
+    public ResponseEntity<?> skipNextAdvice(Long adviceId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        AdviceDto adviceDto= adviceService.skipAdvice(userDetails.getUsername(), adviceId);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{adviceId}")
+                .buildAndExpand(adviceDto.getId())
+                .toUri();
+        return ResponseEntity.ok(adviceDto);
+    }//TODO exceptions
+
+    @PostMapping("/complete/{adviceId}")
+    public ResponseEntity<?> completeAdvice(Long adviceId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        AdviceDto adviceDto= adviceService.completeAdvice(userDetails.getUsername(), adviceId);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{adviceId}")
+                .buildAndExpand(adviceDto.getId())
+                .toUri();
+        return ResponseEntity.ok(adviceDto);
     }//TODO exceptions
 
     @GetMapping

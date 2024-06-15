@@ -4,16 +4,13 @@ import com.claudioscagliotti.thesis.enumeration.tmdb.GenreEnum;
 
 import java.util.List;
 
-public record MovieDto(String overview,
+public record MovieDto(String overview,// TODO check if the other field null are mapped correctly
                        String originalLanguage,
                        String originalTitle,
                        String title,
                        List<GenreEnum> genreIds,
                        String posterPath,
-                       String backdropPath,
                        String releaseDate,
-                       Float popularity,
-                       Float voteAverage,
-                       Integer id
+                       Integer tmdbId
 ) {
 }

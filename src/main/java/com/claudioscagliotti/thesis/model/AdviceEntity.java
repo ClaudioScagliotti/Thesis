@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -45,4 +46,7 @@ public class AdviceEntity {
 
     @Column(name = "quiz_result", length = 50)
     private String quizResult;
+
+    @OneToMany(mappedBy = "advice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuizEntity> quizzes;
 }

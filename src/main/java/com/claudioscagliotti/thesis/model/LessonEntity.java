@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -35,6 +36,9 @@ public class LessonEntity {
 
     @Column(name = "total_cards", nullable = false)
     private Integer totalCards;
+
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuizEntity> quizzes;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
