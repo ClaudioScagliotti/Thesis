@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,8 +27,8 @@ public class QuizController {
         this.quizService = quizService;
     }
 
-    @GetMapping("lesson/{lessonId}")
-    public ResponseEntity<?> getAllQuizForLesson(Long lessonId) {
+    @GetMapping("lesson/{lessonId}") //TODO non funziona ancora l'ereditarietà in modo corretto per la query
+    public ResponseEntity<?> getAllQuizForLesson(@PathVariable("lessonId")Long lessonId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         List<QuizDto> quizDtoList= quizService.findAllByLessonId(lessonId);
@@ -39,7 +40,7 @@ public class QuizController {
         return ResponseEntity.ok(quizDtoList);
     }
     @GetMapping("advice/{adviceId}")
-    public ResponseEntity<?> getAllQuizForAdvice(Long adviceId) {
+    public ResponseEntity<?> getAllQuizForAdvice(@PathVariable("adviceId")Long adviceId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         List<QuizDto> quizDtoList= quizService.findAllByAdviceId(adviceId);
