@@ -24,7 +24,8 @@ public class QuizService {
     private final QuizMapper quizMapper;
 
 
-    public QuizService(QuizRepository quizRepository, QuizMapper quizMapper) {
+
+    public QuizService(QuizRepository quizRepository, QuizMapper quizMapper, AdviceService adviceService) {
         this.quizRepository = quizRepository;
         this.quizMapper = quizMapper;
     }
@@ -42,6 +43,7 @@ public class QuizService {
 
     public List<QuizDto> completeQuiz(List<QuizRequest> requestList) throws JsonProcessingException {
         List<QuizEntity> entities=findQuizById(requestList);
+
         return checkQuizSolutions(requestList,entities);
     }
     private List<QuizEntity> findQuizById(List<QuizRequest> requestList){
@@ -57,7 +59,6 @@ public class QuizService {
         List<QuizEntity> resultList = new ArrayList<>();
 
         for (QuizRequest request : requestList) {
-            QuizEntity result;
             QuizEntity solutionEntity = solutionsList.stream()
                     .filter(q -> q.getId().equals(request.getQuizId()))
                     .findFirst()
@@ -82,6 +83,7 @@ public class QuizService {
             else {
                 updateQuizStatus(solutionEntity.getId(), QuizResultEnum.FAILED);
             }
+
             Optional<QuizEntity> updatedQuizEntity = quizRepository.findById(solutionEntity.getId());
             updatedQuizEntity.ifPresent(resultList::add);
         }
@@ -90,6 +92,7 @@ public class QuizService {
     }
     private void updateQuizStatus(Long quizId, QuizResultEnum resultEnum){
         quizRepository.updateStatusById(quizId, resultEnum);
+
     }
 
     private boolean checkTrueFalseAnswer(QuizEntity quiz, Boolean userAnswer) {
@@ -100,7 +103,18 @@ public class QuizService {
     }
     private boolean checkChronologicalOrderAnswer(QuizEntity quiz, String userAnswer) throws JsonProcessingException {
         return JsonComparator.compareJson(userAnswer, quiz.getCorrectOrder());
-        //return userAnswer.equals(quiz.getCorrectOrder());
+    }
+
+    public double calculateSucceededPercentage(List<QuizEntity> quizzes) {
+
+        if (quizzes == null || quizzes.isEmpty()) {
+            return 0.0;
+        }
+        long succeededCount = quizzes.stream()
+                .filter(quiz -> QuizResultEnum.SUCCEEDED.equals(quiz.getStatus()))
+                .count();
+
+        return (double) succeededCount / quizzes.size() * 100;
     }
 
 

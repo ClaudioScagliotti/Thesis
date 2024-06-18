@@ -1,5 +1,7 @@
 package com.claudioscagliotti.thesis.model;
 
+import com.claudioscagliotti.thesis.enumeration.AdviceStatusEnum;
+import com.claudioscagliotti.thesis.enumeration.QuizResultEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,9 +29,9 @@ public class AdviceEntity {
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
     private MovieEntity movie;
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 50, nullable = false)
-    private String status;
+    private AdviceStatusEnum status;
 
     @Column(name = "creation_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime creationDate;
@@ -43,9 +45,9 @@ public class AdviceEntity {
 
     @Column(name = "points", nullable = false)
     private Integer points;
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "quiz_result", length = 50)
-    private String quizResult;
+    private QuizResultEnum quizResult; //condizione necessaria ma non sufficiente affinchè l'advice sia in status SUCCEEDED
 
     @OneToMany(mappedBy = "advice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuizEntity> quizzes;

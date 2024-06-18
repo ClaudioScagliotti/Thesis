@@ -6,10 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -37,26 +34,20 @@ private final AdviceService adviceService;
     }//TODO exceptions
 
     @PostMapping("/skip/{adviceId}")
-    public ResponseEntity<?> skipNextAdvice(Long adviceId) {
+    public ResponseEntity<?> skipNextAdvice(@PathVariable("adviceId") Long adviceId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         AdviceDto adviceDto= adviceService.skipAdvice(userDetails.getUsername(), adviceId);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{adviceId}")
-                .buildAndExpand(adviceDto.getId())
-                .toUri();
+
         return ResponseEntity.ok(adviceDto);
     }//TODO exceptions
 
     @PostMapping("/complete/{adviceId}")
-    public ResponseEntity<?> completeAdvice(Long adviceId) {
+    public ResponseEntity<?> completeAdvice(@PathVariable("adviceId") Long adviceId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         AdviceDto adviceDto= adviceService.completeAdvice(userDetails.getUsername(), adviceId);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{adviceId}")
-                .buildAndExpand(adviceDto.getId())
-                .toUri();
+
         return ResponseEntity.ok(adviceDto);
     }//TODO exceptions
 
@@ -66,10 +57,6 @@ private final AdviceService adviceService;
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         AdviceDto advice = adviceService.getNextAdvice(userDetails.getUsername());
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(advice.getId())
-                .toUri();
         return ResponseEntity.ok(advice);
     }
 }
