@@ -4,7 +4,7 @@ import com.claudioscagliotti.thesis.dto.response.AdviceDto;
 import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResource;
 import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
 import com.claudioscagliotti.thesis.enumeration.QuizResultEnum;
-import com.claudioscagliotti.thesis.enumeration.StatusEnum;
+import com.claudioscagliotti.thesis.enumeration.AdviceStatusEnum;
 import com.claudioscagliotti.thesis.mapper.AdviceMapper;
 import com.claudioscagliotti.thesis.mapper.GoalMapper;
 import com.claudioscagliotti.thesis.mapper.MovieMapper;
@@ -101,7 +101,7 @@ public class AdviceService {
             adviceEntity.setPoints(100);//TODO ADD ALGORITM TO CALCULATE POINTS
 
             adviceEntity.setMovie(movie);
-            adviceEntity.setStatus(StatusEnum.UNCOMPLETED.name());
+            adviceEntity.setStatus(AdviceStatusEnum.UNCOMPLETED.name());
             adviceEntity.setQuizResult(QuizResultEnum.UNCOMPLETED.name());
             adviceList.add(adviceEntity);
         }

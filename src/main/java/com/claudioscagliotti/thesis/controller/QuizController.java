@@ -1,18 +1,16 @@
 package com.claudioscagliotti.thesis.controller;
 
+import com.claudioscagliotti.thesis.dto.request.QuizRequest;
 import com.claudioscagliotti.thesis.dto.response.QuizDto;
 import com.claudioscagliotti.thesis.service.QuizService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -33,10 +31,6 @@ public class QuizController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         List<QuizDto> quizDtoList= quizService.findAllByLessonId(lessonId);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{number}")
-                .buildAndExpand(quizDtoList.size())
-                .toUri();
         return ResponseEntity.ok(quizDtoList);
     }
     @GetMapping("advice/{adviceId}")
@@ -45,10 +39,15 @@ public class QuizController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         List<QuizDto> quizDtoList= quizService.findAllByAdviceId(adviceId);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{number}")
-                .buildAndExpand(quizDtoList.size())
-                .toUri();
         return ResponseEntity.ok(quizDtoList);
     }
+
+    @PostMapping
+    public ResponseEntity<?> completeQuiz(@Valid @RequestBody List<QuizRequest> quizRequest) throws JsonProcessingException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        List<QuizDto> quizDtoList = quizService.completeQuiz(quizRequest);
+
+        return ResponseEntity.ok(quizDtoList);
+    }//TODO exceptions
 }

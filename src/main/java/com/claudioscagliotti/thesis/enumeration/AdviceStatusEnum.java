@@ -1,6 +1,6 @@
 package com.claudioscagliotti.thesis.enumeration;
 
-public enum StatusEnum {
+public enum AdviceStatusEnum {
     UNCOMPLETED,
     FAILED,
     COMPLETED,
