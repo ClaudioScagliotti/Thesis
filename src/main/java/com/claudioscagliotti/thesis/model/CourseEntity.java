@@ -24,5 +24,10 @@ public class CourseEntity {
     private String title;
 
     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "goal_type_course",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "goal_type_id")
+    )
     private List<GoalTypeEntity> goalTypeEntityList;
 }
