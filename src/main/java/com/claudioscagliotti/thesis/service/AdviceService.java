@@ -20,7 +20,6 @@ import com.claudioscagliotti.thesis.utility.TimeToDedicateConverter;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -77,11 +76,9 @@ public class AdviceService {
     }
 
     public List<AdviceEntity> createAdviceList(String username) {
-        Optional<UserEntity> userEntity= userService.findByUsername(username);
-        if (userEntity.isEmpty()) {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
-        GoalEntity goalEntity = userEntity.get().getGoalEntity();
+        UserEntity userEntity= userService.findByUsername(username);
+
+        GoalEntity goalEntity = userEntity.getGoalEntity();
         MovieResponse response=client.getMovies(goalService.composeParams(goalEntity));
 
         goalService.updatePage(goalEntity, response);
@@ -95,7 +92,7 @@ public class AdviceService {
         List<MovieEntity> savedMovie= movieService.saveAllMovie(movieEntityList);
         for (MovieEntity movie : savedMovie) {
             AdviceEntity adviceEntity = new AdviceEntity();
-            adviceEntity.setUserEntity(userEntity.get());
+            adviceEntity.setUserEntity(userEntity);
 
             adviceEntity.setPoints(100);// TODO ADD ALGORITM TO CALCULATE POINTS
 
