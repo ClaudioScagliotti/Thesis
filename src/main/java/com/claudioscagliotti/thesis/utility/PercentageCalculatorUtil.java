@@ -9,7 +9,7 @@ public class PercentageCalculatorUtil {
     public static double calculateSucceededPercentage(List<QuizEntity> quizzes) {
 
         if (quizzes == null || quizzes.isEmpty()) {
-            return 0.0;
+            return 100.0;
         }
         long succeededCount = quizzes.stream()
                 .filter(quiz -> QuizResultEnum.SUCCEEDED.equals(quiz.getStatus()))
