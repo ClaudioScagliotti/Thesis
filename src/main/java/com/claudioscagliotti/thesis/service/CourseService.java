@@ -56,12 +56,16 @@ public class CourseService {
         }
     }
 
-    public CourseDto unsubscribeCourse(String username, Long courseId){ //TODO
-        //recupero l'utente
-        // controllo che il corso esista e che l'utente sia iscritto
-        // userEntity -> CourseEntity
-        // se non è iscritto mando un errore non bloccante, se è iscritto disiscrivo (tolgo una riga dalla tabella app_user_course)
-        return new CourseDto();
+    public void unsubscribeCourse(String username, Long courseId){
+        UserEntity userEntity = userService.findByUsername(username);
+        CourseEntity courseEntity = findCourseById(courseId);
+        if(!userEntity.getCourseEntityList().contains(courseEntity)){
+            throw new RuntimeException("The user "+username+" is not subscribed to "+courseEntity.getTitle());
+        }
+        else {
+            userEntity.getCourseEntityList().remove(courseEntity);
+            userService.updateUserCourses(userEntity.getId(), userEntity.getCourseEntityList());
+        }
     }
 
 }

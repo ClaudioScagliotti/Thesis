@@ -27,14 +27,14 @@ public class CourseController {
         return ResponseEntity.ok(courseDto);
     }//TODO exceptions
 
-    @PostMapping("unsubscribe/{courseId}")//TODO
+    @PostMapping("unsubscribe/{courseId}")
     public ResponseEntity<?> unsubscribeCourse(@PathVariable("courseId") Long courseId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        CourseDto courseDto = courseService.unsubscribeCourse(userDetails.getUsername(), courseId);
+        courseService.unsubscribeCourse(userDetails.getUsername(), courseId);
 
-        return ResponseEntity.ok(courseDto);
-    }//TODO exceptions
+        return ResponseEntity.ok("Unsubscribed from course successfully");
+    }
 
     @GetMapping("suggested")
     public ResponseEntity<?> suggestCourses(){
