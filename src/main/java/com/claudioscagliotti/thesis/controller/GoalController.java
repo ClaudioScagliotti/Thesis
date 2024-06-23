@@ -25,7 +25,7 @@ public class GoalController {
     public GoalController(GoalService goalService) {
         this.goalService = goalService;
     }
-    @PostMapping//TODO gestire la creazione di più goal per singolo utente
+    @PostMapping// da database un user può avere un goal solo. Lo può modificare nel caso ma rimane solo quel goal
     public ResponseEntity<?> createGoal(@Valid @RequestBody GoalDto createGoalRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();

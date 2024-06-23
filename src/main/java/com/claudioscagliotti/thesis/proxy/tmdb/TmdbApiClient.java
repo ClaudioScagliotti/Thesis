@@ -64,17 +64,23 @@ public class TmdbApiClient {
 
                 ResponseEntity<String> exchange = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
                 response = objectMapper.readValue(exchange.getBody(), MovieResponse.class);
-                if (exchange.getStatusCode() == HttpStatusCode.valueOf(401)) {
-                    throw new InvalidApiKeyException(); //TODO gestione eccezioni
-                }
-                if(response.results().isEmpty()){
-                    throw new NoMovieException();
-                }
+            if (exchange.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                throw new InvalidApiKeyException();
+            }
 
-        } catch (Exception e) {
-            throw new RuntimeException("An error occurred while trying to retrieve data from the TMDB API", e);
+            // Gestione di risposta vuota
+            if (response.results().isEmpty()) {
+                throw new NoMovieException("No movies found with the given filters");
+            }
+
         } catch (NoMovieException e) {
-            throw new RuntimeException("No movie with this filters", e);
+            throw new RuntimeException("No movies found: " + e.getMessage(), e);
+        } catch (InvalidApiKeyException e) {
+
+            throw new RuntimeException("Invalid API key provided", e);
+        } catch (Exception e) {
+            // Gestione generica per tutte le altre eccezioni
+            throw new RuntimeException("An error occurred while trying to retrieve data from the TMDB API", e);
         }
         return response;
     }

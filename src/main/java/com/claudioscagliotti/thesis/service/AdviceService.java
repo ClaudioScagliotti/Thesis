@@ -5,6 +5,7 @@ import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResource;
 import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
 import com.claudioscagliotti.thesis.enumeration.AdviceStatusEnum;
 import com.claudioscagliotti.thesis.enumeration.QuizResultEnum;
+import com.claudioscagliotti.thesis.exception.NoAdviceAvailableException;
 import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
 import com.claudioscagliotti.thesis.mapper.AdviceMapper;
 import com.claudioscagliotti.thesis.mapper.MovieMapper;
@@ -18,6 +19,7 @@ import com.claudioscagliotti.thesis.repository.UserRepository;
 import com.claudioscagliotti.thesis.utility.PercentageCalculatorUtil;
 import com.claudioscagliotti.thesis.utility.TimeToDedicateConverter;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,8 @@ import java.util.Optional;
 @Service
 public class AdviceService {
 
-    private static final double SUCCESS_PERCENTAGE = 51;
+    @Value("${success.percentage}")
+    private double successPercentage;
     private final AdviceRepository adviceRepository;
     private final AdviceMapper adviceMapper;
     private final GoalService goalService;
@@ -53,29 +56,23 @@ public class AdviceService {
         this.userService = userService;
     }
 
-    public List<AdviceDto> getAdviceListResponse(String username){
-        List<AdviceEntity> adviceList = createAdviceList(username);
-        return adviceMapper.toAdviceDtoList(adviceList);
-    }
     public AdviceDto getNextAdvice(String username){
         Pageable pageable = PageRequest.of(0, 1);
         List<AdviceEntity> adviceEntities = adviceRepository.findUncompletedAdviceByUsername(username, pageable);
         if(!adviceEntities.isEmpty()){
+
             AdviceEntity adviceEntity = adviceEntities.get(0);
             GoalEntity goalEntity = userRepository.getGoalEntityByUsername(username);
             int daysUntilDeadline = TimeToDedicateConverter.convertTimeToDedicateToDays(goalEntity.getTimeToDedicate());
-            adviceRepository.updateAdviceDeadline(adviceEntity.getId(),LocalDateTime.now().plusDays(daysUntilDeadline));
-            Optional<AdviceEntity> adviceEntityUpdated = adviceRepository.findById(adviceEntity.getId());
-            if(adviceEntityUpdated.isPresent()){
-                return adviceMapper.toAdviceDto(adviceEntityUpdated.get());
-            }
-        }
-        // TODO GESTIRE CASO IN CUI SIANO FINITI GLI ADVICE
-        return null;
 
+            adviceEntity.setDeadline(LocalDateTime.now().plusDays(daysUntilDeadline));
+            return adviceMapper.toAdviceDto(adviceRepository.save(adviceEntity));
+
+        }
+        else throw new NoAdviceAvailableException("There are not uncompleted advices for the user with username: "+username);
     }
 
-    public List<AdviceEntity> createAdviceList(String username) {
+    public List<AdviceDto> createAdviceList(String username) {
         UserEntity userEntity= userService.findByUsername(username);
 
         GoalEntity goalEntity = userEntity.getGoalEntity();
@@ -101,49 +98,46 @@ public class AdviceService {
             adviceEntity.setQuizResult(QuizResultEnum.UNCOMPLETED);
             adviceList.add(adviceEntity);
         }
-        return adviceRepository.saveAll(adviceList);
+        return adviceMapper.toAdviceDto(adviceRepository.saveAll(adviceList));
     }
 
     public AdviceDto completeAdvice(String username, Long adviceId){
-        Optional<AdviceEntity> adviceEntity = adviceRepository.findById(adviceId);
+        Optional<AdviceEntity> advice = adviceRepository.findById(adviceId);
 
-        if(adviceEntity.isPresent()){
-            AdviceEntity entity = adviceEntity.get();
+        if(advice.isPresent()){
+            AdviceEntity adviceEntity = advice.get();
 
-            checkUsername(username, entity.getUserEntity().getUsername());
-            double quizCorrectPercentage = PercentageCalculatorUtil.calculateSucceededPercentage(entity.getQuizzes());
-            if(quizCorrectPercentage>SUCCESS_PERCENTAGE)
-            {
-                updateQuizResult(entity.getId(), QuizResultEnum.SUCCEEDED);
+            checkUsername(username, adviceEntity.getUserEntity().getUsername());
+
+            double quizCorrectPercentage = PercentageCalculatorUtil.calculateSucceededPercentage(adviceEntity.getQuizzes());
+
+            if(quizCorrectPercentage>successPercentage) {
+                adviceEntity.setQuizResult(QuizResultEnum.SUCCEEDED);
             }
             else {
-                updateQuizResult(entity.getId(), QuizResultEnum.FAILED);
+                adviceEntity.setQuizResult(QuizResultEnum.FAILED);
             }
 
-            if(entity.getDeadline().isAfter(LocalDateTime.now()) &&
-                    quizCorrectPercentage>SUCCESS_PERCENTAGE){
-                entity.setStatus(AdviceStatusEnum.COMPLETED);
+            if(adviceEntity.getDeadline().isAfter(LocalDateTime.now()) &&
+                    quizCorrectPercentage>successPercentage){
+                adviceEntity.setStatus(AdviceStatusEnum.COMPLETED);
+
+                userService.addPoints(userService.findByUsername(username),adviceEntity.getPoints());
             }
             else{
-                entity.setStatus(AdviceStatusEnum.FAILED);
+                adviceEntity.setStatus(AdviceStatusEnum.FAILED);
             }
-            return updateAdviceStatus(entity);
-        }else throw new EntityNotFoundException();
+
+            return adviceMapper.toAdviceDto(adviceRepository.save(adviceEntity));
+
+        } else throw new EntityNotFoundException("There is not an advice with id: "+adviceId);
 
     }
 
-    private AdviceDto updateAdviceStatus(AdviceEntity entity) {
-        adviceRepository.updateStatus(entity.getId(), entity.getStatus());
-        Optional<AdviceEntity> updatedEntity = adviceRepository.findById(entity.getId());
-        if(updatedEntity.isPresent()){
-            return adviceMapper.toAdviceDto(updatedEntity.get());
-        }
-        throw new EntityNotFoundException();
-    }
 
     private static void checkUsername(String username, String entityUsername) {
         if(!entityUsername.equals(username)){
-            throw new UnauthorizedUserException();
+            throw new UnauthorizedUserException("The user with username: "+username+" is not authorized to make this action");
         }
     }
 
@@ -158,14 +152,9 @@ public class AdviceService {
             else {
                 entity.setStatus(AdviceStatusEnum.FAILED);
             }
-            return updateAdviceStatus(entity);
+            return adviceMapper.toAdviceDto(adviceRepository.save(entity));
 
-        }else throw new EntityNotFoundException();
+        } else throw new EntityNotFoundException("There is no advice with id: "+adviceId);
     }
-
-    public void updateQuizResult(Long adviceId, QuizResultEnum resultEnum){
-        adviceRepository.updateQuizResult(adviceId, resultEnum);
-    }
-
 
 }

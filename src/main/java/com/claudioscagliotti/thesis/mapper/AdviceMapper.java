@@ -16,6 +16,7 @@ public interface AdviceMapper {
     @Mapping(source = "movie", target = "movieDto")
     AdviceDto toAdviceDto(AdviceEntity entity);
 
+
     @Mapping(source = "movie", target = "movieDto")
-    List<AdviceDto> toAdviceDtoList(List<AdviceEntity> entityList);
+    List<AdviceDto> toAdviceDto(List<AdviceEntity> entityList);
 }
