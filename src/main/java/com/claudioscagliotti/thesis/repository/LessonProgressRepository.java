@@ -35,11 +35,10 @@ public interface LessonProgressRepository extends JpaRepository<LessonProgressEn
     @Transactional
     @Query("UPDATE LessonProgressEntity a SET a.status = :status, a.quizResult= :quizResult WHERE a.id = :lessonProgressId")
     void updateLessonProgressStatusAndQuizResult(@Param("lessonProgressId") Long lessonProgressId, @Param("status") LessonStatusEnum status, @Param("quizResult") QuizResultEnum quizResult);
-
-    @Query("SELECT lp.id FROM LessonProgressEntity lp " +
+    @Query("SELECT lp FROM LessonProgressEntity lp " +
             "JOIN lp.lessonEntity l " +
             "WHERE l.courseEntity.id = :courseId " +
             "AND lp.userEntity.id = :userId")
-    List<Long> findLessonProgressIdsByCourseIdAndUserId(@Param("courseId") Long courseId, @Param("userId") Long userId);
+    List<LessonProgressEntity> findLessonProgressByCourseIdAndUserId(@Param("courseId") Long courseId, @Param("userId") Long userId);
 
 }

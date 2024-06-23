@@ -57,7 +57,7 @@ public class LessonProgressService {
 
                 Integer updatedCards = lessonProgress.getCompletedCards() + newCompletedCards;
                 if (updatedCards > lessonEntity.getTotalCards()) {
-                    return lessonProgressMapper.tolessonProgressDto(lessonProgress, lessonId, username); //TODO Aggiungi un messaggio di avviso o gestisci l'errore.
+                    throw new IndexOutOfBoundsException("The new progress exceeded the total cards. Total cards: "+lessonEntity.getTotalCards()+", updated cards: "+updatedCards);
                 } else {
                     float progress = calculateProgress(updatedCards, lessonEntity.getTotalCards());
 
@@ -108,16 +108,21 @@ public class LessonProgressService {
         Optional<LessonEntity> lessonEntity = lessonRepository.findById(lessonId);
 
         if (lessonEntity.isPresent()) {
-            float progress = calculateProgress(newCompletedCard, lessonEntity.get().getTotalCards());
-            LessonProgressEntity lessonProgress = new LessonProgressEntity(
-                    lessonEntity.get(),
-                    userEntity,
-                    progress,
-                    newCompletedCard,
-                    QuizResultEnum.UNCOMPLETED,
-                    LessonStatusEnum.UNCOMPLETED
-            );
-            lessonProgressRepository.save(lessonProgress);
+            Optional<LessonProgressEntity> existingLessonProgress = lessonProgressRepository.getLessonProgressByUserIdAndLessonId(userEntity.getId(), lessonEntity.get().getId());
+            if (existingLessonProgress.isEmpty()) {
+                float progress = calculateProgress(newCompletedCard, lessonEntity.get().getTotalCards());
+                LessonProgressEntity lessonProgress = new LessonProgressEntity(
+                        lessonEntity.get(),
+                        userEntity,
+                        progress,
+                        newCompletedCard,
+                        QuizResultEnum.UNCOMPLETED,
+                        LessonStatusEnum.UNCOMPLETED
+                );
+                lessonProgressRepository.save(lessonProgress);
+            } else {
+                throw new IllegalStateException("A lesson progress already exists for user " + userEntity.getUsername() + " and lesson " + lessonEntity.get().getId());
+            }
         } else throw new EntityNotFoundException("There is no lesson with id: " + lessonId);
     }
 
