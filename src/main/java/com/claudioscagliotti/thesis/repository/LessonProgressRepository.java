@@ -17,23 +17,10 @@ import java.util.Optional;
 public interface LessonProgressRepository extends JpaRepository<LessonProgressEntity, Long> {
 
     @Query("SELECT lp FROM LessonProgressEntity lp " +
-            "JOIN lp.lessonEntity le " +
-            "WHERE lp.userEntity.id = :userId " +
-            "AND le.courseEntity.id = :courseId " +
-            "AND lp.completedCards < le.totalCards " +
-            "ORDER BY le.id ASC")
-    Optional<LessonProgressEntity> getNextLessonUncompleted(@Param("userId") Long userId, @Param("courseId") Long courseId);
-
-    @Query("SELECT lp FROM LessonProgressEntity lp " +
             "WHERE lp.userEntity.id = :userId " +
             "AND lp.lessonEntity.id = :lessonId " +
             "ORDER BY lp.id ASC")
     Optional<LessonProgressEntity> getLessonProgressByUserIdAndLessonId(@Param("userId") Long userId, @Param("lessonId") Long lessonId);
-    @Modifying
-    @Transactional
-    @Query("UPDATE LessonProgressEntity a SET a.progress = :progress, a.completedCards= :completedCards WHERE a.id = :lessonProgressId")
-    void updateLessonProgress(@Param("lessonProgressId")Long lessonProgressId, @Param("progress") Float progress, @Param("completedCards") Integer completedCards);
-
     @Query("SELECT lp FROM LessonProgressEntity lp " +
             "JOIN lp.lessonEntity l " +
             "JOIN l.courseEntity c " +

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GoalTypeRepository extends JpaRepository<GoalTypeEntity, Long> {
-    //Optional<GoalTypeEntity> getGoalTypeByGoalId(Long goalId);
+
     
 }
