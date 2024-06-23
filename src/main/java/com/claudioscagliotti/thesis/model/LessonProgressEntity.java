@@ -1,5 +1,7 @@
 package com.claudioscagliotti.thesis.model;
 
+import com.claudioscagliotti.thesis.enumeration.LessonStatusEnum;
+import com.claudioscagliotti.thesis.enumeration.QuizResultEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +29,23 @@ public class LessonProgressEntity {
     @JoinColumn(name = "app_user_id", nullable = false)
     private UserEntity userEntity;
 
-    private Integer progress;
+    private Float progress;
     private Integer completedCards;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "quiz_result", length = 50)
+    private QuizResultEnum quizResult; //condizione necessaria ma non sufficiente affinchè la lessonProgress sia in status SUCCEEDED
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 50, nullable = false)
+    private LessonStatusEnum status;
+
+    public LessonProgressEntity(LessonEntity lessonEntity, UserEntity userEntity, Float progress, Integer completedCards, QuizResultEnum quizResult, LessonStatusEnum status) {
+        this.lessonEntity = lessonEntity;
+        this.userEntity = userEntity;
+        this.progress = progress;
+        this.completedCards = completedCards;
+        this.quizResult = quizResult;
+        this.status = status;
+    }
+
 }
