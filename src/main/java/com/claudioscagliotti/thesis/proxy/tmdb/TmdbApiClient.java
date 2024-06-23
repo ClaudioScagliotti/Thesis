@@ -4,6 +4,7 @@ import com.claudioscagliotti.thesis.dto.tmdb.response.authentication.Authenticat
 import com.claudioscagliotti.thesis.dto.tmdb.response.genre.GenreResponse;
 import com.claudioscagliotti.thesis.dto.tmdb.response.keyword.KeywordResponse;
 import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
+import com.claudioscagliotti.thesis.exception.ExternalAPIException;
 import com.claudioscagliotti.thesis.exception.InvalidApiKeyException;
 import com.claudioscagliotti.thesis.exception.NoMovieException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -102,7 +103,7 @@ public class TmdbApiClient {
 
             return objectMapper.readValue(exchange.getBody(), KeywordResponse.class);
         } catch (Exception e) {
-            throw new RuntimeException("An error occurred while trying to retrieve data from the TMDB API", e);
+            throw new ExternalAPIException("An error occurred while trying to retrieve data from the TMDB API");
         }
     }
 
