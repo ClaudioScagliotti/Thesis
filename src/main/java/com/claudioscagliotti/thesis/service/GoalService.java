@@ -5,10 +5,7 @@ import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
 import com.claudioscagliotti.thesis.enumeration.tmdb.MetohdEnum;
 import com.claudioscagliotti.thesis.enumeration.tmdb.QueryParamEnum;
 import com.claudioscagliotti.thesis.mapper.GoalMapper;
-import com.claudioscagliotti.thesis.model.CountryOfProductionEntity;
-import com.claudioscagliotti.thesis.model.GenreEntity;
-import com.claudioscagliotti.thesis.model.GoalEntity;
-import com.claudioscagliotti.thesis.model.KeywordEntity;
+import com.claudioscagliotti.thesis.model.*;
 import com.claudioscagliotti.thesis.repository.CountryOfProductionRepository;
 import com.claudioscagliotti.thesis.repository.GoalRepository;
 import org.springframework.stereotype.Service;
@@ -41,7 +38,11 @@ public class GoalService {
     public GoalDto createGoal(GoalDto request, String username) {
         GoalEntity goalEntity = saveGoal(request);
         userService.updateUserGoal(username, goalEntity);
-        return goalMapper.INSTANCE.toGoalDto(goalEntity);
+        return goalMapper.toGoalDto(goalEntity);
+    }
+    public GoalDto getGoalByUser(String username){
+        UserEntity userEntity = userService.findByUsername(username);
+        return goalMapper.toGoalDto(userEntity.getGoalEntity());
     }
 
     public String composeParams(GoalEntity goalEntity) {
@@ -134,9 +135,5 @@ public class GoalService {
             goalEntity.setPage(goalEntity.getPage()+1);
             updateGoal(goalEntity);
         }
-    }
-
-    public GoalEntity getGoalById(Long id){
-        return goalRepository.getReferenceById(id);
     }
 }

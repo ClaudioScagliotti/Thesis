@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.service;
 
 import com.claudioscagliotti.thesis.dto.response.LessonDto;
-import com.claudioscagliotti.thesis.exception.UnsubscribedUserException;
+import com.claudioscagliotti.thesis.exception.SubscriptionUserException;
 import com.claudioscagliotti.thesis.mapper.LessonMapper;
 import com.claudioscagliotti.thesis.model.CourseEntity;
 import com.claudioscagliotti.thesis.model.LessonEntity;
@@ -34,7 +34,7 @@ public class LessonService {
 
     public List<LessonDto> getAllLessonByCourse(String username, Long courseId){
         if(!courseService.checkSubscription(username, courseId)){
-            throw new UnsubscribedUserException("The user with username "+username+" is not subscribed to course with id: "+ courseId);
+            throw new SubscriptionUserException("The user with username "+username+" is not subscribed to course with id: "+ courseId);
         }
         CourseEntity courseEntity = courseService.findCourseById(courseId);
         List<LessonEntity> lessonEntityList = lessonRepository.getAllLessonByCourseEntity(courseEntity);
@@ -42,7 +42,7 @@ public class LessonService {
     }
     public LessonDto getNextLessonByCourse(String username, Long courseId){
         if(!courseService.checkSubscription(username, courseId)){
-            throw new UnsubscribedUserException("The user with username "+username+" is not subscribed to course with id: "+ courseId);
+            throw new SubscriptionUserException("The user with username "+username+" is not subscribed to course with id: "+ courseId);
         }
         UserEntity user = userService.findByUsername(username);
         Optional<LessonProgressEntity> lessonProgress = lessonProgressRepository.getNextUncompletedLessonProgressByCourseId(courseId, user.getId());

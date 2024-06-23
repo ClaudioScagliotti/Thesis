@@ -1,23 +1,22 @@
 package com.claudioscagliotti.thesis.controller;
 
+import com.claudioscagliotti.thesis.dto.response.GenericResponse;
 import com.claudioscagliotti.thesis.dto.response.GoalDto;
 import com.claudioscagliotti.thesis.service.GoalService;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.net.URI;
 
 @RestController
-@RequestMapping("/goals")
+@RequestMapping("/goal")
 @Validated
 public class GoalController {
     private final GoalService goalService;
@@ -25,15 +24,37 @@ public class GoalController {
     public GoalController(GoalService goalService) {
         this.goalService = goalService;
     }
-    @PostMapping// da database un user può avere un goal solo. Lo può modificare nel caso ma rimane solo quel goal
+    @PostMapping
     public ResponseEntity<?> createGoal(@Valid @RequestBody GoalDto createGoalRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        GoalDto createdGoal = goalService.createGoal(createGoalRequest, userDetails.getUsername());
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(createdGoal.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(createdGoal);
-    }//TODO exceptions
+        try {
+            GoalDto createdGoal = goalService.createGoal(createGoalRequest, userDetails.getUsername());
+
+            String message = "Created goal with id: " + createdGoal.getId();
+            GenericResponse<GoalDto> response = new GenericResponse<>("success", message, createdGoal);
+            return ResponseEntity.ok(response);
+
+        } catch (EntityNotFoundException | UsernameNotFoundException e){
+            GenericResponse<GoalDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+    }
+
+    @GetMapping
+    public ResponseEntity<GenericResponse<GoalDto>> getGoalByUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        try {
+            GoalDto goalDto = goalService.getGoalByUser(userDetails.getUsername());
+            String message = "Found goal with id: " + goalDto.getId();
+            GenericResponse<GoalDto> response = new GenericResponse<>("success", message, goalDto);
+            return ResponseEntity.ok(response);
+
+        } catch (EntityNotFoundException | UsernameNotFoundException e){
+            GenericResponse<GoalDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
 }
