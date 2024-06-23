@@ -1,6 +1,7 @@
 package com.claudioscagliotti.thesis.service;
 
 import com.claudioscagliotti.thesis.dto.response.CourseDto;
+import com.claudioscagliotti.thesis.exception.SubscriptionUserException;
 import com.claudioscagliotti.thesis.mapper.CourseMapper;
 import com.claudioscagliotti.thesis.model.CourseEntity;
 import com.claudioscagliotti.thesis.model.GoalTypeEntity;
@@ -41,30 +42,33 @@ public class CourseService {
     public CourseDto subscribeCourse(String username, Long courseId) {
         UserEntity userEntity = userService.findByUsername(username);
         CourseEntity courseEntity = findCourseById(courseId);
+
         addCourseToUser(userEntity, courseEntity);
-        userService.updateUserCourses(userEntity.getId(), userEntity.getCourseEntityList());
+        userService.saveUser(userEntity);
         return courseMapper.toCourseDto(courseEntity);
     }
     protected CourseEntity findCourseById(Long courseId) {
         return courseRepository.findById(courseId)
-                .orElseThrow(() -> new EntityNotFoundException("Course with ID " + courseId + " not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Course with id: " + courseId + " not found"));
     }
     private void addCourseToUser(UserEntity userEntity, CourseEntity courseEntity) {
 
         if (!userEntity.getCourseEntityList().contains(courseEntity)) {
             userEntity.getCourseEntityList().add(courseEntity);
         }
+        else throw new SubscriptionUserException("The user with id: "+userEntity.getId()+" is already subscribed to course with title:" +courseEntity.getTitle());
     }
 
     public void unsubscribeCourse(String username, Long courseId){
         UserEntity userEntity = userService.findByUsername(username);
         CourseEntity courseEntity = findCourseById(courseId);
-        if(!userEntity.getCourseEntityList().contains(courseEntity)){
-            throw new RuntimeException("The user "+username+" is not subscribed to "+courseEntity.getTitle());
+
+        if(!checkSubscription(username,courseId)){
+            throw new SubscriptionUserException("The user "+username+" is not subscribed to the course with title: "+courseEntity.getTitle());
         }
         else {
             userEntity.getCourseEntityList().remove(courseEntity);
-            userService.updateUserCourses(userEntity.getId(), userEntity.getCourseEntityList());
+            userService.saveUser(userEntity);
         }
     }
 

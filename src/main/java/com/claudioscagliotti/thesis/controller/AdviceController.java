@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,14 +28,18 @@ private final AdviceService adviceService;
     public ResponseEntity<GenericResponse<List<AdviceDto>>> createAdviceList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
+        try {
         List<AdviceDto> adviceList = adviceService.createAdviceList(userDetails.getUsername());
         String message= "Created "+adviceList.size()+" advices";
 
         GenericResponse<List<AdviceDto>> response= new GenericResponse<>("success", message,adviceList);
-
         return ResponseEntity.ok(response);
-    }//TODO exceptions
+
+        } catch (UsernameNotFoundException | EntityNotFoundException e) {
+            GenericResponse<List<AdviceDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
 
     @PostMapping("/skip/{adviceId}")
     public ResponseEntity<GenericResponse<AdviceDto>> skipNextAdvice(@PathVariable("adviceId") Long adviceId) {
@@ -46,7 +51,7 @@ private final AdviceService adviceService;
             GenericResponse<AdviceDto> response = new GenericResponse<>("success", message, adviceDto);
             return ResponseEntity.ok(response);
 
-        } catch (EntityNotFoundException e) {
+        } catch (UsernameNotFoundException | EntityNotFoundException e){
             GenericResponse<AdviceDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
@@ -62,7 +67,7 @@ private final AdviceService adviceService;
             GenericResponse<AdviceDto> response = new GenericResponse<>("success", message, adviceDto);
             return ResponseEntity.ok(response);
 
-        } catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException | UsernameNotFoundException e) {
             GenericResponse<AdviceDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 
@@ -83,7 +88,7 @@ private final AdviceService adviceService;
             GenericResponse<AdviceDto> response = new GenericResponse<>("success", message, adviceDto);
             return ResponseEntity.ok(response);
 
-        } catch (NoAdviceAvailableException e){
+        } catch (NoAdviceAvailableException | EntityNotFoundException | UsernameNotFoundException e){
             GenericResponse<AdviceDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }

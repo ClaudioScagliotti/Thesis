@@ -12,5 +12,5 @@ import lombok.Setter;
 public class GenericResponse<T> {
     private String status;
     private String message;
-    private T data;
+    private T body;
 }
