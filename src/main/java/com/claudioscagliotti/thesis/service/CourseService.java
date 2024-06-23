@@ -45,7 +45,7 @@ public class CourseService {
         userService.updateUserCourses(userEntity.getId(), userEntity.getCourseEntityList());
         return courseMapper.toCourseDto(courseEntity);
     }
-    private CourseEntity findCourseById(Long courseId) {
+    protected CourseEntity findCourseById(Long courseId) {
         return courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("Course with ID " + courseId + " not found"));
     }
@@ -66,6 +66,12 @@ public class CourseService {
             userEntity.getCourseEntityList().remove(courseEntity);
             userService.updateUserCourses(userEntity.getId(), userEntity.getCourseEntityList());
         }
+    }
+
+    public boolean checkSubscription(String username, Long courseId){
+        UserEntity userEntity = userService.findByUsername(username);
+        CourseEntity courseEntity = findCourseById(courseId);
+        return userEntity.getCourseEntityList().contains(courseEntity);
     }
 
 }

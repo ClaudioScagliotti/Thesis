@@ -33,7 +33,7 @@ public class CourseController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         courseService.unsubscribeCourse(userDetails.getUsername(), courseId);
 
-        return ResponseEntity.ok("Unsubscribed from course successfully");
+        return ResponseEntity.ok("Unsubscribed from course successfully");// TODO creare un oggetto di risposta per tutte le void
     }
 
     @GetMapping("suggested")

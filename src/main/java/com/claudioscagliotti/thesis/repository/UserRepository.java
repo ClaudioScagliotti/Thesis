@@ -19,7 +19,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("UPDATE UserEntity u SET u.goalEntity.id = :newGoalId WHERE u.id = :userId")
     void updateUserGoal(@Param("userId") Long userId, @Param("newGoalId") Long newGoalId);
 
-
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM app_user_course WHERE app_user_id = :userId", nativeQuery = true)

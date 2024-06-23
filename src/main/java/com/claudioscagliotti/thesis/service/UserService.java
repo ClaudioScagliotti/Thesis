@@ -48,4 +48,11 @@ public class UserService {
             userRepository.addUserCourse(userId, courseEntity.getId());
         }
     }
+
+    public void addPoints(UserEntity userEntity, int points) {
+        int totalPoints = userEntity.getPoints() + points;
+        userEntity.setPoints(totalPoints);
+        userRepository.save(userEntity);
+    }
+
 }

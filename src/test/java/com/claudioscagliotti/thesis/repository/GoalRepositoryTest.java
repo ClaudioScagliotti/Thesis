@@ -45,14 +45,14 @@ class GoalRepositoryTest {
         assertThat(goalTypeByGoalId).isNotNull();
     }
     @Test
-    void getTGoalType() {
+    void getTGoalType() {//TODO
         List<GoalTypeEnum> enums= goalRepository.findGoalTypesById(1L);
 
         assertThat(enums).isNotNull();
 
     }
     @Test
-    void getTGoalTypeEntiy() {
+    void getTGoalTypeEntity() {
         List<GoalTypeEntity> entity = goalRepository.findGoalTypesById2(1L);
         assertThat(entity).isNotNull();
 

@@ -105,17 +105,5 @@ public class QuizService {
         return JsonComparator.compareJson(userAnswer, quiz.getCorrectOrder());
     }
 
-    public double calculateSucceededPercentage(List<QuizEntity> quizzes) {
-
-        if (quizzes == null || quizzes.isEmpty()) {
-            return 0.0;
-        }
-        long succeededCount = quizzes.stream()
-                .filter(quiz -> QuizResultEnum.SUCCEEDED.equals(quiz.getStatus()))
-                .count();
-
-        return (double) succeededCount / quizzes.size() * 100;
-    }
-
 
 }
