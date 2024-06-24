@@ -14,8 +14,8 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @Entity
-@Table(name = "medal")
-public class MedalEntity {
+@Table(name = "badge")
+public class BadgeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,6 +23,6 @@ public class MedalEntity {
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "medalEntityList", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "badgeEntityList", fetch = FetchType.EAGER)
     private List<UserEntity> userEntityList;
 }

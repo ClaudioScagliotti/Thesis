@@ -51,11 +51,11 @@ public class UserEntity implements UserDetails {
     }
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-            name = "app_user_medal",
+            name = "app_user_badge",
             joinColumns = @JoinColumn(name = "app_user_id"),
-            inverseJoinColumns = @JoinColumn(name = "medal_id")
+            inverseJoinColumns = @JoinColumn(name = "badge_id")
     )
-    private Set<MedalEntity> medalEntityList;
+    private Set<BadgeEntity> badgeEntityList;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "app_user_course",
