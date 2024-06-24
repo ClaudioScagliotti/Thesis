@@ -9,7 +9,9 @@ import com.claudioscagliotti.thesis.model.LessonProgressEntity;
 import com.claudioscagliotti.thesis.model.UserEntity;
 import com.claudioscagliotti.thesis.repository.LessonProgressRepository;
 import com.claudioscagliotti.thesis.repository.LessonRepository;
+import com.claudioscagliotti.thesis.utility.PercentageCalculatorUtil;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -17,7 +19,8 @@ import java.util.Optional;
 
 @Service
 public class LessonProgressService {
-
+    @Value("${success.percentage}")
+    private double successPercentage;
     private final LessonProgressRepository lessonProgressRepository;
     private final LessonRepository lessonRepository;
 
@@ -93,6 +96,15 @@ public class LessonProgressService {
                 lessonProgressEntity.getCompletedCards())) {
             lessonProgressEntity.setStatus(LessonStatusEnum.COMPLETED);
             points = 10;
+
+            double quizCorrectPercentage = PercentageCalculatorUtil.calculateSucceededPercentage(lessonEntity.getQuizzes());
+            if(quizCorrectPercentage>successPercentage) {
+                lessonProgressEntity.setQuizResult(QuizResultEnum.SUCCEEDED);
+            }
+            else {
+                lessonProgressEntity.setQuizResult(QuizResultEnum.FAILED);
+            }
+
             if (lessonProgressEntity.getQuizResult().equals(QuizResultEnum.SUCCEEDED)) {
                 points += 100; //TODO RIVEDERE quantità punti
             } else {

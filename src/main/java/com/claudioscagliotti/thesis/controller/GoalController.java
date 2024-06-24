@@ -24,8 +24,9 @@ public class GoalController {
     public GoalController(GoalService goalService) {
         this.goalService = goalService;
     }
+
     @PostMapping
-    public ResponseEntity<?> createGoal(@Valid @RequestBody GoalDto createGoalRequest) {
+    public ResponseEntity<GenericResponse<GoalDto>> createGoal(@Valid @RequestBody GoalDto createGoalRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
@@ -35,7 +36,7 @@ public class GoalController {
             GenericResponse<GoalDto> response = new GenericResponse<>("success", message, createdGoal);
             return ResponseEntity.ok(response);
 
-        } catch (EntityNotFoundException | UsernameNotFoundException e){
+        } catch (EntityNotFoundException | UsernameNotFoundException e) {
             GenericResponse<GoalDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
@@ -52,7 +53,7 @@ public class GoalController {
             GenericResponse<GoalDto> response = new GenericResponse<>("success", message, goalDto);
             return ResponseEntity.ok(response);
 
-        } catch (EntityNotFoundException | UsernameNotFoundException e){
+        } catch (EntityNotFoundException | UsernameNotFoundException e) {
             GenericResponse<GoalDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }

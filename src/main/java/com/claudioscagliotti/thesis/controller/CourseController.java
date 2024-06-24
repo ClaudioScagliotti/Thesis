@@ -35,7 +35,7 @@ public class CourseController {
             GenericResponse<CourseDto> response = new GenericResponse<>("success", message, courseDto);
             return ResponseEntity.ok(response);
 
-        } catch (UsernameNotFoundException | EntityNotFoundException e){
+        } catch (UsernameNotFoundException | EntityNotFoundException e) {
             GenericResponse<CourseDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (SubscriptionUserException e) {
@@ -50,13 +50,13 @@ public class CourseController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
-        courseService.unsubscribeCourse(userDetails.getUsername(), courseId);
+            courseService.unsubscribeCourse(userDetails.getUsername(), courseId);
 
-        String message = "Unsubscribed from course with id: " + courseId +" successfully";
-        GenericResponse<Object> response = new GenericResponse<>("success", message, null);
-        return ResponseEntity.ok(response);
+            String message = "Unsubscribed from course with id: " + courseId + " successfully";
+            GenericResponse<Object> response = new GenericResponse<>("success", message, null);
+            return ResponseEntity.ok(response);
 
-        } catch (SubscriptionUserException e){
+        } catch (SubscriptionUserException e) {
             GenericResponse<Object> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 
@@ -68,12 +68,12 @@ public class CourseController {
     }
 
     @GetMapping("suggested")
-    public ResponseEntity<GenericResponse<List<CourseDto>>> suggestCourses(){
+    public ResponseEntity<GenericResponse<List<CourseDto>>> suggestCourses() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
             List<CourseDto> dtoList = courseService.suggestCourses(userDetails.getUsername());
-            String message = "Suggested " + dtoList.size() +" courses";
+            String message = "Suggested " + dtoList.size() + " courses";
             GenericResponse<List<CourseDto>> response = new GenericResponse<>("success", message, dtoList);
             return ResponseEntity.ok(response);
 
@@ -83,13 +83,14 @@ public class CourseController {
         }
 
     }
+
     @GetMapping()
-    public ResponseEntity<?> subscribedCourses(){
+    public ResponseEntity<GenericResponse<List<CourseDto>>> subscribedCourses() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
             List<CourseDto> dtoList = courseService.subscribedCourses(userDetails.getUsername());
-            String message = "Subscribed to " + dtoList.size() +" courses";
+            String message = "Subscribed to " + dtoList.size() + " courses";
             GenericResponse<List<CourseDto>> response = new GenericResponse<>("success", message, dtoList);
             return ResponseEntity.ok(response);
 

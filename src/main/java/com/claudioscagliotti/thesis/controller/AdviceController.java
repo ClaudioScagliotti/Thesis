@@ -15,10 +15,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @RestController
 @RequestMapping("/advice")
 public class AdviceController {
-private final AdviceService adviceService;
+    private final AdviceService adviceService;
 
     public AdviceController(AdviceService adviceService) {
         this.adviceService = adviceService;
@@ -29,11 +30,11 @@ private final AdviceService adviceService;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
-        List<AdviceDto> adviceList = adviceService.createAdviceList(userDetails.getUsername());
-        String message= "Created "+adviceList.size()+" advices";
+            List<AdviceDto> adviceList = adviceService.createAdviceList(userDetails.getUsername());
+            String message = "Created " + adviceList.size() + " advices";
 
-        GenericResponse<List<AdviceDto>> response= new GenericResponse<>("success", message,adviceList);
-        return ResponseEntity.ok(response);
+            GenericResponse<List<AdviceDto>> response = new GenericResponse<>("success", message, adviceList);
+            return ResponseEntity.ok(response);
 
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
             GenericResponse<List<AdviceDto>> response = new GenericResponse<>("error", e.getMessage(), null);
@@ -41,7 +42,7 @@ private final AdviceService adviceService;
         }
     }
 
-    @PostMapping("/skip/{adviceId}")
+    @PostMapping("skip/{adviceId}")
     public ResponseEntity<GenericResponse<AdviceDto>> skipNextAdvice(@PathVariable("adviceId") Long adviceId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -51,18 +52,18 @@ private final AdviceService adviceService;
             GenericResponse<AdviceDto> response = new GenericResponse<>("success", message, adviceDto);
             return ResponseEntity.ok(response);
 
-        } catch (UsernameNotFoundException | EntityNotFoundException e){
+        } catch (UsernameNotFoundException | EntityNotFoundException e) {
             GenericResponse<AdviceDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
 
-    @PostMapping("/complete/{adviceId}")
+    @PostMapping("complete/{adviceId}")
     public ResponseEntity<GenericResponse<AdviceDto>> completeAdvice(@PathVariable("adviceId") Long adviceId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
-            AdviceDto adviceDto= adviceService.completeAdvice(userDetails.getUsername(), adviceId);
+            AdviceDto adviceDto = adviceService.completeAdvice(userDetails.getUsername(), adviceId);
             String message = "Completed advice with id: " + adviceId;
             GenericResponse<AdviceDto> response = new GenericResponse<>("success", message, adviceDto);
             return ResponseEntity.ok(response);
@@ -71,7 +72,7 @@ private final AdviceService adviceService;
             GenericResponse<AdviceDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 
-        } catch (UnauthorizedUserException e){
+        } catch (UnauthorizedUserException e) {
             GenericResponse<AdviceDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
@@ -88,7 +89,7 @@ private final AdviceService adviceService;
             GenericResponse<AdviceDto> response = new GenericResponse<>("success", message, adviceDto);
             return ResponseEntity.ok(response);
 
-        } catch (NoAdviceAvailableException | EntityNotFoundException | UsernameNotFoundException e){
+        } catch (NoAdviceAvailableException | EntityNotFoundException | UsernameNotFoundException e) {
             GenericResponse<AdviceDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }

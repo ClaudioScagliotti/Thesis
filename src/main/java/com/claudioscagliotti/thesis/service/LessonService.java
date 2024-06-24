@@ -4,10 +4,7 @@ import com.claudioscagliotti.thesis.dto.response.LessonDto;
 import com.claudioscagliotti.thesis.exception.CompletedCourseException;
 import com.claudioscagliotti.thesis.exception.SubscriptionUserException;
 import com.claudioscagliotti.thesis.mapper.LessonMapper;
-import com.claudioscagliotti.thesis.model.CourseEntity;
-import com.claudioscagliotti.thesis.model.LessonEntity;
-import com.claudioscagliotti.thesis.model.LessonProgressEntity;
-import com.claudioscagliotti.thesis.model.UserEntity;
+import com.claudioscagliotti.thesis.model.*;
 import com.claudioscagliotti.thesis.repository.LessonProgressRepository;
 import com.claudioscagliotti.thesis.repository.LessonRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -84,6 +81,11 @@ public class LessonService {
             }
         }
         return null;
+    }
+
+    public LessonEntity getById(Long lessonId) {
+        return lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new EntityNotFoundException("There is not an Lesson with id: " + lessonId));
     }
 
 

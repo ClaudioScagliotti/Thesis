@@ -83,8 +83,8 @@ public class LessonController {
         }
     }
 
-    @PostMapping("/update/{lessonId}/progress/{newProgress}")
-    public ResponseEntity<?> updateLessonProgress(@PathVariable("lessonId") Long lessonId,
+    @PostMapping("update/{lessonId}/progress/{newProgress}")
+    public ResponseEntity<GenericResponse<LessonProgressDto>> updateLessonProgress(@PathVariable("lessonId") Long lessonId,
                                                   @PathVariable("newProgress") int newProgress) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();

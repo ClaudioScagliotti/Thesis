@@ -3,6 +3,7 @@ package com.claudioscagliotti.thesis.service;
 import com.claudioscagliotti.thesis.dto.request.LoginRequest;
 import com.claudioscagliotti.thesis.dto.request.RegisterRequest;
 import com.claudioscagliotti.thesis.dto.response.AuthenticationResponse;
+import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
 import com.claudioscagliotti.thesis.mapper.UserMapper;
 import com.claudioscagliotti.thesis.model.TokenEntity;
 import com.claudioscagliotti.thesis.model.UserEntity;
@@ -11,10 +12,9 @@ import com.claudioscagliotti.thesis.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -93,14 +93,15 @@ public class AuthenticationService {
         token.setUser(user);
         tokenRepository.save(token);
     }
-    public ResponseEntity refreshToken( //TODO approfondire il refresh token
+    public AuthenticationResponse refreshToken(
             HttpServletRequest request,
             HttpServletResponse response) {
         // extract the token from authorization header
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if(authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+            //return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+            throw new UnauthorizedUserException("The Bearer token is missing");
         }
         String token = authHeader.substring(7);
 
@@ -109,7 +110,7 @@ public class AuthenticationService {
 
         // check if the user exist in database
         UserEntity user = repository.findByUsername(username)
-                .orElseThrow(()->new RuntimeException("No user found"));
+                .orElseThrow(()->new UsernameNotFoundException("No user found"));
 
         // check if the token is valid
         if(jwtService.isValidRefreshToken(token, user)) {
@@ -120,10 +121,9 @@ public class AuthenticationService {
             revokeAllTokenByUser(user);
             saveUserToken(accessToken, refreshToken, user);
 
-            return new ResponseEntity(new AuthenticationResponse(accessToken, refreshToken, "New token generated"), HttpStatus.OK);
+            return new AuthenticationResponse(accessToken, refreshToken, "New token generated");
         }
-
-        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        throw new UnauthorizedUserException("The refresh token is not valid");
 
     }
 }

@@ -157,4 +157,10 @@ public class AdviceService {
         } else throw new EntityNotFoundException("There is no advice with id: "+adviceId);
     }
 
+    public AdviceEntity getById(Long adviceId) {
+        return adviceRepository.findById(adviceId)
+                .orElseThrow(() -> new EntityNotFoundException("There is not an Advice with id: " + adviceId));
+    }
+
+
 }

@@ -4,7 +4,11 @@ import com.claudioscagliotti.thesis.dto.request.QuizRequest;
 import com.claudioscagliotti.thesis.dto.response.QuizDto;
 import com.claudioscagliotti.thesis.enumeration.QuizResultEnum;
 import com.claudioscagliotti.thesis.enumeration.QuizTypeEnum;
+import com.claudioscagliotti.thesis.exception.SubscriptionUserException;
+import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
 import com.claudioscagliotti.thesis.mapper.QuizMapper;
+import com.claudioscagliotti.thesis.model.AdviceEntity;
+import com.claudioscagliotti.thesis.model.LessonEntity;
 import com.claudioscagliotti.thesis.model.QuizEntity;
 import com.claudioscagliotti.thesis.repository.QuizRepository;
 import com.claudioscagliotti.thesis.utility.JsonComparator;
@@ -22,23 +26,38 @@ public class QuizService {
 
     private final QuizRepository quizRepository;
     private final QuizMapper quizMapper;
+    private final AdviceService adviceService;
+    private final LessonService lessonService;
+    private final CourseService courseService;
 
 
 
-    public QuizService(QuizRepository quizRepository, QuizMapper quizMapper, AdviceService adviceService) {
+    public QuizService(QuizRepository quizRepository, QuizMapper quizMapper, AdviceService adviceService, LessonService lessonService, CourseService courseService) {
         this.quizRepository = quizRepository;
         this.quizMapper = quizMapper;
+        this.adviceService = adviceService;
+        this.lessonService = lessonService;
+        this.courseService = courseService;
     }
 
 
-    public List<QuizDto> findAllByAdviceId(Long adviceId) {
+    public List<QuizDto> findAllByAdviceId(Long adviceId, String username) {
+        AdviceEntity adviceEntity = adviceService.getById(adviceId);
+        if(!adviceEntity.getUserEntity().getUsername().equals(username)){
+            throw new UnauthorizedUserException("The user with username: "+username+" does not have the advice with the id:"+adviceId);
+        }
         List<QuizEntity> quizEntities = quizRepository.findAllByAdviceId(adviceId);
         return quizMapper.toQuizDto(quizEntities);
     }
 
-    public List<QuizDto> findAllByLessonId(Long lessonId) {
-        List<QuizEntity> quizEntities = quizRepository.findAllByLessonId(lessonId);
-        return quizMapper.toQuizDto(quizEntities);
+    public List<QuizDto> findAllByLessonId(Long lessonId, String username) {
+        LessonEntity lessonEntity = lessonService.getById(lessonId);
+        if(!courseService.checkSubscription(username, lessonEntity.getCourseEntity().getId())){
+            throw new SubscriptionUserException("The user "+username+" is not subscribed to the course with title: "+lessonEntity.getCourseEntity().getTitle());
+        }else{
+            List<QuizEntity> quizEntities = quizRepository.findAllByLessonId(lessonId);
+            return quizMapper.toQuizDto(quizEntities);
+        }
     }
 
     public List<QuizDto> completeQuiz(List<QuizRequest> requestList) throws JsonProcessingException {
@@ -65,7 +84,7 @@ public class QuizService {
                     .orElse(null);
 
             if (solutionEntity == null) {
-                throw new EntityNotFoundException();
+                throw new EntityNotFoundException("Not found solution for the quiz request with id: "+request.getQuizId());
             }
             boolean isCorrect = false;
 
@@ -86,7 +105,7 @@ public class QuizService {
 
             Optional<QuizEntity> updatedQuizEntity = quizRepository.findById(solutionEntity.getId());
             updatedQuizEntity.ifPresent(resultList::add);
-        }
+        }//TODO possible feature: update the quiz result in the advice or in the lesson when the quiz is completed and not when the advice or lesson is completed
 
         return quizMapper.toQuizDto(resultList);
     }

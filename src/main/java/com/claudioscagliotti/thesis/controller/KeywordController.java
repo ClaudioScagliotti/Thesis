@@ -15,18 +15,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/keywords")
 public class KeywordController {
     private final TmdbApiClient client;
+
     public KeywordController(TmdbApiClient client) {
         this.client = client;
     }
+
     @GetMapping
-    public ResponseEntity<GenericResponse<KeywordResponse>> getKeywords(@RequestParam String keyword){//TODO only an admin with user role can do this call
+    public ResponseEntity<GenericResponse<KeywordResponse>> getKeywords(@RequestParam String keyword) {//TODO only an admin with user role can do this call
         try {
             KeywordResponse keywordResponse = client.searchKeywords(keyword);
-            String message = "Found "+keywordResponse.totalResults()+ " keywords";
+            String message = "Found " + keywordResponse.totalResults() + " keywords";
             GenericResponse<KeywordResponse> response = new GenericResponse<>("success", message, keywordResponse);
             return ResponseEntity.ok(response);
 
-        } catch (ExternalAPIException e){
+        } catch (ExternalAPIException e) {
             GenericResponse<KeywordResponse> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
