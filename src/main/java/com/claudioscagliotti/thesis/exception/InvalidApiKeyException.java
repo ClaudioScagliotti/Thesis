@@ -10,6 +10,6 @@ public class InvalidApiKeyException extends RuntimeException{
     }
 
     public InvalidApiKeyException() {
-        super("Error occurred while authenticating with TMDB API");
+        super("Error occurred while authenticating with External API");
     }
 }

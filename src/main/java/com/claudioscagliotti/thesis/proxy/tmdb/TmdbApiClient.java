@@ -1,5 +1,6 @@
 package com.claudioscagliotti.thesis.proxy.tmdb;
 
+import com.claudioscagliotti.thesis.configuration.TmdbConfig;
 import com.claudioscagliotti.thesis.dto.tmdb.response.authentication.AuthenticationResource;
 import com.claudioscagliotti.thesis.dto.tmdb.response.genre.GenreResponse;
 import com.claudioscagliotti.thesis.dto.tmdb.response.keyword.KeywordResponse;
@@ -8,7 +9,7 @@ import com.claudioscagliotti.thesis.exception.ExternalAPIException;
 import com.claudioscagliotti.thesis.exception.InvalidApiKeyException;
 import com.claudioscagliotti.thesis.exception.NoMovieException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,16 +19,15 @@ import org.springframework.web.client.RestTemplate;
 public class TmdbApiClient {
     private static final String TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
     private final RestTemplate restTemplate;
-    @Value("${tmdb.api.key}")
-    private String apiKey;
+    private final String apiKey;
+    private final String apiToken;
 
-    @Value("${tmdb.api.token}")
-    private String apiToken;
-
-    public TmdbApiClient() {
-        this.restTemplate = new RestTemplate();
+    public TmdbApiClient(@Qualifier("tmdbRestTemplate") RestTemplate restTemplate,
+                         TmdbConfig tmdbConfig) {
+        this.restTemplate = restTemplate;
+        this.apiKey = tmdbConfig.getApiKey();
+        this.apiToken = tmdbConfig.getApiToken();
     }
-
 
     public AuthenticationResource authenticate() {
         String url = TMDB_API_BASE_URL + "/authentication";
@@ -47,7 +47,7 @@ public class TmdbApiClient {
             }
             return authResponse;
         } catch (Exception e) {
-            throw new RuntimeException("Error occurred while authenticating with TMDB API", e);
+            throw new ExternalAPIException("Error occurred while authenticating with TMDB API");
         }
     }
 
@@ -78,10 +78,10 @@ public class TmdbApiClient {
             throw new RuntimeException("No movies found: " + e.getMessage(), e);
         } catch (InvalidApiKeyException e) {
 
-            throw new RuntimeException("Invalid API key provided", e);
+            throw new InvalidApiKeyException("Invalid API key provided", e);
         } catch (Exception e) {
             // Gestione generica per tutte le altre eccezioni
-            throw new RuntimeException("An error occurred while trying to retrieve data from the TMDB API", e);
+            throw new ExternalAPIException("An error occurred while trying to retrieve data from the TMDB API");
         }
         return response;
     }
@@ -122,7 +122,7 @@ public class TmdbApiClient {
 
             return objectMapper.readValue(exchange.getBody(), GenreResponse.class);
         } catch (Exception e) {
-            throw new RuntimeException("An error occurred while trying to retrieve data from the TMDB API", e);
+            throw new ExternalAPIException("An error occurred while trying to retrieve data from the TMDB API");
         }
     }
 
