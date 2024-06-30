@@ -31,15 +31,15 @@ public class OpenAiApiClient {
         this.maxTokens = maxTokens;
     }
 
-    public String chat(ChatRequest chatRequest) {
+    public ChatResponse chat(ChatRequest chatRequest) {
         setChatRequestDetails(chatRequest);
         try {
             ChatResponse response = restTemplate.postForObject(apiUrl, chatRequest, ChatResponse.class);
             if (response == null || response.getChoices() == null || response.getChoices().isEmpty()) {
-                return "No response";
+                return null;
             }
 
-            return response.getChoices().get(0).getMessage().getContent();
+            return response;
 
         } catch (HttpClientErrorException.Unauthorized e) {
             throw new InvalidApiKeyException("Invalid API key provided", e);
@@ -48,11 +48,9 @@ public class OpenAiApiClient {
             throw new ExternalAPIException("Bad request to external service", e);
 
         } catch (HttpServerErrorException e) {
-            // Gestione specifica per errori 5xx (Server Errors)
             throw new ExternalAPIException("External service encountered a server error", e);
 
         } catch (RestClientException e) {
-            // Gestione generale per altre eccezioni di RestClient
             throw new ExternalAPIException("Failed to communicate with external service", e);
         }
 
