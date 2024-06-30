@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.proxy.openai;
 
 import com.claudioscagliotti.thesis.dto.request.openai.ChatRequest;
-import com.claudioscagliotti.thesis.dto.request.openai.ChatResponse;
+import com.claudioscagliotti.thesis.dto.response.openai.ChatResponse;
 import com.claudioscagliotti.thesis.enumeration.RoleplayProfileEnum;
 import com.claudioscagliotti.thesis.exception.ExternalAPIException;
 import com.claudioscagliotti.thesis.exception.InvalidApiKeyException;

@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.controller;
 
 import com.claudioscagliotti.thesis.dto.request.openai.ChatRequest;
-import com.claudioscagliotti.thesis.dto.request.openai.ChatResponse;
+import com.claudioscagliotti.thesis.dto.response.openai.ChatResponse;
 import com.claudioscagliotti.thesis.dto.request.openai.PromptRequest;
 import com.claudioscagliotti.thesis.dto.response.GenericResponse;
 import com.claudioscagliotti.thesis.exception.InvalidApiKeyException;
