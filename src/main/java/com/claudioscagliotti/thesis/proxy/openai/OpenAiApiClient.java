@@ -17,15 +17,18 @@ import org.springframework.web.client.RestTemplate;
 public class OpenAiApiClient {
     private final RestTemplate restTemplate;
     private final String model;
+    private final int maxTokens;
     private final String apiUrl;
 
     public OpenAiApiClient(
             @Qualifier("openaiRestTemplate") RestTemplate restTemplate,
             @Value("${openai.model}") String model,
-            @Value("${openai.api.url}") String apiUrl) {
+            @Value("${openai.api.url}") String apiUrl,
+            @Value("${openai.maxTokens}") int maxTokens) {
         this.restTemplate = restTemplate;
         this.model = model;
         this.apiUrl = apiUrl;
+        this.maxTokens = maxTokens;
     }
 
     public String chat(ChatRequest chatRequest) {
@@ -59,6 +62,7 @@ public class OpenAiApiClient {
         chatRequest.setModel(model);
         chatRequest.setN(1);
         chatRequest.setTemperature(0.7);
+        chatRequest.setMaxTokens(maxTokens);
     }
 
 

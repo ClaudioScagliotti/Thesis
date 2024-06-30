@@ -14,12 +14,13 @@ public class ChatRequest {
     private List<Message> messages;
     private int n;
     private double temperature;
+    private int maxTokens;
 
     public ChatRequest(String prompt, String role) {
         this.messages = new ArrayList<>();
         // aggiunta contesto
         this.messages.add(new Message("system", role));
-        //aggiunta prompt utente
+        // aggiunta prompt utente
         this.messages.add(new Message("user", prompt));
     }
 
