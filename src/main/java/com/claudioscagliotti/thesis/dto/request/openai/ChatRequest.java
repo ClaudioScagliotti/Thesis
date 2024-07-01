@@ -1,6 +1,7 @@
 package com.claudioscagliotti.thesis.dto.request.openai;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class ChatRequest {
 
     private String model;
@@ -23,5 +25,4 @@ public class ChatRequest {
         // aggiunta prompt utente
         this.messages.add(new Message("user", prompt));
     }
-
 }

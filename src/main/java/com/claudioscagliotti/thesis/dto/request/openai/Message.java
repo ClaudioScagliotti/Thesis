@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Message {
 
-    private String role;
+    private String role; // "system", "user", or "assistant"
     private String content;
 
 }

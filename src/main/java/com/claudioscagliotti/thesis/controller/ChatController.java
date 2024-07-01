@@ -1,15 +1,19 @@
 package com.claudioscagliotti.thesis.controller;
 
 import com.claudioscagliotti.thesis.dto.request.openai.ChatRequest;
-import com.claudioscagliotti.thesis.dto.response.openai.ChatResponse;
+import com.claudioscagliotti.thesis.dto.request.openai.Message;
 import com.claudioscagliotti.thesis.dto.request.openai.PromptRequest;
 import com.claudioscagliotti.thesis.dto.response.GenericResponse;
+import com.claudioscagliotti.thesis.dto.response.openai.ChatResponse;
 import com.claudioscagliotti.thesis.exception.InvalidApiKeyException;
 import com.claudioscagliotti.thesis.exception.UnknownRoleException;
 import com.claudioscagliotti.thesis.proxy.openai.OpenAiApiClient;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/chat")
@@ -22,28 +26,50 @@ public class ChatController {
     }
 
     @PostMapping("/{role}")
-    public ResponseEntity<GenericResponse<ChatResponse>> chatWithRole(@PathVariable("role") String role, @RequestBody @Valid PromptRequest request) {
-
-        ChatRequest chatRequest = new ChatRequest(request.getPrompt(), openAiApiClient.getProfile(role));
+    public ResponseEntity<GenericResponse<Message>> chatWithRole(@PathVariable("role") String role,
+                                                                 @RequestBody PromptRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        ChatRequest chatRequest = openAiApiClient.manageConversationHistory(role, request, authentication.getName());
 
         try {
-            ChatResponse responseContent = openAiApiClient.chat(chatRequest);
+            ChatResponse response = openAiApiClient.chat(chatRequest);
+            Message lastMessage= openAiApiClient.getLastMessage(response);
+
+            openAiApiClient.updateConversationHistory(authentication.getName(), response);
+
             String message = "Chat response generated successfully as " + role;
-            GenericResponse<ChatResponse> response = new GenericResponse<>("success", message, responseContent);
-            return ResponseEntity.ok(response);
+            GenericResponse<Message> responseBody = new GenericResponse<>("success", message, lastMessage);
+            return ResponseEntity.ok(responseBody);
 
         } catch (UnknownRoleException e) {
-            GenericResponse<ChatResponse> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<Message> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(400).body(response);
 
         } catch (InvalidApiKeyException e) {
-            GenericResponse<ChatResponse> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<Message> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(500).body(response);
 
         } catch (Exception e) {
             String errorMessage = "Failed to generate chat response as " + role;
-            GenericResponse<ChatResponse> response = new GenericResponse<>("error", errorMessage, null);
+            GenericResponse<Message> response = new GenericResponse<>("error", errorMessage, null);
             return ResponseEntity.status(500).body(response);
+        }
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<GenericResponse<List<Message>>> getFullConversationHistory() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        try {
+            List<Message> conversationHistory = openAiApiClient.getConversation(authentication.getName());
+
+            if (conversationHistory.isEmpty()) {
+                return ResponseEntity.status(404).body(new GenericResponse<>("error", "No conversation history found for user: " + authentication.getName(), null));
+            }
+
+            return ResponseEntity.ok(new GenericResponse<>("success", "Full conversation history retrieved successfully", conversationHistory));
+        } catch (Exception e) {
+            String errorMessage = "Failed to retrieve conversation history for user: " + authentication.getName();
+            return ResponseEntity.status(500).body(new GenericResponse<>("error", errorMessage, null));
         }
     }
 
