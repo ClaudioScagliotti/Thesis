@@ -56,7 +56,7 @@ public class CourseService {
         if (!userEntity.getCourseEntityList().contains(courseEntity)) {
             userEntity.getCourseEntityList().add(courseEntity);
         }
-        else throw new SubscriptionUserException("The user with id: "+userEntity.getId()+" is already subscribed to course with title:" +courseEntity.getTitle());
+        else throw new SubscriptionUserException("The user with id: "+userEntity.getId()+" is already subscribed to course with title: " +courseEntity.getTitle());
     }
 
     public void unsubscribeCourse(String username, Long courseId){
