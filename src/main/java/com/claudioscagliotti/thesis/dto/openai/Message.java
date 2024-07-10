@@ -1,4 +1,4 @@
-package com.claudioscagliotti.thesis.dto.request.openai;
+package com.claudioscagliotti.thesis.dto.openai;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
