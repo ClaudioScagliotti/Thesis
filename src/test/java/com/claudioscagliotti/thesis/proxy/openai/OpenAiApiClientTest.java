@@ -34,10 +34,9 @@ public class OpenAiApiClientTest {
     public void testChatWithMockResponse() {
         ChatResponse mockResponse = new ChatResponse();
         List<Choice> choices = new ArrayList<>();
-        Choice choice = new Choice();
         Message message = new Message("user","ciao come stai?");
         message.setContent("Questa è una risposta mockata dal modello GPT.");
-        choice.setMessage(message);
+        Choice choice=new Choice(message, null);
         choices.add(choice);
         mockResponse.setChoices(choices);
 
@@ -45,10 +44,11 @@ public class OpenAiApiClientTest {
                 .thenReturn(mockResponse);
 
 
-        ChatRequest chatRequest = new ChatRequest("Ciao", "system");
 
-
-        ChatResponse response = openAiApiClient.chat(chatRequest);
+        List<Message> messages= List.of(new Message("system","Giochiamo di ruolo, sei Giorge Melier. Ti farò delle domande"),
+                new Message("user", "ciao George, come va?"));
+        ChatRequest chatRequestWithMessages = openAiApiClient.createChatRequestWithMessages(messages);
+        ChatResponse response = openAiApiClient.chat(chatRequestWithMessages);
 
         assertNotNull(response);
         assertFalse(response.getChoices().isEmpty());
