@@ -1,7 +1,8 @@
 package com.claudioscagliotti.thesis.controller;
 
 import com.claudioscagliotti.thesis.dto.request.openai.ChatRequest;
-import com.claudioscagliotti.thesis.dto.request.openai.Message;
+import com.claudioscagliotti.thesis.dto.openai.Choice;
+import com.claudioscagliotti.thesis.dto.openai.Message;
 import com.claudioscagliotti.thesis.dto.request.openai.PromptRequest;
 import com.claudioscagliotti.thesis.dto.response.GenericResponse;
 import com.claudioscagliotti.thesis.dto.response.openai.ChatResponse;
@@ -29,13 +30,12 @@ public class ChatController {
     public ResponseEntity<GenericResponse<Message>> chatWithRole(@PathVariable("role") String role,
                                                                  @RequestBody PromptRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        ChatRequest chatRequest = openAiApiClient.manageConversationHistory(role, request, authentication.getName());
+        ChatRequest chatRequest = openAiApiClient.retrieveConversationHistory(role, request, authentication.getName());
 
         try {
             ChatResponse response = openAiApiClient.chat(chatRequest);
-            Message lastMessage= openAiApiClient.getLastMessage(response);
 
-            openAiApiClient.updateConversationHistory(authentication.getName(), response);
+            Message lastMessage = openAiApiClient.getMessageLastMessageAndUpdateConversationHistory(authentication, response);
 
             String message = "Chat response generated successfully as " + role;
             GenericResponse<Message> responseBody = new GenericResponse<>("success", message, lastMessage);
@@ -57,10 +57,10 @@ public class ChatController {
     }
 
     @GetMapping("/history")
-    public ResponseEntity<GenericResponse<List<Message>>> getFullConversationHistory() {
+    public ResponseEntity<GenericResponse<List<Choice>>> getFullConversationHistory() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         try {
-            List<Message> conversationHistory = openAiApiClient.getConversation(authentication.getName());
+            List<Choice> conversationHistory = openAiApiClient.getConversation(authentication.getName());
 
             if (conversationHistory.isEmpty()) {
                 return ResponseEntity.status(404).body(new GenericResponse<>("error", "No conversation history found for user: " + authentication.getName(), null));
@@ -72,5 +72,4 @@ public class ChatController {
             return ResponseEntity.status(500).body(new GenericResponse<>("error", errorMessage, null));
         }
     }
-
 }

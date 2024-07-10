@@ -1,8 +1,8 @@
 package com.claudioscagliotti.thesis.proxy.openai;
 
 import com.claudioscagliotti.thesis.dto.request.openai.ChatRequest;
-import com.claudioscagliotti.thesis.dto.request.openai.Choice;
-import com.claudioscagliotti.thesis.dto.request.openai.Message;
+import com.claudioscagliotti.thesis.dto.openai.Choice;
+import com.claudioscagliotti.thesis.dto.openai.Message;
 import com.claudioscagliotti.thesis.dto.request.openai.PromptRequest;
 import com.claudioscagliotti.thesis.dto.response.openai.ChatResponse;
 import com.claudioscagliotti.thesis.enumeration.RoleplayProfileEnum;
@@ -12,6 +12,7 @@ import com.claudioscagliotti.thesis.exception.UnknownRoleException;
 import com.claudioscagliotti.thesis.service.ChatSessionService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -19,42 +20,41 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class OpenAiApiClient {
-    private static final int N_RECENT_MESSAGES = 5; // Numero di messaggi da inviare a gpt
+
+    @Value("${openai.request.context.messages}")
+    private int N_RECENT_MESSAGES;
     private final RestTemplate restTemplate;
-    private final String model;
-    private final int maxTokens;
     private final String apiUrl;
     private final ChatSessionService chatSessionService;
+    @Value("${openai.model}")
+    private String model;
+
+    @Value("${openai.maxTokens}")
+    private int maxTokens;
+
+    @Value("${openai.response.number}")
+    private int n;
+
+    @Value("${openai.response.temperature}")
+    private double temperature;
+
+    public ChatRequest createChatRequestWithMessages(List<Message> messages) {
+        return ChatRequest.createChatRequest(model, maxTokens, n, temperature, messages);
+    }
 
     public OpenAiApiClient(
             @Qualifier("openaiRestTemplate") RestTemplate restTemplate,
-            @Value("${openai.model}") String model,
             @Value("${openai.api.url}") String apiUrl,
-            @Value("${openai.maxTokens}") int maxTokens,
             ChatSessionService chatSessionService) {
         this.restTemplate = restTemplate;
-        this.model = model;
         this.apiUrl = apiUrl;
-        this.maxTokens = maxTokens;
         this.chatSessionService = chatSessionService;
     }
 
-    public Message getLastMessage(ChatResponse response) {
-        if (response == null || response.getChoices() == null || response.getChoices().isEmpty()) {
-            return null;
-        }
-
-        Choice lastChoice = response.getChoices().stream()
-                .max(Comparator.comparingInt(Choice::getIndex))
-                .orElse(null);
-
-        return lastChoice.getMessage();
-    }
 
     private List<Message> getlastMessages(List<Message> messages) {
         List<Message> relevantMessages = new ArrayList<>();
@@ -65,7 +65,7 @@ public class OpenAiApiClient {
 
         int startIndex = messages.size() - N_RECENT_MESSAGES;
         if (startIndex < 0) {
-            startIndex = 0;
+            startIndex = 1;
         }
 
         for (int i = startIndex; i < messages.size(); i++) {
@@ -78,7 +78,7 @@ public class OpenAiApiClient {
 
 
     public ChatResponse chat(ChatRequest chatRequest) {
-        setChatRequestDetails(chatRequest);
+        truncateChatRequestMessages(chatRequest);
 
         try {
             ChatResponse response = restTemplate.postForObject(apiUrl, chatRequest, ChatResponse.class);
@@ -104,52 +104,61 @@ public class OpenAiApiClient {
 
     }
 
-    private void setChatRequestDetails(ChatRequest chatRequest) {
-        chatRequest.setModel(model);
-        chatRequest.setN(1);
-        chatRequest.setTemperature(0.7);
-        chatRequest.setMaxTokens(maxTokens);
-
+    private void truncateChatRequestMessages(ChatRequest chatRequest) {
         List<Message> truncatedMessages = getlastMessages(chatRequest.getMessages());
         chatRequest.setMessages(truncatedMessages);
     }
 
-
-
     public String getProfile(String role) {
         try {
-
             return RoleplayProfileEnum.fromRole(role).getProfileDescription();
-
         } catch (IllegalArgumentException e) {
-
             throw new UnknownRoleException("Unknown role: " + role);
         }
     }
 
-    public ChatRequest manageConversationHistory(String role, PromptRequest request, String username) {
-        List<Message> conversationHistory = getConversation(username);
+public ChatRequest retrieveConversationHistory(String role, PromptRequest request, String username) {
+    List<Choice> conversationHistory = getConversation(username);
+    List<Choice> newChoices = new ArrayList<>();
+    int index= Choice.calculateLastIndex(conversationHistory);
 
-        ChatRequest chatRequest = new ChatRequest();
+    if (conversationHistory.isEmpty()) {
+        Message profileMessage = new Message("system", getProfile(role));
+        Choice profileChoice= new Choice(++index, profileMessage);
+        newChoices.add(profileChoice);
+    }
 
-        if (conversationHistory.isEmpty()) {
-            // Se la cronologia è vuota, setto il contesto di sistema e il prompt dell'utente
-            List<Message> initialMessages = new ArrayList<>();
-            initialMessages.add(new Message("system", getProfile(role)));
-            initialMessages.add(new Message("user", request.getPrompt()));
-            chatRequest.setMessages(initialMessages);
-        } else {
-            // Se ci sono messaggi salvati, aggiungo il nuovo messaggio dell'utente in coda alla cronologia esistente
-            conversationHistory.add(new Message("user", request.getPrompt()));
-            chatRequest.setMessages(conversationHistory);
+    Message userMessage = new Message("user", request.getPrompt());
+    Choice userChoice= new Choice(++index, userMessage);
+
+    newChoices.add(userChoice);
+    chatSessionService.updateConversationHistory(username, newChoices);
+
+    List<Message> messages = new ArrayList<>(getConversation(username).stream().map(Choice::getMessage).toList());
+
+    return createChatRequestWithMessages(messages);
+}
+    public void addResponseToConversationHistory(String username, List<Message> messages) {
+        List<Choice> conversationHistory = getConversation(username);
+        List<Choice> newChoices= new ArrayList<>();
+
+        for(Message message: messages){
+            Choice newChoice = new Choice(message, conversationHistory);
+            newChoices.add(newChoice);
         }
-        return chatRequest;
+        chatSessionService.updateConversationHistory(username, newChoices);
     }
-    public void updateConversationHistory(String username, ChatResponse response){
-        chatSessionService.updateConversationHistory(username, response);
-    }
-    public List<Message> getConversation(String username) {
+
+    public List<Choice> getConversation(String username) {
         return chatSessionService.getConversationHistory(username);
     }
 
+    public Message getMessageLastMessageAndUpdateConversationHistory(Authentication authentication, ChatResponse response) {
+        List<Message> messages = response.getChoices().stream()
+                .map(Choice::getMessage)
+                .toList();
+        Message lastMessage = messages.get(messages.lastIndexOf(messages.get(messages.size() - 1)));
+        addResponseToConversationHistory(authentication.getName(), messages);
+        return lastMessage;
+    }
 }
