@@ -1,6 +1,6 @@
 package com.claudioscagliotti.thesis.dto.response.openai;
 
-import com.claudioscagliotti.thesis.dto.request.openai.Choice;
+import com.claudioscagliotti.thesis.dto.openai.Choice;
 import lombok.Getter;
 import lombok.Setter;
 
