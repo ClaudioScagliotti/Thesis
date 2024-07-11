@@ -10,7 +10,6 @@ import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +17,6 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = GenreService.class)
 public interface MovieMapper {
-    MovieMapper INSTANCE = Mappers.getMapper(MovieMapper.class);
 
     @Mapping(source = "id", target = "tmdbId")
     @Mapping(source = "genreIds", target = "genreEntities", qualifiedByName = "mapGenreIdsToEntities")
@@ -30,6 +28,7 @@ public interface MovieMapper {
 
     @Mapping(source = "genreEntities", target = "genreIds", qualifiedByName = "mapGenreEntitiesToEnums")
     MovieDto toMovieDto(MovieEntity movieEntity);
+
     @Named("mapGenreIdsToEntities")
     default List<GenreEntity> mapGenreIdsToEntities(List<Integer> genreIds, @Context GenreService genreService) {
         return genreService.mapGenreIdsToEntities(genreIds);

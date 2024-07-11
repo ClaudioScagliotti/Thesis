@@ -9,22 +9,19 @@ import com.claudioscagliotti.thesis.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 @Mapper(componentModel = "spring")
 public interface GoalMapper {
-
-    GoalMapper INSTANCE = Mappers.getMapper(GoalMapper.class);
-
     @Mapping(source = "goalType", target = "goalType", qualifiedByName = "mapStringToGoalType")
     @Mapping(source = "keywordList", target = "keywordEntityList")
     @Mapping(source = "genreEnumList", target = "genreEntityList", qualifiedByName = "mapGenreEnumListToEntityList")
     @Mapping(source = "countryOfProductionList", target = "countryOfProductionEntityList")
     GoalEntity toGoalEntity(GoalDto dto);
 
-    @Mapping(source = "goalType", target = "goalType", qualifiedByName = "mapGoalTypeToString") // Aggiungi questa riga
+    @Mapping(source = "goalType", target = "goalType", qualifiedByName = "mapGoalTypeToString")
     @Mapping(source = "keywordEntityList", target = "keywordList")
     @Mapping(source = "genreEntityList", target = "genreEnumList", qualifiedByName = "mapEntityListToGenreEnumList")
     @Mapping(source = "countryOfProductionEntityList", target = "countryOfProductionList")

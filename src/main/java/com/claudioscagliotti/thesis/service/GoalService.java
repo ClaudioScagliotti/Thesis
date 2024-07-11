@@ -70,7 +70,6 @@ public class GoalService {
 
     private static String setGoalType(GoalEntity goalEntity) {
         String result;
-        final String formattedString;
 
         switch (goalEntity.getGoalType().getType()) {
             case NOW_PLAYING: {
@@ -109,7 +108,7 @@ public class GoalService {
     }
     @Transactional
     public GoalEntity saveGoal(GoalDto dto) {
-        GoalEntity goalEntity = goalMapper.INSTANCE.toGoalEntity(dto);
+        GoalEntity goalEntity = goalMapper.toGoalEntity(dto);
 
         goalEntity.getCountryOfProductionEntityList().forEach(c -> countryOfProductionRepository.getCountryOfProductionByCountryCode(c.getCountryCode()));
         List<CountryOfProductionEntity> countryEntities = goalEntity.getCountryOfProductionEntityList().stream()
