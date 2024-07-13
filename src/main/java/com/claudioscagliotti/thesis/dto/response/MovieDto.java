@@ -4,7 +4,7 @@ import com.claudioscagliotti.thesis.enumeration.tmdb.GenreEnum;
 
 import java.util.List;
 
-public record MovieDto(String overview,// TODO check if the other field null are mapped correctly
+public record MovieDto(String overview,
                        String originalLanguage,
                        String originalTitle,
                        String title,
