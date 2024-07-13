@@ -15,23 +15,37 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Rest controller for managing course subscriptions and suggestions.
+ */
 @RestController
 @RequestMapping("/course")
 public class CourseController {
 
     private final CourseService courseService;
 
+    /**
+     * Constructs a CourseController instance with the provided dependencies.
+     *
+     * @param courseService The CourseService dependency.
+     */
     public CourseController(CourseService courseService) {
         this.courseService = courseService;
     }
 
+    /**
+     * Subscribes the authenticated user to a course.
+     *
+     * @param courseId The ID of the course to subscribe to.
+     * @return A ResponseEntity containing the subscribed course details.
+     */
     @PostMapping("subscribe/{courseId}")
     public ResponseEntity<GenericResponse<CourseDto>> subscribeCourse(@PathVariable("courseId") Long courseId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
             CourseDto courseDto = courseService.subscribeCourse(userDetails.getUsername(), courseId);
-            String message = "Subscribed course with id: " + courseId;
+            String message = "Subscribed to course with id: " + courseId;
             GenericResponse<CourseDto> response = new GenericResponse<>("success", message, courseDto);
             return ResponseEntity.ok(response);
 
@@ -41,32 +55,45 @@ public class CourseController {
         } catch (SubscriptionUserException e) {
             GenericResponse<CourseDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        } catch (Exception e) {
+            GenericResponse<CourseDto> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-
     }
 
+    /**
+     * Unsubscribes the authenticated user from a course.
+     *
+     * @param courseId The ID of the course to unsubscribe from.
+     * @return A ResponseEntity indicating the result of the unsubscription.
+     */
     @PostMapping("unsubscribe/{courseId}")
-    public ResponseEntity<GenericResponse<Object>> unsubscribeCourse(@PathVariable("courseId") Long courseId) {
+    public ResponseEntity<GenericResponse<Void>> unsubscribeCourse(@PathVariable("courseId") Long courseId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
             courseService.unsubscribeCourse(userDetails.getUsername(), courseId);
-
             String message = "Unsubscribed from course with id: " + courseId + " successfully";
-            GenericResponse<Object> response = new GenericResponse<>("success", message, null);
+            GenericResponse<Void> response = new GenericResponse<>("success", message, null);
             return ResponseEntity.ok(response);
 
         } catch (SubscriptionUserException e) {
-            GenericResponse<Object> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<Void> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
-            GenericResponse<Object> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<Void> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            GenericResponse<Void> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-
     }
 
+    /**
+     * Suggests courses for the authenticated user.
+     *
+     * @return A ResponseEntity containing the list of suggested courses.
+     */
     @GetMapping("suggested")
     public ResponseEntity<GenericResponse<List<CourseDto>>> suggestCourses() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -80,11 +107,18 @@ public class CourseController {
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
             GenericResponse<List<CourseDto>> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            GenericResponse<List<CourseDto>> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-
     }
 
-    @GetMapping()
+    /**
+     * Retrieves the courses the authenticated user is subscribed to.
+     *
+     * @return A ResponseEntity containing the list of subscribed courses.
+     */
+    @GetMapping
     public ResponseEntity<GenericResponse<List<CourseDto>>> subscribedCourses() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -97,6 +131,9 @@ public class CourseController {
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
             GenericResponse<List<CourseDto>> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            GenericResponse<List<CourseDto>> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 }

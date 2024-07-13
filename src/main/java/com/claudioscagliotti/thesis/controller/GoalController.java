@@ -15,23 +15,37 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+/**
+ * Rest controller for managing user goals.
+ */
 @RestController
 @RequestMapping("/goal")
 @Validated
 public class GoalController {
+
     private final GoalService goalService;
 
+    /**
+     * Constructs a GoalController instance with the provided dependencies.
+     *
+     * @param goalService The GoalService dependency.
+     */
     public GoalController(GoalService goalService) {
         this.goalService = goalService;
     }
 
+    /**
+     * Creates a new goal for the authenticated user.
+     *
+     * @param createGoalRequest The GoalDto containing goal details.
+     * @return A ResponseEntity containing the created goal details.
+     */
     @PostMapping
     public ResponseEntity<GenericResponse<GoalDto>> createGoal(@Valid @RequestBody GoalDto createGoalRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
             GoalDto createdGoal = goalService.createGoal(createGoalRequest, userDetails.getUsername());
-
             String message = "Created goal with id: " + createdGoal.getId();
             GenericResponse<GoalDto> response = new GenericResponse<>("success", message, createdGoal);
             return ResponseEntity.ok(response);
@@ -39,10 +53,17 @@ public class GoalController {
         } catch (EntityNotFoundException | UsernameNotFoundException e) {
             GenericResponse<GoalDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            GenericResponse<GoalDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-
     }
 
+    /**
+     * Retrieves the goal of the authenticated user.
+     *
+     * @return A ResponseEntity containing the user's goal details.
+     */
     @GetMapping
     public ResponseEntity<GenericResponse<GoalDto>> getGoalByUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -56,6 +77,9 @@ public class GoalController {
         } catch (EntityNotFoundException | UsernameNotFoundException e) {
             GenericResponse<GoalDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            GenericResponse<GoalDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 }
