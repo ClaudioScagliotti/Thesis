@@ -17,13 +17,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+/**
+ * SecurityConfig configures web security for the application, including authentication,
+ * authorization, session management, and CSRF protection.
+ * This configuration class sets up various security features using Spring Security framework,
+ * including JWT authentication, user details service, password encoding, and authorization rules.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomLogoutHandler logoutHandler;
+    /**
+     * Constructs the SecurityConfig with necessary dependencies.
+     *
+     * @param userDetailsServiceImpl Custom implementation of UserDetailsServiceImpl for user details management.
+     * @param jwtAuthenticationFilter JwtAuthenticationFilter for JWT token handling.
+     * @param logoutHandler CustomLogoutHandler for handling logout actions.
+     */
     public SecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl,
                           JwtAuthenticationFilter jwtAuthenticationFilter,
                           CustomLogoutHandler logoutHandler) {
@@ -31,6 +43,13 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.logoutHandler = logoutHandler;
     }
+    /**
+     * Configures the security filter chain.
+     *
+     * @param http HttpSecurity instance to configure security settings.
+     * @return SecurityFilterChain configured with authentication, authorization, session management, and logout handling.
+     * @throws Exception if configuration fails.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -58,10 +77,22 @@ public class SecurityConfig {
                 .build();
 
     }
+    /**
+     * Provides a PasswordEncoder bean using BCrypt hashing.
+     *
+     * @return BCryptPasswordEncoder for password hashing.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    /**
+     * Provides an AuthenticationManager bean.
+     *
+     * @param configuration AuthenticationConfiguration to retrieve AuthenticationManager.
+     * @return AuthenticationManager instance for authentication purposes.
+     * @throws Exception if authentication manager configuration fails.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();

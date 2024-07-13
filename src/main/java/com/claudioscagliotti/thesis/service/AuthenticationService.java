@@ -14,10 +14,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -167,4 +171,26 @@ public class AuthenticationService {
             throw new UnauthorizedUserException("Invalid refresh token");
         }
     }
+
+    /**
+     * Verifica se l'utente autenticato ha un determinato ruolo.
+     *
+     * @param role il ruolo da verificare (ad esempio, "ROLE_USER" o "ROLE_ADMIN")
+     * @return true se l'utente ha il ruolo specificato, altrimenti false
+     */
+    public boolean hasRole(String role) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getAuthorities() == null) {
+            return false;
+        }
+
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        for (GrantedAuthority authority : authorities) {
+            if (authority.getAuthority().equals(role)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

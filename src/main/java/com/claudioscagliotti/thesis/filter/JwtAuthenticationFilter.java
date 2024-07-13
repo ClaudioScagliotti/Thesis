@@ -16,15 +16,45 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * JwtAuthenticationFilter is a filter responsible for JWT-based authentication in Spring Security.
+ *
+ * This filter intercepts incoming requests and validates JWT tokens provided in the Authorization header.
+ * It uses JwtService to extract the username from the JWT token and UserDetailsServiceImpl to load
+ * user details from the database based on the username.
+ *
+ * Example usage:
+ * - Intercepts requests and checks for a JWT token in the Authorization header.
+ * - Extracts the username from the JWT token and validates its authenticity using JwtService.
+ * - Loads UserDetails from the database using UserDetailsServiceImpl and populates the SecurityContext
+ *   with an authenticated UsernamePasswordAuthenticationToken if the token is valid.
+ */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final JwtService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
 
+    /**
+     * Constructs JwtAuthenticationFilter with JwtService and UserDetailsServiceImpl dependencies.
+     *
+     * @param jwtService           Service responsible for JWT operations (token extraction and validation).
+     * @param userDetailsService  Service for loading user-specific data.
+     */
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsServiceImpl userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
     }
+
+    /**
+     * Filters incoming requests to authenticate based on JWT token.
+     *
+     * @param request     HTTP request object.
+     * @param response    HTTP response object.
+     * @param filterChain Filter chain for processing the request.
+     * @throws ServletException If an error occurs during servlet processing.
+     * @throws IOException      If an I/O error occurs during the execution of the filter.
+     */
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -56,3 +86,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+
