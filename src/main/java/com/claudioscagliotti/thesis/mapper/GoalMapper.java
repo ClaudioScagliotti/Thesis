@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.mapper;
 
 import com.claudioscagliotti.thesis.dto.response.CountryOfProductionDto;
-import com.claudioscagliotti.thesis.dto.response.GoalDto;
+import com.claudioscagliotti.thesis.dto.request.GoalDto;
 import com.claudioscagliotti.thesis.dto.response.KeywordDto;
 import com.claudioscagliotti.thesis.enumeration.GoalTypeEnum;
 import com.claudioscagliotti.thesis.enumeration.tmdb.GenreEnum;

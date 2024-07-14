@@ -1,6 +1,5 @@
 package com.claudioscagliotti.thesis.proxy.tmdb;
 
-import com.claudioscagliotti.thesis.configuration.TmdbConfig;
 import com.claudioscagliotti.thesis.dto.tmdb.response.authentication.AuthenticationResource;
 import com.claudioscagliotti.thesis.dto.tmdb.response.genre.GenreResponse;
 import com.claudioscagliotti.thesis.dto.tmdb.response.keyword.KeywordResponse;
@@ -36,20 +35,14 @@ import org.springframework.web.client.RestTemplate;
 public class TmdbApiClient {
     private static final String TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
     private final RestTemplate restTemplate;
-    private final String apiKey;
-    private final String apiToken;
 
     /**
      * Constructs TmdbApiClient with RestTemplate, API key, and API token dependencies.
      *
      * @param restTemplate Configured RestTemplate for making API calls to TMDB.
-     * @param tmdbConfig   TmdbConfig object containing API key and token configurations.
      */
-    public TmdbApiClient(@Qualifier("tmdbRestTemplate") RestTemplate restTemplate,
-                         TmdbConfig tmdbConfig) {
+    public TmdbApiClient(@Qualifier("tmdbRestTemplate") RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.apiKey = tmdbConfig.getApiKey();
-        this.apiToken = tmdbConfig.getApiToken();
     }
     /**
      * Authenticates with the TMDB API using the provided API token.
@@ -61,11 +54,7 @@ public class TmdbApiClient {
     public AuthenticationResource authenticate() {
         String url = TMDB_API_BASE_URL + "/authentication";
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("accept", "application/json");
-            headers.set("Authorization", "Bearer " + this.apiToken);
-
-            HttpEntity<String> entity = new HttpEntity<>(headers);
+            HttpEntity<String> entity = new HttpEntity<>(new HttpHeaders());
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
@@ -95,11 +84,8 @@ public class TmdbApiClient {
      */
     public MovieResponse getMovies(String pathVariable) {
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("accept", "application/json");
-            headers.set("Authorization", "Bearer " + this.apiToken);
             ObjectMapper objectMapper = new ObjectMapper();
-            HttpEntity<String> entity = new HttpEntity<>(headers);
+            HttpEntity<String> entity = new HttpEntity<>(new HttpHeaders());
 
             String url = TMDB_API_BASE_URL + pathVariable;
 
@@ -134,11 +120,7 @@ public class TmdbApiClient {
     public KeywordResponse searchKeywords(String keyword) {
         String url = TMDB_API_BASE_URL + "/search/keyword?query=" + keyword;
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("accept", "application/json");
-            headers.set("Authorization", "Bearer " + this.apiToken);
-
-            HttpEntity<String> entity = new HttpEntity<>(headers);
+            HttpEntity<String> entity = new HttpEntity<>(new HttpHeaders());
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 
@@ -165,11 +147,7 @@ public class TmdbApiClient {
     public GenreResponse getGenres() {
         String url = TMDB_API_BASE_URL + "/genre/movie/list";
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("accept", "application/json");
-            headers.set("Authorization", "Bearer " + this.apiToken);
-
-            HttpEntity<String> entity = new HttpEntity<>(headers);
+            HttpEntity<String> entity = new HttpEntity<>(new HttpHeaders());
 
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 

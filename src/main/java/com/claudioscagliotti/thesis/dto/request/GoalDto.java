@@ -1,5 +1,7 @@
-package com.claudioscagliotti.thesis.dto.response;
+package com.claudioscagliotti.thesis.dto.request;
 
+import com.claudioscagliotti.thesis.dto.response.CountryOfProductionDto;
+import com.claudioscagliotti.thesis.dto.response.KeywordDto;
 import com.claudioscagliotti.thesis.enumeration.tmdb.GenreEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

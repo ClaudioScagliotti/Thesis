@@ -1,6 +1,6 @@
 package com.claudioscagliotti.thesis.service;
 
-import com.claudioscagliotti.thesis.dto.response.GoalDto;
+import com.claudioscagliotti.thesis.dto.request.GoalDto;
 import com.claudioscagliotti.thesis.dto.tmdb.response.movie.MovieResponse;
 import com.claudioscagliotti.thesis.enumeration.tmdb.MetohdEnum;
 import com.claudioscagliotti.thesis.enumeration.tmdb.QueryParamEnum;

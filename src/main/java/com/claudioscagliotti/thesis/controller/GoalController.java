@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.controller;
 
 import com.claudioscagliotti.thesis.dto.response.GenericResponse;
-import com.claudioscagliotti.thesis.dto.response.GoalDto;
+import com.claudioscagliotti.thesis.dto.request.GoalDto;
 import com.claudioscagliotti.thesis.service.GoalService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
