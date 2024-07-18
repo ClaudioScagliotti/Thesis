@@ -25,4 +25,8 @@ public class BadgeEntity {
 
     @ManyToMany(mappedBy = "badgeEntityList", fetch = FetchType.EAGER)
     private List<UserEntity> userEntityList;
+
+    @ManyToOne
+    @JoinColumn(name = "genre_to_unlock", referencedColumnName = "id")
+    private GenreEntity genreToUnlock;
 }
