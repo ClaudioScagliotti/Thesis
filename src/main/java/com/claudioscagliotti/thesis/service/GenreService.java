@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -52,11 +53,8 @@ public class GenreService {
      */
     @Transactional
     public GenreEntity getGenreByNameAndSaveIfNotExists(GenreEntity entity) {
-        GenreEntity genreEntityByName = genreRepository.getGenreEntityByName(entity.getName());
-        if (genreEntityByName == null) {
-            return genreRepository.save(entity);
-        }
-        return genreEntityByName;
+        Optional<GenreEntity> genreEntityByName = genreRepository.getGenreEntityByName(entity.getName());
+        return genreEntityByName.orElseGet(() -> genreRepository.save(entity));
     }
 
     /**
