@@ -95,7 +95,8 @@ public class AdviceService {
             adviceEntity.setDeadline(LocalDateTime.now().plusDays(daysUntilDeadline));
             return adviceMapper.toAdviceDto(adviceRepository.save(adviceEntity));
         } else {
-            throw new NoAdviceAvailableException("There are no uncompleted advices for the user with username: " + username);
+            throw new NoAdviceAvailableException("There are no uncompleted advices for the user with username: " + username+
+                    ". Create a new Goal and generate new advices!");
         }
     }
 
@@ -160,6 +161,7 @@ public class AdviceService {
             if (adviceEntity.getDeadline().isAfter(LocalDateTime.now()) &&
                     quizCorrectPercentage > successPercentage) {
                 adviceEntity.setStatus(AdviceStatusEnum.COMPLETED);
+                //TODO use this advice to user statistics to get badges and profiles
                 userService.addPoints(userService.findByUsername(username), adviceEntity.getPoints());
             } else {
                 adviceEntity.setStatus(AdviceStatusEnum.FAILED);
