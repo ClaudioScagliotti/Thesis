@@ -48,6 +48,8 @@ public class AdviceService {
     private final UserRepository userRepository;
     private final GenreService genreService;
     private final UserService userService;
+    private final UserStatsService userStatsService;
+    private final BadgeService badgeService;
 
     /**
      * Constructs an AdviceService with the required dependencies.
@@ -61,10 +63,12 @@ public class AdviceService {
      * @param userRepository   The repository for managing UserEntity instances.
      * @param genreService     The service for managing movie genres.
      * @param userService      The service for managing UserEntity instances.
+     * @param userStatsService The service for managing UserStatsEntity instances
+     * @param badgeService     The service for managing Badge
      */
     public AdviceService(AdviceRepository adviceRepository, AdviceMapper adviceMapper, GoalService goalService,
                          TmdbApiClient client, MovieMapper movieMapper, MovieService movieService,
-                         UserRepository userRepository, GenreService genreService, UserService userService) {
+                         UserRepository userRepository, GenreService genreService, UserService userService, UserStatsService userStatsService, BadgeService badgeService) {
         this.adviceRepository = adviceRepository;
         this.adviceMapper = adviceMapper;
         this.goalService = goalService;
@@ -74,6 +78,8 @@ public class AdviceService {
         this.userRepository = userRepository;
         this.genreService = genreService;
         this.userService = userService;
+        this.userStatsService = userStatsService;
+        this.badgeService = badgeService;
     }
 
     /**
@@ -161,7 +167,8 @@ public class AdviceService {
             if (adviceEntity.getDeadline().isAfter(LocalDateTime.now()) &&
                     quizCorrectPercentage > successPercentage) {
                 adviceEntity.setStatus(AdviceStatusEnum.COMPLETED);
-                //TODO use this advice to user statistics to get badges and profiles
+                userStatsService.addUserStats(adviceEntity.getUserEntity(), adviceEntity.getMovie().getGenreEntities());
+                badgeService.checkBadgeForUser(adviceEntity.getUserEntity());
                 userService.addPoints(userService.findByUsername(username), adviceEntity.getPoints());
             } else {
                 adviceEntity.setStatus(AdviceStatusEnum.FAILED);
