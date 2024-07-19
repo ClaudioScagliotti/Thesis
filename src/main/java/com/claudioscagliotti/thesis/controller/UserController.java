@@ -14,6 +14,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -122,10 +125,17 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
+    /**
+     * Controller method to retrieve all user statistics.
+     * This method handles GET requests to the stats/all endpoint.
+     *
+     * @return a ResponseEntity containing a GenericResponse with a list of user's statistics.
+     * The response will include a success message and all the user's statistics data if the operation
+     * is successful. In case of an error, it will return an error message and an HTTP 500 status.
+     */
     @GetMapping
-    @RequestMapping("all/stats")
-    public ResponseEntity<GenericResponse<List<UserStatsDto>>> getUserStats(){
+    @RequestMapping("stats/all")
+    public ResponseEntity<GenericResponse<List<UserStatsDto>>> getUsersStats(){
         try {
             List<UserStatsDto> allUserStats = userStatsService.getAllUserStats(RoleEnum.USER);
             String message = "Retrieved all " + allUserStats.size() + " users";
@@ -134,6 +144,30 @@ public class UserController {
 
         } catch (Exception e) {
             GenericResponse<List<UserStatsDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    /**
+     * Controller method to retrieve user statistics.
+     * This method handles GET requests to the /stats endpoint.
+     *
+     * @return a ResponseEntity containing a GenericResponse with the user's statistics.
+     * The response will include a success message and the user's statistics data if the operation
+     * is successful. In case of an error, it will return an error message and an HTTP 500 status.
+     */
+    @GetMapping
+    @RequestMapping("stats")
+    public ResponseEntity<GenericResponse<UserStatsDto>> getUserStats(){
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            UserStatsDto userStats = userStatsService.getUserStats(userDetails.getUsername());
+            String message = "Retrieved stats for user: " + userDetails.getUsername();
+            GenericResponse<UserStatsDto> response = new GenericResponse<>("success", message, userStats);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            GenericResponse<UserStatsDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

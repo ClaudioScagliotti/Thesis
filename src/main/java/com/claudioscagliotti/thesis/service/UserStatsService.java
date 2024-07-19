@@ -89,12 +89,41 @@ public class UserStatsService {
         List<UserEntity> users = userService.getAllUsersWithRole(roleEnum);
         List<UserStatsDto> dtoList= new ArrayList<>();
         for(UserEntity user: users){
-            UserStatsDto statsDto = userStatsMapper.toUserStatsDto(user);
-            statsDto.setGenreCount(getGenreCountByUserId(user.getId()));
-            statsDto.setLevel(calculateLevel(user.getPoints()));
+            UserStatsDto statsDto = getUserStatsDto(user);
             dtoList.add(statsDto);
         }
         return dtoList;
+    }
+
+    /**
+     * Retrieves the statistics for a user identified by their username.
+     *
+     * This method finds the user by their username using the `userService` and then converts
+     * the user entity into a `UserStatsDto` object by calling the `getUserStatsDto` method.
+     *
+     * @param username the username of the user whose statistics are to be retrieved.
+     * @return a `UserStatsDto` object containing the user's statistics including genre counts and level.
+     */
+    public UserStatsDto getUserStats(String username) {
+        return getUserStatsDto(userService.findByUsername(username));
+    }
+
+    /**
+     * Converts a `UserEntity` object into a `UserStatsDto` object, including additional statistics.
+     *
+     * This method maps the provided `UserEntity` to a `UserStatsDto` using the `userStatsMapper`.
+     * It also sets the genre count and level for the user by calling `getGenreCountByUserId` and
+     * `calculateLevel` methods, respectively.
+     *
+     * @param user the `UserEntity` object for which the statistics are to be retrieved.
+     * @return a `UserStatsDto` object containing the user's statistics, including genre counts and level.
+     * @throws IllegalArgumentException if the user's points are invalid for level calculation.
+     */
+    public UserStatsDto getUserStatsDto(UserEntity user) {
+        UserStatsDto statsDto = userStatsMapper.toUserStatsDto(user);
+        statsDto.setGenreCount(getGenreCountByUserId(user.getId()));
+        statsDto.setLevel(calculateLevel(user.getPoints()));
+        return statsDto;
     }
 
     /**

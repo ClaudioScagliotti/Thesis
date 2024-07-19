@@ -40,7 +40,7 @@ public class UserEntity implements UserDetails {
     @Column(name = "points", nullable = false)
     private int points;
     @Column(name = "streak", nullable = false)
-    private int streak; //TODO IMPLEMENT STREAK
+    private int streak; // TODO IMPLEMENT STREAK
     @Column(name = "age", nullable = false)
     private int age;
     @Column(name = "creation_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
