@@ -23,7 +23,7 @@ public class BadgeEntity {
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "badgeEntityList", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "badgeEntitySet", fetch = FetchType.EAGER)
     private List<UserEntity> userEntityList;
 
     @ManyToOne

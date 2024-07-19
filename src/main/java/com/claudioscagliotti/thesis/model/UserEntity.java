@@ -40,7 +40,7 @@ public class UserEntity implements UserDetails {
     @Column(name = "points", nullable = false)
     private int points;
     @Column(name = "streak", nullable = false)
-    private int streak;
+    private int streak; //TODO IMPLEMENT STREAK
     @Column(name = "age", nullable = false)
     private int age;
     @Column(name = "creation_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -55,7 +55,7 @@ public class UserEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "app_user_id"),
             inverseJoinColumns = @JoinColumn(name = "badge_id")
     )
-    private Set<BadgeEntity> badgeEntityList;
+    private Set<BadgeEntity> badgeEntitySet;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "app_user_course",
