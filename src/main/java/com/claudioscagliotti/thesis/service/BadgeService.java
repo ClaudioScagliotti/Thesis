@@ -68,8 +68,8 @@ public class BadgeService {
         BadgeEntity badgeEntity = badgeRepository.findById(badgeId)
                 .orElseThrow(() -> new EntityNotFoundException("Badge not found with id: " + badgeId));
 
-        if (!userEntity.getBadgeEntityList().contains(badgeEntity)) {
-            userEntity.getBadgeEntityList().add(badgeEntity);
+        if (!userEntity.getBadgeEntitySet().contains(badgeEntity)) {
+            userEntity.getBadgeEntitySet().add(badgeEntity);
             userService.saveUser(userEntity);
         } else {
             throw new EntityExistsException("User already has this badge.");

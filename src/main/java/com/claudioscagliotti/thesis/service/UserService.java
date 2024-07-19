@@ -1,6 +1,7 @@
 package com.claudioscagliotti.thesis.service;
 
 import com.claudioscagliotti.thesis.dto.request.RegisterRequest;
+import com.claudioscagliotti.thesis.enumeration.RoleEnum;
 import com.claudioscagliotti.thesis.mapper.UserMapper;
 import com.claudioscagliotti.thesis.model.CourseEntity;
 import com.claudioscagliotti.thesis.model.GoalEntity;
@@ -107,5 +108,16 @@ public class UserService {
         int totalPoints = userEntity.getPoints() + points;
         userEntity.setPoints(totalPoints);
         userRepository.save(userEntity);
+    }
+    /**
+     * Retrieves all users with a specific role.
+     *
+     * This method fetches all users from the repository that have the specified role.
+     *
+     * @param roleEnum the role of the users to retrieve
+     * @return a list of UserEntity objects representing users with the specified role
+     */
+    public List<UserEntity> getAllUsersWithRole(RoleEnum roleEnum){
+        return userRepository.getAllUserByRole(roleEnum);
     }
 }

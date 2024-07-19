@@ -4,18 +4,20 @@ import com.claudioscagliotti.thesis.dto.request.LoginRequest;
 import com.claudioscagliotti.thesis.dto.request.RegisterRequest;
 import com.claudioscagliotti.thesis.dto.response.AuthenticationResponse;
 import com.claudioscagliotti.thesis.dto.response.GenericResponse;
+import com.claudioscagliotti.thesis.dto.response.UserStatsDto;
+import com.claudioscagliotti.thesis.enumeration.RoleEnum;
 import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
 import com.claudioscagliotti.thesis.service.AuthenticationService;
+import com.claudioscagliotti.thesis.service.UserStatsService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Rest controller for managing user authentication.
@@ -24,14 +26,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 public class UserController {
     private final AuthenticationService authService;
+    private final UserStatsService userStatsService;
 
     /**
      * Constructs a UserController instance with the provided AuthenticationService dependency.
      *
-     * @param authService The AuthenticationService dependency.
+     * @param authService      The AuthenticationService dependency.
+     * @param userStatsService The UserStatsService dependency.
      */
-    public UserController(AuthenticationService authService) {
+    public UserController(AuthenticationService authService, UserStatsService userStatsService) {
         this.authService = authService;
+        this.userStatsService = userStatsService;
     }
 
     /**
@@ -114,6 +119,21 @@ public class UserController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             GenericResponse<Void> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @GetMapping
+    @RequestMapping("all/stats")
+    public ResponseEntity<GenericResponse<List<UserStatsDto>>> getUserStats(){
+        try {
+            List<UserStatsDto> allUserStats = userStatsService.getAllUserStats(RoleEnum.USER);
+            String message = "Retrieved all " + allUserStats.size() + " users";
+            GenericResponse<List<UserStatsDto>> response = new GenericResponse<>("success", message, allUserStats);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            GenericResponse<List<UserStatsDto>> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
