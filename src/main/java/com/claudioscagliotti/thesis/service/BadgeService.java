@@ -87,7 +87,16 @@ public class BadgeService {
         List<BadgeEntity> badgeEntityList = badgeRepository.findAll();
         return badgeMapper.toBadgeDto(badgeEntityList);
     }
-
+    /**
+     * Checks if the user has accumulated enough movies in a specific genre to warrant a badge.
+     *
+     * This method retrieves the genre counts for the specified user and compares these counts to a predefined threshold
+     * (defined by the {@code numberOfFilm} variable). If the number of movies for a genre exceeds this threshold, the method checks
+     * if there is a badge associated with that genre. If a badge is found, it is assigned to the user.
+     *
+     * @param user The user for whom to check and assign badges. Must not be {@code null}.
+     * @throws NullPointerException If {@code user} is {@code null}.
+     */
     public void checkBadgeForUser(UserEntity user) {
         Map<Long, Long> genreCountByUserId = userStatsService.getGenreCountByUserId(user.getId());
 
