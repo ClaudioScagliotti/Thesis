@@ -8,6 +8,7 @@ import com.claudioscagliotti.thesis.repository.GenreRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,17 +59,36 @@ public class GenreService {
     }
 
     /**
-     * Maps genre IDs to genre entities.
+     * Maps genre Tmdb IDs to genre entities.
      *
-     * @param genreIds The list of genre IDs.
+     * @param genreTmdbId The list of genre Tmdb IDs.
      * @return List of genre entities mapped from the provided genre IDs.
      */
-    public List<GenreEntity> mapGenreIdsToEntities(List<Integer> genreIds) {
-        if (genreIds == null || genreIds.isEmpty()) {
-            return null;
+    public List<GenreEntity> mapGenreTmdbIdsToEntities(List<Long> genreTmdbId) {
+        if (genreTmdbId == null || genreTmdbId.isEmpty()) {
+            return Collections.emptyList();
         }
-        return genreIds.stream()
-                .map(genreRepository::getGenreEntityByTmdbId)
+        return genreTmdbId.stream()
+                .map(genreRepository::findByTmdbId)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Maps genre IDs to genre entities.
+     *
+     * @param genreId The list of genre IDs.
+     * @return List of genre entities mapped from the provided genre IDs.
+     */
+    public List<GenreEntity> mapGenreIdsToEntities(List<Long> genreId) {
+        if (genreId == null || genreId.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return genreId.stream()
+                .map(genreRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
     }
 
@@ -78,7 +98,8 @@ public class GenreService {
      * @param genreEntities The list of genre entities.
      * @return List of genre IDs mapped from the provided genre entities.
      */
-    public List<Integer> mapGenreEntitiesToIds(List<GenreEntity> genreEntities) {
+
+    public List<Long> mapGenreEntitiesToIds(List<GenreEntity> genreEntities) {
         if (genreEntities == null || genreEntities.isEmpty()) {
             return null;
         }
