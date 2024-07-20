@@ -15,10 +15,10 @@ import java.util.List;
 public class MovieEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @Column(length = 800)
     private String overview;
-    @Column(name = "original_language", length = 255)
+    @Column(name = "original_language")
     private String originalLanguage;
     @Column(name = "original_title", length = 400)
     private String originalTitle;
@@ -34,5 +34,5 @@ public class MovieEntity {
     @Column(name = "poster_path", length = 500)
     private String posterPath; //TODO GESTIONE IMMAGINI https://image.tmdb.org/t/p/, Poster Sizes: w92, w154, w185, w342, w500, w780, original.
     private LocalDate releaseDate;
-    private Integer tmdbId;
+    private Long tmdbId;
 }

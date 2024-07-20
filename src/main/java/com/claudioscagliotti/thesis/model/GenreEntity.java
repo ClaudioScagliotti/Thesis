@@ -26,13 +26,13 @@ public class GenreEntity {
     @ManyToMany(mappedBy = "genreEntities")
     private List<MovieEntity> movies;
     @Column(name = "tmdb_id", unique = true)
-    private Integer tmdbId;
+    private Long tmdbId;
 
     public GenreEntity(String name) {
         this.name = name;
     }
 
-    public GenreEntity(String name, Integer tmdbId) {
+    public GenreEntity(String name, Long tmdbId) {
         this.name = name;
         this.tmdbId = tmdbId;
     }

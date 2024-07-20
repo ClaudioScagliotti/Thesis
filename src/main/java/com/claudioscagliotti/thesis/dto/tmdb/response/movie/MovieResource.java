@@ -9,7 +9,7 @@ public record MovieResource(
 		@JsonProperty("original_title") String originalTitle,
 		Boolean video,
 		String title,
-		@JsonProperty("genre_ids") List<Integer> genreIds,
+		@JsonProperty("genre_ids") List<Long> genreIds,
 		@JsonProperty("poster_path") String posterPath,
 		@JsonProperty("backdrop_path") String backdropPath,
 		@JsonProperty("release_date") String releaseDate,

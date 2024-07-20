@@ -13,13 +13,11 @@ import org.mapstruct.Named;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-
-@Mapper(componentModel = "spring", uses = GenreService.class)
+@Mapper(componentModel = "spring", uses = {GenreService.class})
 public interface MovieMapper {
 
     @Mapping(source = "id", target = "tmdbId")
-    @Mapping(source = "genreIds", target = "genreEntities", qualifiedByName = "mapGenreIdsToEntities")
+    @Mapping(source = "genreIds", target = "genreEntities", qualifiedByName = "mapGenreTmdbIdsToEntities")
     MovieEntity toMovieEntity(MovieResource movieResource, @Context GenreService genreService);
 
     @Mapping(source = "tmdbId", target = "id")
@@ -29,14 +27,14 @@ public interface MovieMapper {
     @Mapping(source = "genreEntities", target = "genreIds", qualifiedByName = "mapGenreEntitiesToEnums")
     MovieDto toMovieDto(MovieEntity movieEntity);
 
-    @Named("mapGenreIdsToEntities")
-    default List<GenreEntity> mapGenreIdsToEntities(List<Integer> genreIds, @Context GenreService genreService) {
-        return genreService.mapGenreIdsToEntities(genreIds);
+    @Named("mapGenreTmdbIdsToEntities")
+    default List<GenreEntity> mapGenreTmdbIdsToEntities(List<Long> genreIds, @Context GenreService genreService) {
+        return genreService.mapGenreTmdbIdsToEntities(genreIds);
     }
 
     @Named("mapGenreEntitiesToIds")
-    default List<Integer> mapGenreEntitiesToIds(List<GenreEntity> genreEntities, @Context GenreService genreService) {
-        return genreService.mapGenreEntitiesToIds(genreEntities);
+    default List<Long> mapGenreEntitiesToIds(List<GenreEntity> genreEntities) {
+        return genreEntities.stream().map(GenreEntity::getTmdbId).collect(Collectors.toList());
     }
 
     @Named("mapGenreEntitiesToEnums")

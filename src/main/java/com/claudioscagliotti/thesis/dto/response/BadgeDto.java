@@ -15,4 +15,6 @@ public class BadgeDto {
     private String name;
     @JsonIgnore
     private Long genreToUnlock;
+
+    private Float level;
 }

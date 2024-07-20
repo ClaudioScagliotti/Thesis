@@ -11,6 +11,6 @@ public record MovieDto(String overview,
                        List<GenreEnum> genreIds,
                        String posterPath,
                        String releaseDate,
-                       Integer tmdbId
+                       Long tmdbId
 ) {
 }

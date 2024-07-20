@@ -2,38 +2,39 @@ package com.claudioscagliotti.thesis.enumeration.tmdb;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public enum GenreEnum {
-    ACTION(28, "Action"),
-    ADVENTURE(12, "Adventure"),
-    ANIMATION(16, "Animation"),
-    COMEDY(35, "Comedy"),
-    CRIME(80, "Crime"),
-    DOCUMENTARY(99, "Documentary"),
-    DRAMA(18, "Drama"),
-    FAMILY(10751, "Family"),
-    FANTASY(14, "Fantasy"),
-    HISTORY(36, "History"),
-    HORROR(27, "Horror"),
-    MUSIC(10402, "Music"),
-    MYSTERY(9648, "Mystery"),
-    ROMANCE(10749, "Romance"),
-    SCIENCE_FICTION(878, "Science Fiction"),
-    TV_MOVIE(10770, "TV Movie"),
-    THRILLER(53, "Thriller"),
-    WAR(10752, "War"),
-    WESTERN(37, "Western");
+    ACTION(28L, "Action"),
+    ADVENTURE(12L, "Adventure"),
+    ANIMATION(16L, "Animation"),
+    COMEDY(35L, "Comedy"),
+    CRIME(80L, "Crime"),
+    DOCUMENTARY(99L, "Documentary"),
+    DRAMA(18L, "Drama"),
+    FAMILY(10751L, "Family"),
+    FANTASY(14L, "Fantasy"),
+    HISTORY(36L, "History"),
+    HORROR(27L, "Horror"),
+    MUSIC(10402L, "Music"),
+    MYSTERY(9648L, "Mystery"),
+    ROMANCE(10749L, "Romance"),
+    SCIENCE_FICTION(878L, "Science Fiction"),
+    TV_MOVIE(10770L, "TV Movie"),
+    THRILLER(53L, "Thriller"),
+    WAR(10752L, "War"),
+    WESTERN(37L, "Western");
 
-    private final int tmdb_id;
+    private final Long tmdb_id;
     private final String name;
 
-    GenreEnum(int tmdb_id, String name) {
+    GenreEnum(Long tmdb_id, String name) {
         this.tmdb_id = tmdb_id;
         this.name = name;
     }
 
-    public int getTmdbId() {
+    public Long getTmdbId() {
         return tmdb_id;
     }
 
@@ -41,9 +42,9 @@ public enum GenreEnum {
         return name;
     }
 
-    public static GenreEnum getById(int id) {
+    public static GenreEnum getById(Long id) {
         for (GenreEnum genre : values()) {
-            if (genre.tmdb_id == id) {
+            if (Objects.equals(genre.tmdb_id, id)) {
                 return genre;
             }
         }
@@ -65,9 +66,9 @@ public enum GenreEnum {
                 .collect(Collectors.toList());
     }
 
-    public static GenreEnum fromTmdbId(int tmdbId) {
+    public static GenreEnum fromTmdbId(Long tmdbId) {
         for (GenreEnum genre : values()) {
-            if (genre.getTmdbId() == tmdbId) {
+            if (Objects.equals(genre.getTmdbId(), tmdbId)) {
                 return genre;
             }
         }

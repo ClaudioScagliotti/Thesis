@@ -32,7 +32,7 @@ public class MovieService {
      * @param externalId The id of the movie on TMDB.
      * @return An optional of the MovieEntity.
      */
-    public Optional<MovieEntity> findByTmdvlId(Integer externalId) {
+    public Optional<MovieEntity> findByTmdvlId(Long externalId) {
         return movieRepository.findByTmdbId(externalId);
     }
 
