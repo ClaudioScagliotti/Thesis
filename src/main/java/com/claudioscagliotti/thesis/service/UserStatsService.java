@@ -33,8 +33,8 @@ public class UserStatsService {
      * Constructor for UserStatsService.
      *
      * @param userStatsRepository the repository to manage user statistics
-     * @param userService
-     * @param userStatsMapper
+     * @param userService the service to retrieve the users
+     * @param userStatsMapper the mapper for the UserStatsDto
      */
     public UserStatsService(UserStatsRepository userStatsRepository, UserService userService, UserStatsMapper userStatsMapper) {
         this.userStatsRepository = userStatsRepository;
