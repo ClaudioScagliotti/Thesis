@@ -1,15 +1,19 @@
 package com.claudioscagliotti.thesis.proxy.openai;
 
-import com.claudioscagliotti.thesis.dto.request.openai.ChatRequest;
 import com.claudioscagliotti.thesis.dto.openai.Choice;
 import com.claudioscagliotti.thesis.dto.openai.Message;
+import com.claudioscagliotti.thesis.dto.request.openai.ChatRequest;
 import com.claudioscagliotti.thesis.dto.request.openai.PromptRequest;
 import com.claudioscagliotti.thesis.dto.response.openai.ChatResponse;
 import com.claudioscagliotti.thesis.enumeration.RoleplayProfileEnum;
 import com.claudioscagliotti.thesis.exception.ExternalApiException;
 import com.claudioscagliotti.thesis.exception.InvalidApiKeyException;
 import com.claudioscagliotti.thesis.exception.UnknownRoleException;
+import com.claudioscagliotti.thesis.exception.UnlockedRoleException;
+import com.claudioscagliotti.thesis.model.UserEntity;
 import com.claudioscagliotti.thesis.service.ChatSessionService;
+import com.claudioscagliotti.thesis.service.RoleplayProfileService;
+import com.claudioscagliotti.thesis.service.UserService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -46,6 +50,8 @@ public class OpenAiApiClient {
     private final RestTemplate restTemplate;
     private final String apiUrl;
     private final ChatSessionService chatSessionService;
+    private final RoleplayProfileService roleplayProfileService;
+    private final UserService userService;
     @Value("${openai.model}")
     private String model;
 
@@ -71,17 +77,21 @@ public class OpenAiApiClient {
     /**
      * Constructs OpenAiApiClient with RestTemplate, API URL, and ChatSessionService dependencies.
      *
-     * @param restTemplate      Configured RestTemplate for making API calls to OpenAI.
-     * @param apiUrl            URL of the OpenAI API endpoint.
-     * @param chatSessionService Service for managing and retrieving user conversation histories.
+     * @param restTemplate           Configured RestTemplate for making API calls to OpenAI.
+     * @param apiUrl                 URL of the OpenAI API endpoint.
+     * @param chatSessionService     Service for managing and retrieving user conversation histories.
+     * @param roleplayProfileService Service for managing rules of roles
+     * @param userService
      */
     public OpenAiApiClient(
             @Qualifier("openaiRestTemplate") RestTemplate restTemplate,
             @Value("${openai.api.url}") String apiUrl,
-            ChatSessionService chatSessionService) {
+            ChatSessionService chatSessionService, RoleplayProfileService roleplayProfileService, UserService userService) {
         this.restTemplate = restTemplate;
         this.apiUrl = apiUrl;
         this.chatSessionService = chatSessionService;
+        this.roleplayProfileService = roleplayProfileService;
+        this.userService = userService;
     }
 
     /**
@@ -162,9 +172,9 @@ public class OpenAiApiClient {
      * @return Profile description associated with the provided role.
      * @throws UnknownRoleException If the provided role does not match any known roles.
      */
-    public String getProfile(String role) {
+    public RoleplayProfileEnum getProfile(String role) {
         try {
-            return RoleplayProfileEnum.fromRole(role).getProfileDescription();
+            return RoleplayProfileEnum.fromRole(role);
         } catch (IllegalArgumentException e) {
             throw new UnknownRoleException("Unknown role: " + role);
         }
@@ -185,7 +195,7 @@ public ChatRequest retrieveConversationHistory(String role, PromptRequest reques
     int index= Choice.calculateLastIndex(conversationHistory);
 
     if (conversationHistory.isEmpty()) {
-        Message profileMessage = new Message("system", getProfile(role));
+        Message profileMessage = new Message("system", getProfile(role).getProfileDescription());
         Choice profileChoice= new Choice(++index, profileMessage);
         newChoices.add(profileChoice);
     }
@@ -241,5 +251,20 @@ public ChatRequest retrieveConversationHistory(String role, PromptRequest reques
         Message lastMessage = messages.get(messages.lastIndexOf(messages.get(messages.size() - 1)));
         addResponseToConversationHistory(authentication.getName(), messages);
         return lastMessage;
+    }
+
+    public void checkRolePermission(String username, String role){
+        RoleplayProfileEnum roleplayProfileEnum = getProfile(role);
+        UserEntity userEntity = userService.findByUsername(username);
+
+        boolean checkUnlockedRole = roleplayProfileService.checkUnlockedRole(userEntity, roleplayProfileEnum);
+        if(!checkUnlockedRole){
+            throw new UnlockedRoleException("The role "+roleplayProfileEnum.name()+" for the user "+username+" is unlocked");
+        }
+    }
+    public List<String> getAllUnlockedProfiles(String username){
+        UserEntity userEntity = userService.findByUsername(username);
+        List<RoleplayProfileEnum> allUnlockedProfiles = roleplayProfileService.getAllUnlockedProfiles(userEntity);
+        return RoleplayProfileEnum.convertEnumListToStringList(allUnlockedProfiles);
     }
 }

@@ -8,11 +8,13 @@ import com.claudioscagliotti.thesis.dto.response.GenericResponse;
 import com.claudioscagliotti.thesis.dto.response.openai.ChatResponse;
 import com.claudioscagliotti.thesis.exception.InvalidApiKeyException;
 import com.claudioscagliotti.thesis.exception.UnknownRoleException;
+import com.claudioscagliotti.thesis.exception.UnlockedRoleException;
 import com.claudioscagliotti.thesis.proxy.openai.OpenAiApiClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.List;
 public class ChatController {
 
     private final OpenAiApiClient openAiApiClient;
+
 
     /**
      * Constructs a ChatController instance with the provided dependencies.
@@ -46,9 +49,11 @@ public class ChatController {
     public ResponseEntity<GenericResponse<Message>> chatWithRole(@PathVariable("role") String role,
                                                                  @RequestBody PromptRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        ChatRequest chatRequest = openAiApiClient.retrieveConversationHistory(role, request, authentication.getName());
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         try {
+            openAiApiClient.checkRolePermission(userDetails.getUsername(), role);
+            ChatRequest chatRequest = openAiApiClient.retrieveConversationHistory(role, request, authentication.getName());
             ChatResponse response = openAiApiClient.chat(chatRequest);
 
             Message lastMessage = openAiApiClient.getMessageLastMessageAndUpdateConversationHistory(authentication, response);
@@ -57,7 +62,7 @@ public class ChatController {
             GenericResponse<Message> responseBody = new GenericResponse<>("success", message, lastMessage);
             return ResponseEntity.ok(responseBody);
 
-        } catch (UnknownRoleException e) {
+        } catch (UnknownRoleException | UnlockedRoleException e) {
             GenericResponse<Message> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 
@@ -92,5 +97,24 @@ public class ChatController {
             String errorMessage = "Failed to retrieve conversation history for user: " + authentication.getName();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericResponse<>("error", errorMessage, null));
         }
+    }
+    /**
+     * Retrieves all the roleplay profiles that the user is currently allowed to chat with.
+     *
+     * @return A ResponseEntity containing the list of roleplay profiles.
+     */
+    @GetMapping("/available-roles")
+    public ResponseEntity<GenericResponse<List<String>>> getAvailableRoles() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+        List<String> availableRoles = openAiApiClient.getAllUnlockedProfiles(userDetails.getUsername());
+
+        if (availableRoles.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new GenericResponse<>("error", "No available roles found for user: " + userDetails.getUsername(), null));
+        }
+
+        return ResponseEntity.ok(new GenericResponse<>("success", "Available roles retrieved successfully", availableRoles));
     }
 }
