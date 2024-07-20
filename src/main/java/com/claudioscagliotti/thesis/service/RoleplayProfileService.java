@@ -33,8 +33,14 @@ public class RoleplayProfileService {
         specificBadgeUnlockProfiles.add(RoleplayProfileEnum.FORD);
         specificBadgeUnlockProfiles.add(RoleplayProfileEnum.KUROSAWA);
         specificBadgeUnlockProfiles.add(RoleplayProfileEnum.HITCHCOCK);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.ALLEN);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.WES_ANDERSON);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.NOLAN);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.BURTON);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.LEONE);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.ARGENTO);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.LUCAS);
     }
-
 
     public RoleplayProfileService(BadgeService badgeService) {
         this.badgeService = badgeService;
@@ -101,6 +107,10 @@ public class RoleplayProfileService {
             }
             case FORD -> {
                 return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "western expert".equals(badgeDto.getName()));
+            }
+            case LEONE -> {
+                return allBadgeByUser.stream()
                         .anyMatch(badgeDto -> "western beginner".equals(badgeDto.getName()));
             }
             case KUROSAWA -> {
@@ -111,11 +121,37 @@ public class RoleplayProfileService {
                 return allBadgeByUser.stream()
                         .anyMatch(badgeDto -> "thriller beginner".equals(badgeDto.getName()));
             }
+            case ARGENTO -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "horror beginner".equals(badgeDto.getName()));
+            }
+            case WES_ANDERSON -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "comedy beginner".equals(badgeDto.getName()));
+            }
+            case ALLEN -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "comedy expert".equals(badgeDto.getName()));
+            }
+            case NOLAN -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "science fiction beginner".equals(badgeDto.getName()));
+            }
+            case LUCAS -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "adventure beginner".equals(badgeDto.getName()));
+            }
+            case BURTON -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "mystery beginner".equals(badgeDto.getName()));
+            }
             default -> {
                 return false;
             }
         }
     }
-
+/*
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.BURTON);
+ */
 }
 
