@@ -1,9 +1,7 @@
 package com.claudioscagliotti.thesis.service;
 
-import com.claudioscagliotti.thesis.dto.request.RegisterRequest;
 import com.claudioscagliotti.thesis.enumeration.RoleEnum;
 import com.claudioscagliotti.thesis.mapper.UserMapper;
-import com.claudioscagliotti.thesis.model.CourseEntity;
 import com.claudioscagliotti.thesis.model.GoalEntity;
 import com.claudioscagliotti.thesis.model.UserEntity;
 import com.claudioscagliotti.thesis.repository.UserRepository;
@@ -32,17 +30,6 @@ public class UserService {
     public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-    }
-
-    /**
-     * Registers a new user.
-     *
-     * @param user The registration request containing user details.
-     * @return The saved UserEntity.
-     */
-    public UserEntity registerUser(RegisterRequest user) {
-        UserEntity userEntity = userMapper.toUserEntity(user);
-        return this.userRepository.save(userEntity);
     }
 
     /**
@@ -85,18 +72,21 @@ public class UserService {
     }
 
     /**
-     * Updates the user's courses.
+     * Updates the user's streak.
      *
-     * @param userId              The ID of the user.
-     * @param newCourseEntityList The new list of course entities to be set.
+     * @param userEntity   The UserEntity.
+     * @param updateOrSkip   The Boolean parameter that indicate if the streak must be increased or reset.
      */
-    @Transactional
-    public void updateUserCourses(Long userId, List<CourseEntity> newCourseEntityList) {
-        userRepository.deleteUserCourses(userId);
-        for (CourseEntity courseEntity : newCourseEntityList) {
-            userRepository.addUserCourse(userId, courseEntity.getId());
+    public void updateUserStreak(UserEntity userEntity, Boolean updateOrSkip) {
+        if(updateOrSkip){
+            userEntity.setStreak(userEntity.getStreak() + 1);
+        } else {
+            userEntity.setStreak(0);
         }
+
+        userRepository.save(userEntity);
     }
+
 
     /**
      * Adds points to the user's total points.

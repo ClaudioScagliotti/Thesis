@@ -151,7 +151,7 @@ public class AdviceService {
      */
     public AdviceDto completeAdvice(String username, Long adviceId) {
         Optional<AdviceEntity> advice = adviceRepository.findById(adviceId);
-
+        UserEntity userEntity = userService.findByUsername(username);
         if (advice.isPresent()) {
             AdviceEntity adviceEntity = advice.get();
             checkUsername(username, adviceEntity.getUserEntity().getUsername());
@@ -169,7 +169,8 @@ public class AdviceService {
                 adviceEntity.setStatus(AdviceStatusEnum.COMPLETED);
                 userStatsService.addUserStats(adviceEntity.getUserEntity(), adviceEntity.getMovie().getGenreEntities());
                 badgeService.checkBadgeForUser(adviceEntity.getUserEntity());
-                userService.addPoints(userService.findByUsername(username), adviceEntity.getPoints());
+                userService.addPoints(userEntity, adviceEntity.getPoints());
+                userService.updateUserStreak(userEntity, true);
             } else {
                 adviceEntity.setStatus(AdviceStatusEnum.FAILED);
             }
@@ -191,13 +192,14 @@ public class AdviceService {
      */
     public AdviceDto skipAdvice(String username, Long adviceId) {
         Optional<AdviceEntity> adviceEntity = adviceRepository.findById(adviceId);
-
+        UserEntity userEntity = userService.findByUsername(username);
         if (adviceEntity.isPresent()) {
             AdviceEntity entity = adviceEntity.get();
             checkUsername(username, entity.getUserEntity().getUsername());
 
             if (entity.getDeadline().isAfter(LocalDateTime.now())) {
                 entity.setStatus(AdviceStatusEnum.SKIPPED);
+                userService.updateUserStreak(userEntity, false);
             } else {
                 entity.setStatus(AdviceStatusEnum.FAILED);
             }
