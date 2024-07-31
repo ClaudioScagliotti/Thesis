@@ -37,6 +37,8 @@ public class UserEntity implements UserDetails {
     private RoleEnum role;
     @Column(name = "username", length = 100, nullable = false, unique = true)
     private String username;
+    @Column(name = "email", length = 100, nullable = false)
+    private String email;
     @Column(name = "points", nullable = false)
     private int points;
     @Column(name = "streak", nullable = false)

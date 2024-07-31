@@ -15,4 +15,6 @@ public class RegisterRequest extends LoginRequest{
     private String lastName;
     @NotBlank(message = "Role cannot be blank")
     private String role;
+    @NotBlank(message = "Mail cannot be blank")
+    private String email;
 }
