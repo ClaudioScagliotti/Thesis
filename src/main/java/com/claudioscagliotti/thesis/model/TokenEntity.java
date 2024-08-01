@@ -23,4 +23,6 @@ public class TokenEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
 }
