@@ -14,6 +14,7 @@ import com.claudioscagliotti.thesis.service.UserService;
 import com.claudioscagliotti.thesis.service.UserStatsService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -61,6 +62,9 @@ public class UserController {
             String message = "Registration succeeded for the username: " + request.getUsername();
             GenericResponse<AuthenticationResponse> response = new GenericResponse<>("success", message, register);
             return ResponseEntity.ok(response);
+        } catch (BadRequestException e) {
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         } catch (Exception e) {
             GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", "An unexpected error occurred", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);

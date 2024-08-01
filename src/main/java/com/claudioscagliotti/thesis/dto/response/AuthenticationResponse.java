@@ -3,11 +3,9 @@ package com.claudioscagliotti.thesis.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record AuthenticationResponse(@JsonProperty("access_token") String accessToken,
-                                     @JsonProperty("refresh_token") String refreshToken,
-                                     @JsonProperty("message") String message) {
-    public AuthenticationResponse(String accessToken, String refreshToken, String message) {
+                                     @JsonProperty("refresh_token") String refreshToken) {
+    public AuthenticationResponse(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
-        this.message = message;
         this.refreshToken = refreshToken;
     }
 
@@ -19,10 +17,5 @@ public record AuthenticationResponse(@JsonProperty("access_token") String access
     @Override
     public String refreshToken() {
         return refreshToken;
-    }
-
-    @Override
-    public String message() {
-        return message;
     }
 }

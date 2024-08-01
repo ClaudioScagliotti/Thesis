@@ -10,6 +10,7 @@ import com.claudioscagliotti.thesis.model.UserEntity;
 import com.claudioscagliotti.thesis.repository.TokenRepository;
 import com.claudioscagliotti.thesis.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -63,9 +64,9 @@ public class AuthenticationService {
      * @param request The registration request containing user details.
      * @return An AuthenticationResponse indicating the success or failure of registration.
      */
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterRequest request) throws BadRequestException {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            return new AuthenticationResponse(null, null, "User already exists");
+            throw  new BadRequestException("Username already exists");
         }
 
         UserEntity user = userMapper.toUserEntity(request);
@@ -78,7 +79,7 @@ public class AuthenticationService {
         String refreshToken = jwtService.generateRefreshToken(user);
 
         saveUserToken(accessToken, refreshToken, null, user);
-        return new AuthenticationResponse(accessToken, refreshToken, "User registration was successful");
+        return new AuthenticationResponse(accessToken, refreshToken);
     }
 
     /**
@@ -105,7 +106,7 @@ public class AuthenticationService {
         revokeAllTokenByUser(user);
         saveUserToken(accessToken, refreshToken, null, user);
 
-        return new AuthenticationResponse(accessToken, refreshToken, "User login was successful");
+        return new AuthenticationResponse(accessToken, refreshToken);
     }
 
     /**
@@ -160,7 +161,7 @@ public class AuthenticationService {
             revokeAllTokenByUser(user);
             saveUserToken(accessToken, refreshToken, null, user);
 
-            return new AuthenticationResponse(accessToken, refreshToken, "New tokens generated");
+            return new AuthenticationResponse(accessToken, refreshToken);
         } else {
             throw new UnauthorizedUserException("Invalid refresh token");
         }
