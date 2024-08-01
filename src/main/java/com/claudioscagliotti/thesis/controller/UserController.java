@@ -1,6 +1,8 @@
 package com.claudioscagliotti.thesis.controller;
 
 import com.claudioscagliotti.thesis.dto.request.LoginRequest;
+import com.claudioscagliotti.thesis.dto.request.PasswordChangeRequest;
+import com.claudioscagliotti.thesis.dto.request.PasswordResetRequest;
 import com.claudioscagliotti.thesis.dto.request.RegisterRequest;
 import com.claudioscagliotti.thesis.dto.response.AuthenticationResponse;
 import com.claudioscagliotti.thesis.dto.response.GenericResponse;
@@ -8,12 +10,13 @@ import com.claudioscagliotti.thesis.dto.response.UserStatsDto;
 import com.claudioscagliotti.thesis.enumeration.RoleEnum;
 import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
 import com.claudioscagliotti.thesis.service.AuthenticationService;
+import com.claudioscagliotti.thesis.service.UserService;
 import com.claudioscagliotti.thesis.service.UserStatsService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,16 +33,19 @@ import java.util.List;
 public class UserController {
     private final AuthenticationService authService;
     private final UserStatsService userStatsService;
+    private final UserService userService;
 
     /**
      * Constructs a UserController instance with the provided AuthenticationService dependency.
      *
      * @param authService      The AuthenticationService dependency.
      * @param userStatsService The UserStatsService dependency.
+     * @param userService      The UserService dependency
      */
-    public UserController(AuthenticationService authService, UserStatsService userStatsService) {
+    public UserController(AuthenticationService authService, UserStatsService userStatsService, UserService userService) {
         this.authService = authService;
         this.userStatsService = userStatsService;
+        this.userService = userService;
     }
 
     /**
@@ -77,6 +83,9 @@ public class UserController {
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
             GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (BadCredentialsException e) {
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         } catch (Exception e) {
             GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", "An unexpected error occurred", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -87,13 +96,12 @@ public class UserController {
      * Refreshes the user's authentication token.
      *
      * @param httpRequest  The HTTP request containing the refresh token.
-     * @param httpResponse The HTTP response to be updated.
      * @return A ResponseEntity containing the new authentication response.
      */
     @PostMapping("/refresh_token")
-    public ResponseEntity<GenericResponse<AuthenticationResponse>> refreshToken(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+    public ResponseEntity<GenericResponse<AuthenticationResponse>> refreshToken(HttpServletRequest httpRequest) {
         try {
-            AuthenticationResponse refreshToken = authService.refreshToken(httpRequest, httpResponse);
+            AuthenticationResponse refreshToken = authService.refreshToken(httpRequest);
             String message = "Refresh succeeded";
             GenericResponse<AuthenticationResponse> response = new GenericResponse<>("success", message, refreshToken);
             return ResponseEntity.ok(response);
@@ -171,5 +179,58 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    @PostMapping("/password-reset-request")
+    public ResponseEntity<GenericResponse<Void>> requestPasswordReset(@RequestBody PasswordResetRequest request) {
+        try {
+            userService.resetUserPassword(request);
+            String message = "Password reset link has been sent to your email.";
+            GenericResponse<Void> response = new GenericResponse<>("success", message, null);
+            return ResponseEntity.ok(response);
+        } catch (UsernameNotFoundException | EntityNotFoundException e) {
+            GenericResponse<Void> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            GenericResponse<Void> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    @PostMapping("/change-password")
+    public ResponseEntity<GenericResponse<Void>> changePassword(@RequestBody PasswordChangeRequest request) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            userService.changePassword(userDetails.getUsername(), request);
+            String message = "Your password has been successfully changed";
+            GenericResponse<Void> response = new GenericResponse<>("success", message, null);
+            return ResponseEntity.ok(response);
+        } catch (UsernameNotFoundException | EntityNotFoundException e) {
+            GenericResponse<Void> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception e) {
+            GenericResponse<Void> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    @PostMapping("/new-password")
+    public ResponseEntity<GenericResponse<Void>> saveNewPassword(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+        try {
+            authService.saveNewPassword(userService.findByUsername(request.getUsername()),request, httpRequest);
+            String message = "Your new password has been successfully saved";
+            GenericResponse<Void> response = new GenericResponse<>("success", message, null);
+            return ResponseEntity.ok(response);
+        } catch (UsernameNotFoundException | EntityNotFoundException e) {
+            GenericResponse<Void> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (UnauthorizedUserException e) {
+            GenericResponse<Void> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            GenericResponse<Void> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
 }
 
