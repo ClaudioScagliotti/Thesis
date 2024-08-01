@@ -10,7 +10,6 @@ import com.claudioscagliotti.thesis.model.UserEntity;
 import com.claudioscagliotti.thesis.repository.TokenRepository;
 import com.claudioscagliotti.thesis.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,7 +30,7 @@ import java.util.List;
 public class AuthenticationService {
 
     private final UserMapper userMapper;
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final TokenRepository tokenRepository;
@@ -41,17 +40,17 @@ public class AuthenticationService {
      * Constructs an AuthenticationService with the required dependencies.
      *
      * @param userMapper            The mapper for converting between UserEntity and DTOs.
-     * @param repository            The repository for accessing user data.
+     * @param userRepository        The repository for accessing user data.
      * @param passwordEncoder       The encoder for password hashing.
      * @param jwtService            The service for JWT token generation and validation.
      * @param tokenRepository       The repository for managing authentication tokens.
      * @param authenticationManager The authentication manager for authenticating users.
      */
-    public AuthenticationService(UserMapper userMapper, UserRepository repository,
+    public AuthenticationService(UserMapper userMapper, UserRepository userRepository,
                                  PasswordEncoder passwordEncoder, JwtService jwtService,
                                  TokenRepository tokenRepository, AuthenticationManager authenticationManager) {
         this.userMapper = userMapper;
-        this.repository = repository;
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.tokenRepository = tokenRepository;
@@ -65,7 +64,7 @@ public class AuthenticationService {
      * @return An AuthenticationResponse indicating the success or failure of registration.
      */
     public AuthenticationResponse register(RegisterRequest request) {
-        if (repository.findByUsername(request.getUsername()).isPresent()) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return new AuthenticationResponse(null, null, "User already exists");
         }
 
@@ -73,12 +72,12 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setPoints(0);
         user.setStreak(0);
-        user = repository.save(user);
+        user = userRepository.save(user);
 
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
-        saveUserToken(accessToken, refreshToken, user);
+        saveUserToken(accessToken, refreshToken, null, user);
         return new AuthenticationResponse(accessToken, refreshToken, "User registration was successful");
     }
 
@@ -97,14 +96,14 @@ public class AuthenticationService {
                 )
         );
 
-        UserEntity user = repository.findByUsername(request.getUsername())
+        UserEntity user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("No user found"));
 
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
         revokeAllTokenByUser(user);
-        saveUserToken(accessToken, refreshToken, user);
+        saveUserToken(accessToken, refreshToken, null, user);
 
         return new AuthenticationResponse(accessToken, refreshToken, "User login was successful");
     }
@@ -130,10 +129,11 @@ public class AuthenticationService {
      * @param refreshToken The generated refresh token.
      * @param user         The user entity for whom tokens are being saved.
      */
-    private void saveUserToken(String accessToken, String refreshToken, UserEntity user) {
+    private void saveUserToken(String accessToken, String refreshToken, String resetToken, UserEntity user) {
         TokenEntity token = new TokenEntity();
         token.setAccessToken(accessToken);
         token.setRefreshToken(refreshToken);
+        token.setResetPasswordToken(resetToken);
         token.setLoggedOut(false);
         token.setUser(user);
         tokenRepository.save(token);
@@ -143,20 +143,14 @@ public class AuthenticationService {
      * Refreshes the access token using the provided refresh token.
      *
      * @param request  The HTTP request containing the refresh token in the Authorization header.
-     * @param response The HTTP response to be modified upon successful token refresh.
      * @return An AuthenticationResponse containing the new access and refresh tokens.
      * @throws UnauthorizedUserException If the refresh token is invalid.
      */
-    public AuthenticationResponse refreshToken(HttpServletRequest request, HttpServletResponse response) {
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new UnauthorizedUserException("Bearer token is missing");
-        }
-
-        String token = authHeader.substring(7); // Extract token from Authorization header
+    public AuthenticationResponse refreshToken(HttpServletRequest request) {
+        String token = extractTokenFromHttpRequest(request);
 
         String username = jwtService.extractUsername(token);
-        UserEntity user = repository.findByUsername(username)
+        UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("No user found"));
 
         if (jwtService.isValidRefreshToken(token, user)) {
@@ -164,7 +158,7 @@ public class AuthenticationService {
             String refreshToken = jwtService.generateRefreshToken(user);
 
             revokeAllTokenByUser(user);
-            saveUserToken(accessToken, refreshToken, user);
+            saveUserToken(accessToken, refreshToken, null, user);
 
             return new AuthenticationResponse(accessToken, refreshToken, "New tokens generated");
         } else {
@@ -193,4 +187,63 @@ public class AuthenticationService {
         return false;
     }
 
+    /**
+     * Generates a reset password token for the given user and saves it.
+     *
+     * @param user The UserEntity for which the reset password token is generated.
+     * @return The generated reset password token as a string.
+     */
+    public String resetPassword(UserEntity user){
+        String resetToken= jwtService.generateResetToken(user);
+        saveUserToken(null,null, resetToken, user);
+        return resetToken;
+    }
+
+    /**
+     * Saves the new password for the user if the reset token is valid.
+     *
+     * @param user The UserEntity for which the password is being reset.
+     * @param request The LoginRequest containing the new password.
+     * @param httpRequest The HttpServletRequest containing the reset token in the Authorization header.
+     * @throws UnauthorizedUserException if the reset token is invalid or missing.
+     */
+    public void saveNewPassword(UserEntity user, LoginRequest request, HttpServletRequest httpRequest) {
+        String token = extractTokenFromHttpRequest(httpRequest);
+        if(jwtService.isValidResetPasswordToken(token, user.getUsername())){
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            userRepository.save(user);
+
+            markResetTokenAsUsed(token);
+        } else {
+            throw new UnauthorizedUserException("Invalid reset token");
+        }
+    }
+
+    /**
+     * Extracts the token from the Authorization header of the HttpServletRequest.
+     *
+     * @param httpRequest The HttpServletRequest containing the Authorization header.
+     * @return The extracted token as a string.
+     * @throws UnauthorizedUserException if the Authorization header is missing or does not contain a Bearer token.
+     */
+    private static String extractTokenFromHttpRequest(HttpServletRequest httpRequest) {
+        String authHeader = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new UnauthorizedUserException("Bearer token is missing");
+        }
+        return authHeader.substring(7);
+    }
+
+    /**
+     * Marks the reset token as used by setting the isLoggedOut flag to true.
+     *
+     * @param token The reset token to be marked as used.
+     * @throws UnauthorizedUserException if the reset token is invalid.
+     */
+    private void markResetTokenAsUsed(String token) {
+        TokenEntity tokenEntity = tokenRepository.findByResetPasswordToken(token)
+                .orElseThrow(() -> new UnauthorizedUserException("Invalid reset token"));
+        tokenEntity.setLoggedOut(true);
+        tokenRepository.save(tokenEntity);
+    }
 }

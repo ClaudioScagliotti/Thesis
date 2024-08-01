@@ -1,11 +1,13 @@
 package com.claudioscagliotti.thesis.service;
 
+import com.claudioscagliotti.thesis.dto.request.PasswordChangeRequest;
+import com.claudioscagliotti.thesis.dto.request.PasswordResetRequest;
 import com.claudioscagliotti.thesis.enumeration.RoleEnum;
-import com.claudioscagliotti.thesis.mapper.UserMapper;
 import com.claudioscagliotti.thesis.model.GoalEntity;
 import com.claudioscagliotti.thesis.model.UserEntity;
 import com.claudioscagliotti.thesis.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,17 +21,23 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final AuthenticationService authenticationService;
+    private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     /**
-     * Constructs a UserService with the specified UserRepository and UserMapper.
+     * Constructs a UserService with the specified UserRepository and AuthenticationService.
      *
-     * @param userRepository The UserRepository to be used.
-     * @param userMapper     The UserMapper to be used.
+     * @param userRepository        The UserRepository to be used.
+     * @param authenticationService The AuthenticationService to be used.
+     * @param emailService          The EmailService to be used.
+     * @param passwordEncoder       The PasswordEncoder to be used.
      */
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, AuthenticationService authenticationService, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
+        this.authenticationService = authenticationService;
+        this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -54,6 +62,22 @@ public class UserService {
         Optional<UserEntity> userEntity = userRepository.findByUsername(username);
         if (userEntity.isEmpty()) {
             throw new UsernameNotFoundException("User not found with username: " + username);
+        } else {
+            return userEntity.get();
+        }
+    }
+    /**
+     * Finds a user by username and email.
+     *
+     * @param username The username to search for.
+     * @param email The email to search for.
+     * @return The found UserEntity.
+     * @throws UsernameNotFoundException If no user is found with the specified username.
+     */
+    public UserEntity findByUsernameAndEmail(String username, String email) {
+        Optional<UserEntity> userEntity = userRepository.findByUsernameAndEmail(username, email);
+        if (userEntity.isEmpty()) {
+            throw new UsernameNotFoundException("User not found with username: " + username+ "and email: "+email);
         } else {
             return userEntity.get();
         }
@@ -109,5 +133,49 @@ public class UserService {
      */
     public List<UserEntity> getAllUsersWithRole(RoleEnum roleEnum){
         return userRepository.getAllUserByRole(roleEnum);
+    }
+
+    /**
+     * Initiates the password reset process for a user.
+     *
+     * This method finds the user by their username and email, generates a reset token,
+     * and sends an email to the user with instructions to reset their password.
+     *
+     * @param request The PasswordResetRequest containing the username and email of the user.
+     */
+    public void resetUserPassword(PasswordResetRequest request){
+        UserEntity user = findByUsernameAndEmail(request.getUsername(), request.getEmail());
+        String token= authenticationService.resetPassword(user);
+        sendPasswordResetEmail(user, token);
+    }
+
+    /**
+     * Sends an email to the user with instructions to reset their password.
+     *
+     * This method constructs the email content, including the reset link and token,
+     * and sends it to the user's email address.
+     *
+     * @param userEntity The UserEntity representing the user.
+     * @param token The reset password token to include in the email.
+     */
+    private void sendPasswordResetEmail(UserEntity userEntity, String token) {
+        String text="Ciao "+userEntity.getFirstName()+", \n"
+                +"Abbiamo ricevuto una richiesta di reset password." +
+                "Se sei stato tu a richiederla, procedi impostando una nuova password usando il link sottostante: \n"
+                +"http://localhost:8080/thesis/api/user/new-password \n" +
+                " indicando come header Authorization il token: Bearer "+token+"\n e come body un campo password contenente la nuova password";
+        emailService.sendSimpleMessage(userEntity.getEmail(), "Reset password", text);
+    }
+
+    /**
+     * Changes the user's password.
+     *
+     * @param request The request containing the new password.
+     */
+    public void changePassword(String username, PasswordChangeRequest request)  {
+        UserEntity user = findByUsername(username);
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        user.setPassword(encodedPassword);
+        saveUser(user);
     }
 }
