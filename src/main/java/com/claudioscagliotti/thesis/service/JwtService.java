@@ -29,6 +29,9 @@ public class JwtService {
     @Value("${jwt.refresh.expiration}")
     private long refreshTokenExpire;
 
+    @Value("${jwt.reset.expiration}")
+    private long resetTokenExpire;
+
     private final TokenRepository tokenRepository;
 
     /**
@@ -47,7 +50,7 @@ public class JwtService {
      * @return The generated access token as a string.
      */
     public String generateAccessToken(UserEntity user) {
-        return generateToken(user, accessTokenExpire);
+        return generateToken(user, accessTokenExpire, "access_token");
     }
 
     /**
@@ -57,21 +60,34 @@ public class JwtService {
      * @return The generated refresh token as a string.
      */
     public String generateRefreshToken(UserEntity user) {
-        return generateToken(user, refreshTokenExpire);
+        return generateToken(user, refreshTokenExpire, "refresh_token");
     }
+
+    /**
+     * Generates a reset token for the given user entity.
+     *
+     * @param user The UserEntity for which the reset token is generated.
+     * @return The generated reset token as a string.
+     */
+    public String generateResetToken(UserEntity user) {
+        return generateToken(user, resetTokenExpire, "reset_password_token");
+    }
+
 
     /**
      * Generates a JWT token for the specified user entity and expiration time.
      *
      * @param user       The UserEntity for which the token is generated.
      * @param expireTime The expiration time of the token in milliseconds.
+     * @param claimType  The claim type to include in the token (e.g., "access_token").
      * @return The generated JWT token as a string.
      */
-    private String generateToken(UserEntity user, long expireTime) {
+    private String generateToken(UserEntity user, long expireTime, String claimType) {
         return Jwts.builder()
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expireTime))
+                .claim("type", claimType)
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -175,5 +191,21 @@ public class JwtService {
     public <T> T extractClaim(String token, Function<Claims, T> resolver) {
         Claims claims = extractAllClaims(token);
         return resolver.apply(claims);
+    }
+
+    /**
+     * Validates the reset password token.
+     *
+     * @param token The reset password token to validate.
+     * @param username The username of the user who want to create the new password .
+     * @return true if the reset token is valid, false otherwise.
+     */
+    public boolean isValidResetPasswordToken(String token, String username) {
+        String tokenUsername = extractUsername(token);
+        boolean validToken = tokenRepository.findByResetPasswordToken(token)
+                .map(t -> !t.isLoggedOut())
+                .orElse(false);
+
+        return (tokenUsername.equals(username)) &&isTokenNotExpired(token) && validToken;
     }
 }
