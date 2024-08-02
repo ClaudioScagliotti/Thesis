@@ -51,24 +51,19 @@ public class CustomLogoutHandler implements LogoutHandler {
                        HttpServletResponse response,
                        Authentication authentication) {
 
-        // Extract the Authorization header
         String authHeader = request.getHeader("Authorization");
 
-        // Check if the header is present and starts with "Bearer "
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
 
-        // Extract the token from the header
         String token = authHeader.substring(7);
 
-        // Find the token entity in the database
         TokenEntity storedToken = tokenRepository.findByAccessToken(token).orElse(null);
 
-        // If token entity is found, mark it as logged out
         if (storedToken != null) {
             storedToken.setLoggedOut(true);
-            tokenRepository.save(storedToken); // Update the token entity in the database
+            tokenRepository.save(storedToken);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.claudioscagliotti.thesis.controller;
 
+import com.claudioscagliotti.thesis.configuration.CustomLogoutHandler;
 import com.claudioscagliotti.thesis.dto.request.LoginRequest;
 import com.claudioscagliotti.thesis.dto.request.PasswordChangeRequest;
 import com.claudioscagliotti.thesis.dto.request.PasswordResetRequest;
@@ -14,6 +15,7 @@ import com.claudioscagliotti.thesis.service.UserService;
 import com.claudioscagliotti.thesis.service.UserStatsService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,18 +37,21 @@ public class UserController {
     private final AuthenticationService authService;
     private final UserStatsService userStatsService;
     private final UserService userService;
+    private final CustomLogoutHandler customLogoutHandler;
 
     /**
      * Constructs a UserController instance with the provided AuthenticationService dependency.
      *
-     * @param authService      The AuthenticationService dependency.
-     * @param userStatsService The UserStatsService dependency.
-     * @param userService      The UserService dependency
+     * @param authService         The AuthenticationService dependency.
+     * @param userStatsService    The UserStatsService dependency.
+     * @param userService         The UserService dependency.
+     * @param customLogoutHandler The CustomLogoutHandler dependency.
      */
-    public UserController(AuthenticationService authService, UserStatsService userStatsService, UserService userService) {
+    public UserController(AuthenticationService authService, UserStatsService userStatsService, UserService userService, CustomLogoutHandler customLogoutHandler) {
         this.authService = authService;
         this.userStatsService = userStatsService;
         this.userService = userService;
+        this.customLogoutHandler = customLogoutHandler;
     }
 
     /**
@@ -64,7 +69,7 @@ public class UserController {
             return ResponseEntity.ok(response);
         } catch (BadRequestException e) {
             GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", e.getMessage(), null);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
             GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", "An unexpected error occurred", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -127,8 +132,9 @@ public class UserController {
      * @return A ResponseEntity indicating the logout status.
      */
     @PostMapping("/logout")
-    public ResponseEntity<GenericResponse<Void>> logoutUser() {
+    public ResponseEntity<GenericResponse<Void>> logoutUser(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) {
         try {
+            customLogoutHandler.logout(httpServletRequest, httpServletResponse, authentication);
             String message = "User logged out successfully";
             GenericResponse<Void> response = new GenericResponse<>("success", message, null);
             return ResponseEntity.ok(response);
@@ -188,7 +194,7 @@ public class UserController {
     public ResponseEntity<GenericResponse<Void>> requestPasswordReset(@RequestBody PasswordResetRequest request) {
         try {
             userService.resetUserPassword(request);
-            String message = "Password reset link has been sent to your email.";
+            String message = "Password reset link has been sent to your email";
             GenericResponse<Void> response = new GenericResponse<>("success", message, null);
             return ResponseEntity.ok(response);
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
