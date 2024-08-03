@@ -57,6 +57,9 @@ public class CourseService {
 
         GoalTypeEntity goalType = userEntity.getGoalEntity().getGoalType();
         List<CourseEntity> courseEntityList = courseRepository.findAllByGoalType(goalType);
+        if(courseEntityList.size()==0){
+            throw new EntityNotFoundException("There are no courses avaliable for this goal type!");
+        }
 
         return courseMapper.toCourseDto(courseEntityList);
     }
@@ -102,7 +105,7 @@ public class CourseService {
         if (!userEntity.getCourseEntityList().contains(courseEntity)) {
             userEntity.getCourseEntityList().add(courseEntity);
         } else {
-            throw new SubscriptionUserException("The user with id: " + userEntity.getId() + " is already subscribed to course with title: " + courseEntity.getTitle());
+            throw new SubscriptionUserException("The user with username: " + userEntity.getUsername() + " is already subscribed to course with title: " + courseEntity.getTitle());
         }
     }
 
