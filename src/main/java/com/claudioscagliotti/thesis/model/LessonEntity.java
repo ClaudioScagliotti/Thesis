@@ -29,7 +29,7 @@ public class LessonEntity {
     private String title;
 
     @Column(name = "content")
-    private String content;
+    private String content; // TODO how the content must be splitted in cards?
 
     @Column(name = "type", length = 50)
     private String type;
@@ -46,5 +46,5 @@ public class LessonEntity {
             joinColumns = @JoinColumn(name = "lesson_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
-    private Set<ImageEntity> imageEntities; //TODO gestire image
+    private Set<ImageEntity> imageEntities; // TODO gestire image
 }

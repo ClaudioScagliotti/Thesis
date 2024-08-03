@@ -109,7 +109,7 @@ public class LessonController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
             LessonProgressDto progress = lessonProgressService.getLessonProgress(userDetails.getUsername(), lessonId);
-            String message = "The progress for the lesson with id: " + lessonId + " has id: " + progress.getId();
+            String message = "Retrieved the progress for the lesson with id: " + lessonId;
             GenericResponse<LessonProgressDto> response = new GenericResponse<>("success", message, progress);
             return ResponseEntity.ok(response);
 
@@ -136,7 +136,7 @@ public class LessonController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
             LessonProgressDto lessonProgressDto = lessonProgressService.updateLessonProgress(userDetails.getUsername(), lessonId, newProgress);
-            String message = "The progress for the lesson with id: " + lessonId + " has id: " + lessonProgressDto.getId();
+            String message = "Updated progress for the lesson with id: " + lessonId;
             GenericResponse<LessonProgressDto> response = new GenericResponse<>("success", message, lessonProgressDto);
             return ResponseEntity.ok(response);
 
