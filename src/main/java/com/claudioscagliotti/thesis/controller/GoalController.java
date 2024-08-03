@@ -46,7 +46,7 @@ public class GoalController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
             GoalDto createdGoal = goalService.createGoal(createGoalRequest, userDetails.getUsername());
-            String message = "Created goal with id: " + createdGoal.getId();
+            String message = "Created goal for the user: " + userDetails.getUsername();
             GenericResponse<GoalDto> response = new GenericResponse<>("success", message, createdGoal);
             return ResponseEntity.ok(response);
 
@@ -70,7 +70,7 @@ public class GoalController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
             GoalDto goalDto = goalService.getGoalByUser(userDetails.getUsername());
-            String message = "Found goal with id: " + goalDto.getId();
+            String message = "Found goal for the user: " + userDetails.getUsername();
             GenericResponse<GoalDto> response = new GenericResponse<>("success", message, goalDto);
             return ResponseEntity.ok(response);
 
