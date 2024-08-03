@@ -102,7 +102,7 @@ public class AdviceService {
             return adviceMapper.toAdviceDto(adviceRepository.save(adviceEntity));
         } else {
             throw new NoAdviceAvailableException("There are no uncompleted advices for the user with username: " + username+
-                    ". Create a new Goal and generate new advices!");
+                    ". Create a new Goal or generate new advices!");
         }
     }
 
@@ -173,6 +173,7 @@ public class AdviceService {
                 userService.updateUserStreak(userEntity, true);
             } else {
                 adviceEntity.setStatus(AdviceStatusEnum.FAILED);
+                userService.updateUserStreak(userEntity, false);
             }
 
             return adviceMapper.toAdviceDto(adviceRepository.save(adviceEntity));
@@ -199,11 +200,10 @@ public class AdviceService {
 
             if (entity.getDeadline().isAfter(LocalDateTime.now())) {
                 entity.setStatus(AdviceStatusEnum.SKIPPED);
-                userService.updateUserStreak(userEntity, false);
             } else {
                 entity.setStatus(AdviceStatusEnum.FAILED);
             }
-
+            userService.updateUserStreak(userEntity, false);
             return adviceMapper.toAdviceDto(adviceRepository.save(entity));
         } else {
             throw new EntityNotFoundException("There is no advice with id: " + adviceId);

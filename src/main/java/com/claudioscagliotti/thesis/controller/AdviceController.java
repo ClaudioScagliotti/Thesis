@@ -80,7 +80,7 @@ public class AdviceController {
 
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
             GenericResponse<AdviceDto> response = new GenericResponse<>("error", e.getMessage(), null);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
             GenericResponse<AdviceDto> response = new GenericResponse<>("error", "An unexpected error occurred", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);

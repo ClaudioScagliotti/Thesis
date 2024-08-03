@@ -99,10 +99,10 @@ public class UserService {
      * Updates the user's streak.
      *
      * @param userEntity   The UserEntity.
-     * @param updateOrSkip   The Boolean parameter that indicate if the streak must be increased or reset.
+     * @param updateOrReset   The Boolean parameter that indicate if the streak must be increased or reset.
      */
-    public void updateUserStreak(UserEntity userEntity, Boolean updateOrSkip) {
-        if(updateOrSkip){
+    public void updateUserStreak(UserEntity userEntity, Boolean updateOrReset) {
+        if(updateOrReset){
             userEntity.setStreak(userEntity.getStreak() + 1);
         } else {
             userEntity.setStreak(0);
