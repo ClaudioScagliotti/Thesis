@@ -168,10 +168,10 @@ public class AuthenticationService {
     }
 
     /**
-     * Verifica se l'utente autenticato ha un determinato ruolo.
+     * Checks if the authenticated user has a specific role.
      *
-     * @param role il ruolo da verificare (ad esempio, "ROLE_USER" o "ROLE_ADMIN")
-     * @return true se l'utente ha il ruolo specificato, altrimenti false
+     * @param role the role to check (e.g., "ROLE_USER" or "ROLE_ADMIN")
+     * @return true if the user has the specified role, otherwise false
      */
     public boolean hasRole(String role) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
