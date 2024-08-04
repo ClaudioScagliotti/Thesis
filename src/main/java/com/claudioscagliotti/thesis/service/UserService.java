@@ -3,6 +3,7 @@ package com.claudioscagliotti.thesis.service;
 import com.claudioscagliotti.thesis.dto.request.PasswordChangeRequest;
 import com.claudioscagliotti.thesis.dto.request.PasswordResetRequest;
 import com.claudioscagliotti.thesis.enumeration.RoleEnum;
+import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
 import com.claudioscagliotti.thesis.model.GoalEntity;
 import com.claudioscagliotti.thesis.model.UserEntity;
 import com.claudioscagliotti.thesis.repository.UserRepository;
@@ -177,5 +178,15 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
         user.setPassword(encodedPassword);
         saveUser(user);
+    }
+
+    /**
+     * Check if the user has the ADMIN role.
+     */
+    public void checkIsAdmin(){
+        String adminRole = "ROLE_ADMIN";
+        if(!authenticationService.hasRole(adminRole)){
+            throw new UnauthorizedUserException("The user role must be: ADMIN");
+        }
     }
 }

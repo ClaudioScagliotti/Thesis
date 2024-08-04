@@ -5,7 +5,7 @@ import com.claudioscagliotti.thesis.dto.tmdb.response.keyword.KeywordResponse;
 import com.claudioscagliotti.thesis.exception.ExternalApiException;
 import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
 import com.claudioscagliotti.thesis.proxy.tmdb.TmdbApiClient;
-import com.claudioscagliotti.thesis.service.KeywordService;
+import com.claudioscagliotti.thesis.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,17 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/keywords")
 public class KeywordController {
     private final TmdbApiClient client;
-    private final KeywordService keywordService;
+    private final UserService userService;
 
     /**
      * Constructs a KeywordController instance with the provided dependencies.
      *
      * @param client         The TmdbApiClient dependency.
-     * @param keywordService The KeywordService dependency.
+     * @param userService    The UserService dependency.
      */
-    public KeywordController(TmdbApiClient client, KeywordService keywordService) {
+    public KeywordController(TmdbApiClient client, UserService userService) {
         this.client = client;
-        this.keywordService = keywordService;
+        this.userService = userService;
     }
 
     /**
@@ -42,7 +42,7 @@ public class KeywordController {
     @GetMapping
     public ResponseEntity<GenericResponse<KeywordResponse>> getKeywords(@RequestParam String keyword) {
         try {
-            keywordService.checkIsAdmin();
+            userService.checkIsAdmin();
             KeywordResponse keywordResponse = client.searchKeywords(keyword);
             String message = "Found " + keywordResponse.totalResults() + " keywords";
             GenericResponse<KeywordResponse> response = new GenericResponse<>("success", message, keywordResponse);
