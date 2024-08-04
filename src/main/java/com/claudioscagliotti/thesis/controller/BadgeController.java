@@ -2,7 +2,9 @@ package com.claudioscagliotti.thesis.controller;
 
 import com.claudioscagliotti.thesis.dto.response.BadgeDto;
 import com.claudioscagliotti.thesis.dto.response.GenericResponse;
+import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
 import com.claudioscagliotti.thesis.service.BadgeService;
+import com.claudioscagliotti.thesis.service.UserService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -23,14 +25,17 @@ import java.util.List;
 public class BadgeController {
 
     private final BadgeService badgeService;
+    private final UserService userService;
 
     /**
      * Constructs a BadgeController instance with the provided dependencies.
      *
      * @param badgeService The BadgeService dependency.
+     * @param userService  The UserService dependency.
      */
-    public BadgeController(BadgeService badgeService) {
+    public BadgeController(BadgeService badgeService, UserService userService) {
         this.badgeService = badgeService;
+        this.userService = userService;
     }
 
     /**
@@ -68,11 +73,15 @@ public class BadgeController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         try {
+            userService.checkIsAdmin();
             BadgeDto badgeDto = badgeService.addBadgeForUser(userDetails.getUsername(), badgeId);
             String message = "Badge with id: " + badgeId + " added to user: " + userDetails.getUsername();
             GenericResponse<BadgeDto> response = new GenericResponse<>("success", message, badgeDto);
             return ResponseEntity.ok(response);
 
+        } catch (UnauthorizedUserException e) {
+            GenericResponse<BadgeDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (EntityNotFoundException e) {
             GenericResponse<BadgeDto> response = new GenericResponse<>("error", e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
