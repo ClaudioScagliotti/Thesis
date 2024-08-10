@@ -58,7 +58,7 @@ public class CourseService {
         GoalTypeEntity goalType = userEntity.getGoalEntity().getGoalType();
         List<CourseEntity> courseEntityList = courseRepository.findAllByGoalType(goalType);
         if(courseEntityList.size()==0){
-            throw new EntityNotFoundException("There are no courses avaliable for this goal type!");
+            throw new EntityNotFoundException("There are not courses avaliable for this goal type!");
         }
 
         return courseMapper.toCourseDto(courseEntityList);

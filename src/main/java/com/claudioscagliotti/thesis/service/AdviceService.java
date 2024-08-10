@@ -101,7 +101,7 @@ public class AdviceService {
             adviceEntity.setDeadline(LocalDateTime.now().plusDays(daysUntilDeadline));
             return adviceMapper.toAdviceDto(adviceRepository.save(adviceEntity));
         } else {
-            throw new NoAdviceAvailableException("There are no uncompleted advices for the user with username: " + username+
+            throw new NoAdviceAvailableException("There are not uncompleted advices for the user with username: " + username+
                     ". Create a new Goal or generate new advices!");
         }
     }
