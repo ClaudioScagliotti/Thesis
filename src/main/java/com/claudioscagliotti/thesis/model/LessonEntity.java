@@ -46,5 +46,5 @@ public class LessonEntity {
             joinColumns = @JoinColumn(name = "lesson_id"),
             inverseJoinColumns = @JoinColumn(name = "image_id")
     )
-    private Set<ImageEntity> imageEntities; // TODO gestire image
+    private Set<ImageEntity> imageEntities;
 }
