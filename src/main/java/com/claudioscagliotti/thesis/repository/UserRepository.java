@@ -31,4 +31,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     GoalEntity getGoalEntityByUsername(@Param("username") String username);
 
     List<UserEntity> getAllUserByRole(RoleEnum roleEnum);
+
+    void deleteByUsername(String username);
+
 }
