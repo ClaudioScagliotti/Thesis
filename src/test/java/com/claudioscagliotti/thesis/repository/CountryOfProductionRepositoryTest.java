@@ -24,22 +24,11 @@ class CountryOfProductionRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        italy = new CountryOfProductionEntity();
-        italy.setCountryCode("IT");
-        italy.setName("Italy");
 
-        france = new CountryOfProductionEntity();
-        france.setCountryCode("FR");
-        france.setName("France");
-
-        repository.save(italy);
-        repository.save(france);
     }
 
     @AfterEach
     void tearDown() {
-        repository.delete(italy);
-        repository.delete(france);
     }
 
     @Test
@@ -59,7 +48,7 @@ class CountryOfProductionRepositoryTest {
 
     @Test
     public void testGetCountryOfProductionByCountryCode_NotFound() {
-        CountryOfProductionEntity entity = repository.getCountryOfProductionByCountryCode("DE");
+        CountryOfProductionEntity entity = repository.getCountryOfProductionByCountryCode("AAA");
         BDDAssertions.then(entity).isNull();
     }
 }
