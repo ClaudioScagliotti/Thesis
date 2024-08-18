@@ -55,17 +55,12 @@ class CourseRepositoryTest {
     @Test
     void testFindCourse() {
         Optional<CourseEntity> foundCourse = courseRepository.findById(course1.getId());
-
-        // Verifica che il corso sia presente
         BDDAssertions.then(foundCourse).isPresent();
-
-        // Se il corso è presente, verifica che il titolo sia corretto
         foundCourse.ifPresent(course -> BDDAssertions.then(course.getTitle()).isEqualTo("Introduction to film directing"));
     }
 
     @Test
     void testFindAllByGoalType_WithSingleGoalType() {
-        // Verifica che i corsi associati a "goalType1" siano restituiti correttamente
         List<CourseEntity> courses = courseRepository.findAllByGoalType(goalTypeEntityByType);
 
         BDDAssertions.then(courses).isNotNull();
@@ -77,13 +72,12 @@ class CourseRepositoryTest {
 
     @Test
     void testFindAllByGoalType_WithMultipleGoalTypes() {
-        // Verifica che solo il corso associato a "goalType2" sia restituito correttamente
-        List<CourseEntity> courses = courseRepository.findAllByGoalType(goalTypeEntityByType); // goalType2 è l'entità corretta
+        List<CourseEntity> courses = courseRepository.findAllByGoalType(goalTypeEntityByType);
 
         BDDAssertions.then(courses).isNotNull();
-        BDDAssertions.then(courses.size()).isGreaterThan(1); // Solo un corso è associato a goalType2
+        BDDAssertions.then(courses.size()).isGreaterThan(1);
 
-        // Controlla che il corso "Advanced film editing" sia presente
+
         BDDAssertions.then(courses.stream().map(CourseEntity::getTitle))
                 .contains("Advanced film editing");
     }
