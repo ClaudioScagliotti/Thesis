@@ -65,7 +65,6 @@ class UserRepositoryTest {
         goal2.setCountryOfProductionEntityList(List.of(fr));
         goalRepository.save(goal2);
 
-        // Creazione di UserEntity
         user1 = new UserEntity();
         user1.setUsername("john_doe");
         user1.setEmail("john.doe@example.com");
