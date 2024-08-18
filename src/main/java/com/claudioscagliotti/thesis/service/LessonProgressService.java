@@ -141,7 +141,7 @@ public class LessonProgressService {
             } else {
                 lessonProgressEntity.setQuizResult(QuizResultEnum.FAILED);
             }
-            lessonProgressRepository.updateLessonProgressStatusAndQuizResult(lessonEntity.getId(), lessonProgressEntity.getStatus(), lessonProgressEntity.getQuizResult());
+            lessonProgressRepository.updateLessonProgressStatusAndQuizResult(lessonProgressEntity.getId(), lessonProgressEntity.getStatus(), lessonProgressEntity.getQuizResult());
         }
         userService.addPoints(userEntity, points);
     }
