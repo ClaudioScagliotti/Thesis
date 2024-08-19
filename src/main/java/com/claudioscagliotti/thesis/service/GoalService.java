@@ -92,14 +92,20 @@ public class GoalService {
         // DATE
         result += setDates(goalEntity);
         // GENRES
-        result += genreService.createGenreIds(goalEntity);
+        if(goalEntity.getGenreEntityList()!=null) {
+            result += genreService.createGenreIds(goalEntity);
+        }
         // COUNTRY OF PRODUCTION
-        result += countryOfProductionService.getCountryCodesAsString(goalEntity.getCountryOfProductionEntityList());
+        if(goalEntity.getCountryOfProductionEntityList()!=null){
+            result += countryOfProductionService.getCountryCodesAsString(goalEntity.getCountryOfProductionEntityList());
+        }
         // KEYWORDS
-        result += "&" + QueryParamEnum.WITH_KEYWORDS.getValue() + goalEntity.getKeywordEntityList().stream()
-                .map(KeywordEntity::getTmdbId)
-                .map(String::valueOf)
-                .collect(Collectors.joining("|"));
+        if(goalEntity.getKeywordEntityList()!=null) {
+            result += "&" + QueryParamEnum.WITH_KEYWORDS.getValue() + goalEntity.getKeywordEntityList().stream()
+                    .map(KeywordEntity::getTmdbId)
+                    .map(String::valueOf)
+                    .collect(Collectors.joining("|"));
+        }
         //PAGE
         result += "&" + QueryParamEnum.PAGE.getValue() + goalEntity.getPage();
 
