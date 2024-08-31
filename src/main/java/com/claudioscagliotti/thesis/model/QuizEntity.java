@@ -40,11 +40,9 @@ public class QuizEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advice_id")
     private AdviceEntity advice;
-    @Column(columnDefinition = "jsonb")
     private String options;
 
     private Integer correctOption;
     private Boolean correctAnswer;
-    @Column(columnDefinition = "jsonb")
     private String correctOrder;
 }
