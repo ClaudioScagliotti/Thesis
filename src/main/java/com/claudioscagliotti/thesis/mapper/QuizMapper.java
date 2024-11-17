@@ -8,7 +8,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface QuizMapper {
-    List<QuizEntity> toQuizEntity(List<QuizDto> quizDtoList);
 
     List<QuizDto> toQuizDto(List<QuizEntity> quizEntityList);
 

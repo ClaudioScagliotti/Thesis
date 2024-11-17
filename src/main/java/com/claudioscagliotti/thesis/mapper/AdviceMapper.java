@@ -9,7 +9,6 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", uses = MovieMapper.class)
 public interface AdviceMapper {
-    AdviceEntity toAdviceEntity(AdviceDto dto);
 
     @Mapping(source = "movie", target = "movieDto")
     AdviceDto toAdviceDto(AdviceEntity entity);

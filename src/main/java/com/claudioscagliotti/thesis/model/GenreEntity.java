@@ -16,6 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "genre")
 public class GenreEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +26,7 @@ public class GenreEntity {
 
     @ManyToMany(mappedBy = "genreEntities")
     private List<MovieEntity> movies;
+
     @Column(name = "tmdb_id", unique = true)
     private Long tmdbId;
 

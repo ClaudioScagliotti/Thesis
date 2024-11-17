@@ -29,26 +29,29 @@ public class AdviceEntity {
     @ManyToOne
     @JoinColumn(name = "movie_id", nullable = false)
     private MovieEntity movie;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 50, nullable = false)
     private AdviceStatusEnum status;
 
     @Column(name = "creation_date", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime creationDate;
-    @PrePersist
-    protected void onCreate() {
-        this.creationDate = LocalDateTime.now();
-    }
 
     @Column(name = "deadline")
     private LocalDateTime deadline;
 
     @Column(name = "points", nullable = false)
     private Integer points;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "quiz_result", length = 50)
-    private QuizResultEnum quizResult; //condizione necessaria ma non sufficiente affinchè l'advice sia in status SUCCEEDED
+    private QuizResultEnum quizResult; //necessary but not sufficient condition for advice to have the status SUCCEEDED
 
     @OneToMany(mappedBy = "advice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuizEntity> quizzes;
+
+    @PrePersist
+    protected void onCreate() {
+        this.creationDate = LocalDateTime.now();
+    }
 }

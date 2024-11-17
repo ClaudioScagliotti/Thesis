@@ -30,10 +30,12 @@ public class LessonProgressEntity {
     private UserEntity userEntity;
 
     private Float progress;
+
     private Integer completedCards;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "quiz_result", length = 50)
-    private QuizResultEnum quizResult; //condizione necessaria ma non sufficiente affinchè la lessonProgress sia in status SUCCEEDED
+    private QuizResultEnum quizResult; //necessary but not sufficient condition for lessonProgress to have the status SUCCEEDED
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 50, nullable = false)

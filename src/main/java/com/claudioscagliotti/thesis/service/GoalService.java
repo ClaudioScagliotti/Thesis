@@ -216,7 +216,7 @@ public class GoalService {
             goalEntity.setPage(goalEntity.getPage() + 1);
             updateGoal(goalEntity);
         }
-        //TODO after the creation and the completion of the first advice list, if the page saved om goal entity is>1,
+        //TODO after the creation and the completion of the first advice list, if the page saved on goal entity is>1,
         // you can iterate the call client.getMovies to get the next 20 movies.
         // the process can be iterated every time that the page is updated in the method.
         // maybe it is necessary a Boolean moreAdviceToCreate.

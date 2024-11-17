@@ -9,8 +9,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface LessonMapper {
 
-    LessonEntity toLessonEntity(LessonDto dto);
-
     List<LessonDto> toLessonDto(List<LessonEntity> lessonEntity);
 
     LessonDto toLessonDto(LessonEntity lessonEntity);

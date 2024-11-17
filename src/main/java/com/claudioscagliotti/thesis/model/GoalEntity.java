@@ -18,12 +18,10 @@ public class GoalEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "page")
     private Integer page;
-    @PrePersist
-    protected void onCreate() {
-        this.page = 1;
-    }
+
     @Column(name = "time_to_dedicate", nullable = false)
     private Float timeToDedicate;
 
@@ -33,8 +31,10 @@ public class GoalEntity {
 
     @Column(name = "min_year", nullable = false)
     private Integer minYear;
+
     @Column(name = "max_year", nullable = false)
     private Integer maxYear;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "goal_genre",
@@ -59,5 +59,8 @@ public class GoalEntity {
     )
     private List<CountryOfProductionEntity> countryOfProductionEntityList;
 
-
+    @PrePersist
+    protected void onCreate() {
+        this.page = 1;
+    } //
 }

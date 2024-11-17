@@ -6,6 +6,7 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface LessonProgressMapper {
+
     LessonProgressDto tolessonProgressDto(LessonProgressEntity lessonProgressEntity, Long lessonId, String username);
 
 }

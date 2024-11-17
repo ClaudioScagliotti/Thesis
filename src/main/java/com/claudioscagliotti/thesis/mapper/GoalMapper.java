@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface GoalMapper {
+
     @Mapping(source = "goalType", target = "goalType", qualifiedByName = "mapStringToGoalType")
     @Mapping(source = "keywordList", target = "keywordEntityList")
     @Mapping(source = "genreEnumList", target = "genreEntityList", qualifiedByName = "mapGenreEnumListToEntityList")

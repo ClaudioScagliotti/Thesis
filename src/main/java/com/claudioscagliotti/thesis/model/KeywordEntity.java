@@ -22,6 +22,7 @@ public class KeywordEntity {
 
     @Column(name = "name", length = 100)
     private String name;
+
     @Column(name = "tmdb_id")
     private Integer tmdbId;
 
@@ -29,8 +30,4 @@ public class KeywordEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<GoalEntity> goalEntityList;
 
-    public KeywordEntity(String name, Integer tmdbId) {
-        this.name = name;
-        this.tmdbId = tmdbId;
-    }
 }

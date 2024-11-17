@@ -40,9 +40,12 @@ public class QuizEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advice_id")
     private AdviceEntity advice;
+
     private String options;
 
     private Integer correctOption;
+
     private Boolean correctAnswer;
+
     private String correctOrder;
 }
