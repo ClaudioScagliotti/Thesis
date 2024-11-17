@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonComparator {
 
+    private JsonComparator() {
+        throw new UnsupportedOperationException("Utility class");
+    }
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     /**

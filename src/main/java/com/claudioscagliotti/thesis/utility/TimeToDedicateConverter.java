@@ -7,7 +7,9 @@ import java.util.Map;
  * Utility class for converting hours dedicated to a task into the corresponding number of days.
  */
 public class TimeToDedicateConverter {
-
+    private TimeToDedicateConverter() {
+        throw new UnsupportedOperationException("Utility class");
+    }
     private static final Map<Float, Integer> hoursToDaysMap = new HashMap<>();
 
     static {

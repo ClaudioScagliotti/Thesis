@@ -6,6 +6,9 @@ import com.claudioscagliotti.thesis.model.QuizEntity;
 import java.util.List;
 
 public class PercentageCalculatorUtil {
+    private PercentageCalculatorUtil() {
+        throw new UnsupportedOperationException("Utility class");
+    }
 
     /**
      * Calculates the percentage of quizzes that have succeeded.
