@@ -122,18 +122,10 @@ public class GoalService {
         String result;
 
         switch (goalEntity.getGoalType().getType()) {
-            case NOW_PLAYING -> {
-                result = MetohdEnum.NOW_PLAYING.getValue();
-            }
-            case MOST_POPULAR -> {
-                result = MetohdEnum.MOST_POPULAR.getValue();
-            }
-            case TOP_RATED -> {
-                result = MetohdEnum.TOP_RATED.getValue();
-            }
-            default -> {
-                result = MetohdEnum.DISCOVER.getValue();
-            }
+            case NOW_PLAYING -> result = MetohdEnum.NOW_PLAYING.getValue();
+            case MOST_POPULAR -> result = MetohdEnum.MOST_POPULAR.getValue();
+            case TOP_RATED -> result = MetohdEnum.TOP_RATED.getValue();
+            default -> result = MetohdEnum.DISCOVER.getValue();
         }
         return result;
     }
