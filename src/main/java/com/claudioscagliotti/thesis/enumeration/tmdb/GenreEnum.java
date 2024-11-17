@@ -63,7 +63,7 @@ public enum GenreEnum {
     public static List<String> getAllNames() {
         return Arrays.stream(values())
                 .map(GenreEnum::getName)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public static GenreEnum fromTmdbId(Long tmdbId) {

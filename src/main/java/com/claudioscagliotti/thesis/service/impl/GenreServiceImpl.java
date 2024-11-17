@@ -73,7 +73,7 @@ public class GenreServiceImpl implements GenreService {
                 .map(genreRepository::findByTmdbId)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -90,24 +90,9 @@ public class GenreServiceImpl implements GenreService {
                 .map(genreRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    /**
-     * Maps genre entities to genre IDs.
-     *
-     * @param genreEntities The list of genre entities.
-     * @return List of genre IDs mapped from the provided genre entities.
-     */
-
-    public List<Long> mapGenreEntitiesToIds(List<GenreEntity> genreEntities) {
-        if (genreEntities == null || genreEntities.isEmpty()) {
-            return null;
-        }
-        return genreEntities.stream()
-                .map(GenreEntity::getTmdbId)
-                .collect(Collectors.toList());
-    }
 
 }
 

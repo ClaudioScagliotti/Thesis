@@ -180,7 +180,7 @@ public class GoalServiceImpl implements GoalService {
 
         List<GenreEntity> savedGenreEntities = goalEntity.getGenreEntityList().stream()
                 .map(genreService::getGenreByNameAndSaveIfNotExists)
-                .collect(Collectors.toList());
+                .toList();
         goalEntity.setGenreEntityList(savedGenreEntities);
 
         goalEntity.setKeywordEntityList(keywordService.saveAll(goalEntity.getKeywordEntityList()));

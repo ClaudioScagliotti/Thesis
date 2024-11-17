@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
      * @param userEntity The user entity to save.
      */
     @Transactional
-    public void saveUser(UserEntity userEntity) {
+    public void saveUser(UserEntity userEntity) { //TODO resolve the problem with usages
          this.userRepository.save(userEntity);
     }
 
@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
      * @param updateOrReset   The Boolean parameter that indicate if the streak must be increased or reset.
      */
     public void updateUserStreak(UserEntity userEntity, Boolean updateOrReset) {
-        if(updateOrReset){
+        if(Boolean.TRUE.equals(updateOrReset)){
             userEntity.setStreak(userEntity.getStreak() + 1);
         } else {
             userEntity.setStreak(0);

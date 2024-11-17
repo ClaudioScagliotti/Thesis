@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.mapper;
 
-import com.claudioscagliotti.thesis.dto.response.CountryOfProductionDto;
 import com.claudioscagliotti.thesis.dto.request.GoalDto;
+import com.claudioscagliotti.thesis.dto.response.CountryOfProductionDto;
 import com.claudioscagliotti.thesis.dto.response.KeywordDto;
 import com.claudioscagliotti.thesis.enumeration.GoalTypeEnum;
 import com.claudioscagliotti.thesis.enumeration.tmdb.GenreEnum;
@@ -10,8 +10,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface GoalMapper {
@@ -38,58 +38,58 @@ public interface GoalMapper {
 
     default List<KeywordEntity> mapKeywordListToEntity(List<KeywordDto> keywordDtos) {
         if (keywordDtos == null) {
-            return null;
+            return new ArrayList<>();
         }
         return keywordDtos.stream()
                 .map(this::toKeywordEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     default List<KeywordDto> mapKeywordEntityToList(List<KeywordEntity> keywordEntities) {
         if (keywordEntities == null) {
-            return null;
+            return new ArrayList<>();
         }
         return keywordEntities.stream()
                 .map(this::toKeywordDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     default List<CountryOfProductionEntity> mapCountryListToEntity(List<CountryOfProductionDto> countryDtos) {
         if (countryDtos == null) {
-            return null;
+            return new ArrayList<>();
         }
         return countryDtos.stream()
                 .map(this::toCountryOfProductionEntity)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     default List<CountryOfProductionDto> mapCountryEntityToList(List<CountryOfProductionEntity> countryEntities) {
         if (countryEntities == null) {
-            return null;
+            return new ArrayList<>();
         }
         return countryEntities.stream()
                 .map(this::toCountryOfProductionDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Named("mapGenreEnumListToEntityList")
     default List<GenreEntity> mapGenreEnumListToEntityList(List<GenreEnum> genreEnumList) {
         return genreEnumList.stream()
                 .map(genreEnum -> new GenreEntity(genreEnum.getName(), genreEnum.getTmdbId()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Named("mapEntityListToGenreEnumList")
     default List<GenreEnum> mapEntityListToGenreEnumList(List<GenreEntity> genreEntityList) {
         return genreEntityList.stream()
                 .map(genreEntity -> GenreEnum.getByName(genreEntity.getName()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Named("mapStringToGoalType")
     default GoalTypeEntity mapStringToGoalType(String value) {
         if (value == null) {
-            return null;
+            return new GoalTypeEntity();
         }
         GoalTypeEnum goalTypeEnum = GoalTypeEnum.valueOf(value.toUpperCase());
         GoalTypeEntity goalType = new GoalTypeEntity();
