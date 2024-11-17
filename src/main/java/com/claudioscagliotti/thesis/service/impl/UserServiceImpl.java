@@ -126,7 +126,6 @@ public class UserServiceImpl implements UserService {
     }
     /**
      * Retrieves all users with a specific role.
-     *
      * This method fetches all users from the repository that have the specified role.
      *
      * @param roleEnum the role of the users to retrieve
@@ -138,7 +137,6 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Initiates the password reset process for a user.
-     *
      * This method finds the user by their username and email, generates a reset token,
      * and sends an email to the user with instructions to reset their password.
      *
@@ -152,7 +150,6 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Sends an email to the user with instructions to reset their password.
-     *
      * This method constructs the email content, including the reset link and token,
      * and sends it to the user's email address.
      *

@@ -78,7 +78,7 @@ public class QuizServiceImpl implements QuizService {
      */
     public List<QuizDto> findAllByLessonId(Long lessonId, String username) {
         LessonEntity lessonEntity = lessonService.getById(lessonId);
-        if (!courseService.checkSubscription(username, lessonEntity.getCourseEntity().getId())) {
+        if (!courseService.isNotSubscribed(username, lessonEntity.getCourseEntity().getId())) {
             throw new SubscriptionUserException("The user " + username + " is not subscribed to the course with title: " + lessonEntity.getCourseEntity().getTitle());
         } else {
             List<QuizEntity> quizEntities = quizRepository.findAllByLessonId(lessonId);

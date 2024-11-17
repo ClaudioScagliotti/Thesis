@@ -64,7 +64,7 @@ public class LessonServiceImpl implements LessonService {
      * @throws SubscriptionUserException if the user is not subscribed to the course.
      */
     public List<LessonDto> getAllLessonByCourse(String username, Long courseId) {
-        if (!courseService.checkSubscription(username, courseId)) {
+        if (!courseService.isNotSubscribed(username, courseId)) {
             throw new SubscriptionUserException("The user with username " + username +
                     " is not subscribed to course with id: " + courseId);
         }
@@ -84,7 +84,7 @@ public class LessonServiceImpl implements LessonService {
      * @throws EntityNotFoundException   if the lesson with the smallest missing ID is not found.
      */
     public LessonDto getNextLessonByCourse(String username, Long courseId) {
-        if (!courseService.checkSubscription(username, courseId)) {
+        if (!courseService.isNotSubscribed(username, courseId)) {
             throw new SubscriptionUserException("The user with username " + username +
                     " is not subscribed to course with id: " + courseId);
         }

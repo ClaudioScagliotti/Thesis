@@ -18,11 +18,9 @@ import java.io.IOException;
 
 /**
  * JwtAuthenticationFilter is a filter responsible for JWT-based authentication in Spring Security.
- *
  * This filter intercepts incoming requests and validates JWT tokens provided in the Authorization header.
  * It uses JwtService to extract the username from the JWT token and UserDetailsServiceImpl to load
  * user details from the database based on the username.
- *
  * Example usage:
  * - Intercepts requests and checks for a JWT token in the Authorization header.
  * - Extracts the username from the JWT token and validates its authenticity using JwtService.

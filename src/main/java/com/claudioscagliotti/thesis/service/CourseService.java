@@ -50,5 +50,5 @@ public interface CourseService {
      * @param courseId The ID of the course to check subscription for.
      * @return true if the user is subscribed to the course, false otherwise.
      */
-    boolean checkSubscription(String username, Long courseId);
+    boolean isNotSubscribed(String username, Long courseId);
 }

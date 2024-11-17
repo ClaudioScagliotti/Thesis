@@ -16,6 +16,7 @@ import com.claudioscagliotti.thesis.model.UserEntity;
 import com.claudioscagliotti.thesis.proxy.tmdb.TmdbApiClient;
 import com.claudioscagliotti.thesis.repository.AdviceRepository;
 import com.claudioscagliotti.thesis.repository.UserRepository;
+import com.claudioscagliotti.thesis.service.AdviceService;
 import com.claudioscagliotti.thesis.utility.PercentageCalculatorUtil;
 import com.claudioscagliotti.thesis.utility.TimeToDedicateConverter;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,7 +35,7 @@ import java.util.Optional;
  * Service class for managing advice generation and user interactions.
  */
 @Service
-public class AdviceServiceImpl {
+public class AdviceServiceImpl implements AdviceService {
 
     @Value("${success.percentage}")
     private double successPercentage;

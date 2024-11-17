@@ -39,11 +39,4 @@ public interface GenreService {
      */
     List<GenreEntity> mapGenreIdsToEntities(List<Long> genreId);
 
-    /**
-     * Maps genre entities to genre IDs.
-     *
-     * @param genreEntities The list of genre entities.
-     * @return List of genre IDs mapped from the provided genre entities.
-     */
-    List<Long> mapGenreEntitiesToIds(List<GenreEntity> genreEntities);
 }

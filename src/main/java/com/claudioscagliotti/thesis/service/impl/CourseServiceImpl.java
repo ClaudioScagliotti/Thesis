@@ -121,7 +121,7 @@ public class CourseServiceImpl implements CourseService {
         UserEntity userEntity = userService.findByUsername(username);
         CourseEntity courseEntity = findCourseById(courseId);
 
-        if (!checkSubscription(username, courseId)) {
+        if (!isNotSubscribed(username, courseId)) {
             throw new SubscriptionUserException("The user " + username + " is not subscribed to the course with title: " + courseEntity.getTitle());
         } else {
             userEntity.getCourseEntityList().remove(courseEntity);
@@ -136,9 +136,9 @@ public class CourseServiceImpl implements CourseService {
      * @param courseId The ID of the course to check subscription for.
      * @return true if the user is subscribed to the course, false otherwise.
      */
-    public boolean checkSubscription(String username, Long courseId) {
+    public boolean isNotSubscribed(String username, Long courseId) {
         UserEntity userEntity = userService.findByUsername(username);
         CourseEntity courseEntity = findCourseById(courseId);
-        return userEntity.getCourseEntityList().contains(courseEntity);
+        return !userEntity.getCourseEntityList().contains(courseEntity);
     }
 }

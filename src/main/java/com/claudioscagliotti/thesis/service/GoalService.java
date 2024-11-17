@@ -42,9 +42,8 @@ public interface GoalService {
      * Updates an existing goal entity in the database.
      *
      * @param entity The updated GoalEntity to save.
-     * @return The updated GoalEntity.
      */
-    GoalEntity updateGoal(GoalEntity entity);
+    void updateGoal(GoalEntity entity);
 
     /**
      * Updates the page number of a goal entity based on the response from an external API.

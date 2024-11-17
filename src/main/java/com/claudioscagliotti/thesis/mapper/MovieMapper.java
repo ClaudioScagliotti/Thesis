@@ -28,11 +28,6 @@ public interface MovieMapper {
         return genreService.mapGenreTmdbIdsToEntities(genreIds);
     }
 
-    @Named("mapGenreEntitiesToIds")
-    default List<Long> mapGenreEntitiesToIds(List<GenreEntity> genreEntities) {
-        return genreEntities.stream().map(GenreEntity::getTmdbId).toList();
-    }
-
     @Named("mapGenreEntitiesToEnums")
     default List<GenreEnum> mapGenreEntitiesToEnums(List<GenreEntity> genreEntities) {
         if (genreEntities == null || genreEntities.isEmpty()) {

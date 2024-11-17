@@ -79,7 +79,6 @@ public class UserStatsServiceImpl implements UserStatsService {
     }
     /**
      * Retrieves all user statistics for users with a specific role.
-     *
      * This method fetches all users with the specified role, maps them to UserStatsDto objects,
      * calculates the genre count and level for each user, and returns a list of these DTOs.
      *
@@ -98,7 +97,6 @@ public class UserStatsServiceImpl implements UserStatsService {
 
     /**
      * Retrieves the statistics for a user identified by their username.
-     *
      * This method finds the user by their username using the `userService` and then converts
      * the user entity into a `UserStatsDto` object by calling the `getUserStatsDto` method.
      *
@@ -111,7 +109,6 @@ public class UserStatsServiceImpl implements UserStatsService {
 
     /**
      * Converts a `UserEntity` object into a `UserStatsDto` object, including additional statistics.
-     *
      * This method maps the provided `UserEntity` to a `UserStatsDto` using the `userStatsMapper`.
      * It also sets the genre count and level for the user by calling `getGenreCountByUserId` and
      * `calculateLevel` methods, respectively.
@@ -129,7 +126,6 @@ public class UserStatsServiceImpl implements UserStatsService {
 
     /**
      * Calculates the user level based on the number of points.
-     *
      * This method converts the number of points into a level where each level requires a specified
      * number of points. For example, if each level requires 1000 points, then 2890 points would
      * correspond to level 2.

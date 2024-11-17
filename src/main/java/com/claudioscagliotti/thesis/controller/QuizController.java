@@ -101,11 +101,9 @@ public class QuizController {
      *
      * @param quizRequest A list of QuizRequest objects containing the quiz completion data.
      * @return A ResponseEntity containing the completed quizzes.
-     * @throws JsonProcessingException If there is an error processing the JSON data.
      */
     @PostMapping
-    public ResponseEntity<GenericResponse<List<QuizDto>>> completeQuiz(@Valid @RequestBody List<QuizRequest> quizRequest) throws JsonProcessingException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<GenericResponse<List<QuizDto>>> completeQuiz(@Valid @RequestBody List<QuizRequest> quizRequest) {
 
         try {
             List<QuizDto> quizDtoList = quizService.completeQuiz(quizRequest);

@@ -28,16 +28,13 @@ import java.util.List;
 /**
  * OpenAiApiClient is a service class responsible for interacting with the OpenAI API
  * to perform chat operations and manage conversation history.
- *
  * This class provides methods to create chat requests, send them to the OpenAI API,
  * retrieve conversation history, add responses to the conversation history, and manage
  * user profiles for role-playing scenarios.
- *
  * Example usage:
  * - Create a chat request with specified parameters and send it to the OpenAI API.
  * - Retrieve conversation history for a user and update it with new responses.
  * - Manage user profiles based on role definitions for role-playing scenarios.
- *
  * Dependencies:
  * - Requires a configured RestTemplate with appropriate interceptors for API communication.
  * - Uses a ChatSessionService to manage and retrieve conversation histories for users.
@@ -81,7 +78,7 @@ public class OpenAiApiClient {
      * @param apiUrl                 URL of the OpenAI API endpoint.
      * @param chatSessionService     Service for managing and retrieving user conversation histories.
      * @param roleplayProfileService Service for managing rules of roles
-     * @param userService
+     * @param userService            Service for managing the user
      */
     public OpenAiApiClient(
             @Qualifier("openaiRestTemplate") RestTemplate restTemplate,

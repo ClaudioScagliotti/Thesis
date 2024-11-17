@@ -192,10 +192,9 @@ public class GoalServiceImpl implements GoalService {
      * Updates an existing goal entity in the database.
      *
      * @param entity The updated GoalEntity to save.
-     * @return The updated GoalEntity.
      */
-    public GoalEntity updateGoal(GoalEntity entity) {
-        return goalRepository.save(entity);
+    public void updateGoal(GoalEntity entity) {
+        goalRepository.save(entity);
     }
 
     /**
