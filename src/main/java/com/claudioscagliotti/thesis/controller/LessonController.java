@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.*;
+
 
 /**
  * Rest controller for managing lessons and lesson progress.
@@ -52,18 +54,18 @@ public class LessonController {
         try {
             List<LessonDto> lessonDtoList = lessonService.getAllLessonByCourse(userDetails.getUsername(), courseId);
             String message = "The course with id: " + courseId + " has " + lessonDtoList.size() + " lessons";
-            GenericResponse<List<LessonDto>> response = new GenericResponse<>("success", message, lessonDtoList);
+            GenericResponse<List<LessonDto>> response = new GenericResponse<>(SUCCESS, message, lessonDtoList);
             return ResponseEntity.ok(response);
 
         } catch (EntityNotFoundException | UsernameNotFoundException e) {
-            GenericResponse<List<LessonDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<LessonDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 
         } catch (SubscriptionUserException e) {
-            GenericResponse<List<LessonDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<LessonDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
-            GenericResponse<List<LessonDto>> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<List<LessonDto>> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -81,18 +83,18 @@ public class LessonController {
         try {
             LessonDto lesson = lessonService.getNextLessonByCourse(userDetails.getUsername(), courseId);
             String message = "The next lesson for the course with id: " + courseId + " is " + lesson.getId();
-            GenericResponse<LessonDto> response = new GenericResponse<>("success", message, lesson);
+            GenericResponse<LessonDto> response = new GenericResponse<>(SUCCESS, message, lesson);
             return ResponseEntity.ok(response);
 
         } catch (SubscriptionUserException | CompletedCourseException e) {
-            GenericResponse<LessonDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<LessonDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 
         } catch (EntityNotFoundException | UsernameNotFoundException e) {
-            GenericResponse<LessonDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<LessonDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception e) {
-            GenericResponse<LessonDto> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<LessonDto> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -110,14 +112,14 @@ public class LessonController {
         try {
             LessonProgressDto progress = lessonProgressService.getLessonProgress(userDetails.getUsername(), lessonId);
             String message = "Retrieved the progress for the lesson with id: " + lessonId;
-            GenericResponse<LessonProgressDto> response = new GenericResponse<>("success", message, progress);
+            GenericResponse<LessonProgressDto> response = new GenericResponse<>(SUCCESS, message, progress);
             return ResponseEntity.ok(response);
 
         } catch (EntityNotFoundException | UsernameNotFoundException e) {
-            GenericResponse<LessonProgressDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<LessonProgressDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception e) {
-            GenericResponse<LessonProgressDto> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<LessonProgressDto> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -137,17 +139,17 @@ public class LessonController {
         try {
             LessonProgressDto lessonProgressDto = lessonProgressService.updateLessonProgress(userDetails.getUsername(), lessonId, newProgress);
             String message = "Updated progress for the lesson with id: " + lessonId;
-            GenericResponse<LessonProgressDto> response = new GenericResponse<>("success", message, lessonProgressDto);
+            GenericResponse<LessonProgressDto> response = new GenericResponse<>(SUCCESS, message, lessonProgressDto);
             return ResponseEntity.ok(response);
 
         } catch (EntityNotFoundException | UsernameNotFoundException e) {
-            GenericResponse<LessonProgressDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<LessonProgressDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (IndexOutOfBoundsException | IllegalStateException e) {
-            GenericResponse<LessonProgressDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<LessonProgressDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
-            GenericResponse<LessonProgressDto> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<LessonProgressDto> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

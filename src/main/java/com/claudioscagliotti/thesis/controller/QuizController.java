@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.*;
+
 /**
  * Rest controller for managing quizzes.
  */
@@ -50,18 +52,18 @@ public class QuizController {
         try {
             List<QuizDto> quizDtoList = quizService.findAllByLessonId(lessonId, userDetails.getUsername());
             String message = "There are " + quizDtoList.size() + " quiz for the lesson with id: " + lessonId;
-            GenericResponse<List<QuizDto>> response = new GenericResponse<>("success", message, quizDtoList);
+            GenericResponse<List<QuizDto>> response = new GenericResponse<>(SUCCESS, message, quizDtoList);
             return ResponseEntity.ok(response);
 
         } catch (EntityNotFoundException | UsernameNotFoundException e) {
-            GenericResponse<List<QuizDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<QuizDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 
         } catch (SubscriptionUserException e) {
-            GenericResponse<List<QuizDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<QuizDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
-            GenericResponse<List<QuizDto>> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<List<QuizDto>> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -80,18 +82,18 @@ public class QuizController {
         try {
             List<QuizDto> quizDtoList = quizService.findAllByAdviceId(adviceId, userDetails.getUsername());
             String message = "There are " + quizDtoList.size() + " quiz for the advice with id: " + adviceId;
-            GenericResponse<List<QuizDto>> response = new GenericResponse<>("success", message, quizDtoList);
+            GenericResponse<List<QuizDto>> response = new GenericResponse<>(SUCCESS, message, quizDtoList);
             return ResponseEntity.ok(response);
 
         } catch (EntityNotFoundException | UsernameNotFoundException e) {
-            GenericResponse<List<QuizDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<QuizDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 
         } catch (UnauthorizedUserException e) {
-            GenericResponse<List<QuizDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<QuizDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
-            GenericResponse<List<QuizDto>> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<List<QuizDto>> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -108,17 +110,17 @@ public class QuizController {
         try {
             List<QuizDto> quizDtoList = quizService.completeQuiz(quizRequest);
             String message = "Completed " + quizDtoList.size() + " quiz";
-            GenericResponse<List<QuizDto>> response = new GenericResponse<>("success", message, quizDtoList);
+            GenericResponse<List<QuizDto>> response = new GenericResponse<>(SUCCESS, message, quizDtoList);
             return ResponseEntity.ok(response);
 
         } catch (EntityNotFoundException | UsernameNotFoundException e) {
-            GenericResponse<List<QuizDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<QuizDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (JsonProcessingException e) {
-            GenericResponse<List<QuizDto>> response = new GenericResponse<>("error", "Error with the string userAnswer: " + e.getMessage(), null);
+            GenericResponse<List<QuizDto>> response = new GenericResponse<>(ERROR, "Error with the string userAnswer: " + e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
-            GenericResponse<List<QuizDto>> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<List<QuizDto>> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

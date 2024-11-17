@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.*;
+
 /**
  * Rest controller for managing course subscriptions and suggestions.
  */
@@ -46,17 +48,17 @@ public class CourseController {
         try {
             CourseDto courseDto = courseService.subscribeCourse(userDetails.getUsername(), courseId);
             String message = "Subscribed to course with id: " + courseId;
-            GenericResponse<CourseDto> response = new GenericResponse<>("success", message, courseDto);
+            GenericResponse<CourseDto> response = new GenericResponse<>(SUCCESS, message, courseDto);
             return ResponseEntity.ok(response);
 
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
-            GenericResponse<CourseDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<CourseDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (SubscriptionUserException e) {
-            GenericResponse<CourseDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<CourseDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
-            GenericResponse<CourseDto> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<CourseDto> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -74,17 +76,17 @@ public class CourseController {
         try {
             courseService.unsubscribeCourse(userDetails.getUsername(), courseId);
             String message = "Unsubscribed from course with id: " + courseId + " successfully";
-            GenericResponse<Void> response = new GenericResponse<>("success", message, null);
+            GenericResponse<Void> response = new GenericResponse<>(SUCCESS, message, null);
             return ResponseEntity.ok(response);
 
         } catch (SubscriptionUserException e) {
-            GenericResponse<Void> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<Void> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
-            GenericResponse<Void> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<Void> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception e) {
-            GenericResponse<Void> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<Void> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -101,14 +103,14 @@ public class CourseController {
         try {
             List<CourseDto> dtoList = courseService.suggestCourses(userDetails.getUsername());
             String message = "Suggested " + dtoList.size() + " courses";
-            GenericResponse<List<CourseDto>> response = new GenericResponse<>("success", message, dtoList);
+            GenericResponse<List<CourseDto>> response = new GenericResponse<>(SUCCESS, message, dtoList);
             return ResponseEntity.ok(response);
 
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
-            GenericResponse<List<CourseDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<CourseDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception e) {
-            GenericResponse<List<CourseDto>> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<List<CourseDto>> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -125,14 +127,14 @@ public class CourseController {
         try {
             List<CourseDto> dtoList = courseService.subscribedCourses(userDetails.getUsername());
             String message = "Subscribed to " + dtoList.size() + " courses";
-            GenericResponse<List<CourseDto>> response = new GenericResponse<>("success", message, dtoList);
+            GenericResponse<List<CourseDto>> response = new GenericResponse<>(SUCCESS, message, dtoList);
             return ResponseEntity.ok(response);
 
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
-            GenericResponse<List<CourseDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<CourseDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception e) {
-            GenericResponse<List<CourseDto>> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<List<CourseDto>> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

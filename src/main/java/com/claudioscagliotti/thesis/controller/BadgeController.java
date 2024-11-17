@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.*;
+
 
 /**
  * Rest controller for managing badge-related operations.
@@ -50,14 +52,14 @@ public class BadgeController {
         try {
             List<BadgeDto> badgeDtoList = badgeService.getAllBadgeByUsername(userDetails.getUsername());
             String message = "Retrieved " + badgeDtoList.size() + " badges for user: " + userDetails.getUsername();
-            GenericResponse<List<BadgeDto>> response = new GenericResponse<>("success", message, badgeDtoList);
+            GenericResponse<List<BadgeDto>> response = new GenericResponse<>(SUCCESS, message, badgeDtoList);
             return ResponseEntity.ok(response);
 
         } catch (EntityNotFoundException e) {
-            GenericResponse<List<BadgeDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<BadgeDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception e) {
-            GenericResponse<List<BadgeDto>> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<List<BadgeDto>> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -76,20 +78,20 @@ public class BadgeController {
             userService.checkIsAdmin();
             BadgeDto badgeDto = badgeService.addBadgeForUser(userDetails.getUsername(), badgeId);
             String message = "Badge with id: " + badgeId + " added to user: " + userDetails.getUsername();
-            GenericResponse<BadgeDto> response = new GenericResponse<>("success", message, badgeDto);
+            GenericResponse<BadgeDto> response = new GenericResponse<>(SUCCESS, message, badgeDto);
             return ResponseEntity.ok(response);
 
         } catch (UnauthorizedUserException e) {
-            GenericResponse<BadgeDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<BadgeDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (EntityNotFoundException e) {
-            GenericResponse<BadgeDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<BadgeDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (EntityExistsException e) {
-            GenericResponse<BadgeDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<BadgeDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
-            GenericResponse<BadgeDto> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<BadgeDto> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -104,11 +106,11 @@ public class BadgeController {
         try {
             List<BadgeDto> badgeDtoList = badgeService.getAllBadge();
             String message = "Retrieved all " + badgeDtoList.size() + " badges";
-            GenericResponse<List<BadgeDto>> response = new GenericResponse<>("success", message, badgeDtoList);
+            GenericResponse<List<BadgeDto>> response = new GenericResponse<>(SUCCESS, message, badgeDtoList);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            GenericResponse<List<BadgeDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<BadgeDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.*;
+
 /**
  * Rest controller for managing advice-related operations.
  */
@@ -47,17 +49,17 @@ public class AdviceController {
             List<AdviceDto> adviceList = adviceService.createAdviceList(userDetails.getUsername());
             String message = "Created " + adviceList.size() + " advices";
 
-            GenericResponse<List<AdviceDto>> response = new GenericResponse<>("success", message, adviceList);
+            GenericResponse<List<AdviceDto>> response = new GenericResponse<>(ERROR, message, adviceList);
             return ResponseEntity.ok(response);
 
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
-            GenericResponse<List<AdviceDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<AdviceDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (IllegalArgumentException e) {
-            GenericResponse<List<AdviceDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<AdviceDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
-            GenericResponse<List<AdviceDto>> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<List<AdviceDto>> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -75,14 +77,14 @@ public class AdviceController {
         try {
             AdviceDto adviceDto = adviceService.skipAdvice(userDetails.getUsername(), adviceId);
             String message = "Skipped advice with id: " + adviceId;
-            GenericResponse<AdviceDto> response = new GenericResponse<>("success", message, adviceDto);
+            GenericResponse<AdviceDto> response = new GenericResponse<>(ERROR, message, adviceDto);
             return ResponseEntity.ok(response);
 
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
-            GenericResponse<AdviceDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<AdviceDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
-            GenericResponse<AdviceDto> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<AdviceDto> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -100,18 +102,18 @@ public class AdviceController {
         try {
             AdviceDto adviceDto = adviceService.completeAdvice(userDetails.getUsername(), adviceId);
             String message = "Completed advice with id: " + adviceId;
-            GenericResponse<AdviceDto> response = new GenericResponse<>("success", message, adviceDto);
+            GenericResponse<AdviceDto> response = new GenericResponse<>(SUCCESS, message, adviceDto);
             return ResponseEntity.ok(response);
 
         } catch (EntityNotFoundException | UsernameNotFoundException e) {
-            GenericResponse<AdviceDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<AdviceDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 
         } catch (UnauthorizedUserException e) {
-            GenericResponse<AdviceDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<AdviceDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
-            GenericResponse<AdviceDto> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<AdviceDto> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
@@ -129,14 +131,14 @@ public class AdviceController {
         try {
             AdviceDto adviceDto = adviceService.getNextAdvice(userDetails.getUsername());
             String message = "Found advice with id: " + adviceDto.getId();
-            GenericResponse<AdviceDto> response = new GenericResponse<>("success", message, adviceDto);
+            GenericResponse<AdviceDto> response = new GenericResponse<>(SUCCESS, message, adviceDto);
             return ResponseEntity.ok(response);
 
         } catch (NoAdviceAvailableException | EntityNotFoundException | UsernameNotFoundException e) {
-            GenericResponse<AdviceDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<AdviceDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception e) {
-            GenericResponse<AdviceDto> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<AdviceDto> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

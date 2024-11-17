@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.ERROR;
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.SUCCESS;
+
 /**
  * Rest controller for managing chat-related operations.
  */
@@ -59,20 +62,20 @@ public class ChatController {
             Message lastMessage = openAiApiClient.getMessageLastMessageAndUpdateConversationHistory(authentication, response);
 
             String message = "Chat response generated successfully as " + role;
-            GenericResponse<Message> responseBody = new GenericResponse<>("success", message, lastMessage);
+            GenericResponse<Message> responseBody = new GenericResponse<>(SUCCESS, message, lastMessage);
             return ResponseEntity.ok(responseBody);
 
         } catch (UnknownRoleException | UnlockedRoleException e) {
-            GenericResponse<Message> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<Message> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
 
         } catch (InvalidApiKeyException e) {
-            GenericResponse<Message> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<Message> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
 
         } catch (Exception e) {
             String errorMessage = "Failed to generate chat response as " + role;
-            GenericResponse<Message> response = new GenericResponse<>("error", errorMessage, null);
+            GenericResponse<Message> response = new GenericResponse<>(ERROR, errorMessage, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -89,13 +92,13 @@ public class ChatController {
             List<Choice> conversationHistory = openAiApiClient.getConversation(authentication.getName());
 
             if (conversationHistory.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GenericResponse<>("error", "No conversation history found for user: " + authentication.getName(), null));
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new GenericResponse<>(ERROR, "No conversation history found for user: " + authentication.getName(), null));
             }
 
-            return ResponseEntity.ok(new GenericResponse<>("success", "Full conversation history retrieved successfully", conversationHistory));
+            return ResponseEntity.ok(new GenericResponse<>(SUCCESS, "Full conversation history retrieved successfully", conversationHistory));
         } catch (Exception e) {
             String errorMessage = "Failed to retrieve conversation history for user: " + authentication.getName();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericResponse<>("error", errorMessage, null));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new GenericResponse<>(ERROR, errorMessage, null));
         }
     }
     /**
@@ -112,9 +115,9 @@ public class ChatController {
 
         if (availableRoles.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new GenericResponse<>("error", "No available roles found for user: " + userDetails.getUsername(), null));
+                    .body(new GenericResponse<>(ERROR, "No available roles found for user: " + userDetails.getUsername(), null));
         }
 
-        return ResponseEntity.ok(new GenericResponse<>("success", "Available roles retrieved successfully", availableRoles));
+        return ResponseEntity.ok(new GenericResponse<>(SUCCESS, "Available roles retrieved successfully", availableRoles));
     }
 }

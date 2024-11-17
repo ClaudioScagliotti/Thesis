@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.*;
+
 /**
  * Rest controller for managing user authentication.
  */
@@ -65,13 +67,13 @@ public class UserController {
         try {
             AuthenticationResponse register = authService.register(request);
             String message = "Registration succeeded for the username: " + request.getUsername();
-            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("success", message, register);
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>(SUCCESS, message, register);
             return ResponseEntity.ok(response);
         } catch (BadRequestException e) {
-            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (Exception e) {
-            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -87,16 +89,16 @@ public class UserController {
         try {
             AuthenticationResponse authenticate = authService.authenticate(request);
             String message = "Login succeeded for the username: " + request.getUsername();
-            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("success", message, authenticate);
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>(SUCCESS, message, authenticate);
             return ResponseEntity.ok(response);
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
-            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (BadCredentialsException e) {
-            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", "Invalid credentials", null);
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>(ERROR, "Invalid credentials", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         } catch (Exception e) {
-            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -112,16 +114,16 @@ public class UserController {
         try {
             AuthenticationResponse refreshToken = authService.refreshToken(httpRequest);
             String message = "Refresh succeeded";
-            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("success", message, refreshToken);
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>(SUCCESS, message, refreshToken);
             return ResponseEntity.ok(response);
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
-            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (UnauthorizedUserException e) {
-            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
-            GenericResponse<AuthenticationResponse> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<AuthenticationResponse> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -136,10 +138,10 @@ public class UserController {
         try {
             customLogoutHandler.logout(httpServletRequest, httpServletResponse, authentication);
             String message = "User logged out successfully";
-            GenericResponse<Void> response = new GenericResponse<>("success", message, null);
+            GenericResponse<Void> response = new GenericResponse<>(SUCCESS, message, null);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            GenericResponse<Void> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<Void> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -157,11 +159,11 @@ public class UserController {
         try {
             List<UserStatsDto> allUserStats = userStatsService.getAllUserStats(RoleEnum.USER);
             String message = "Retrieved all " + allUserStats.size() + " users";
-            GenericResponse<List<UserStatsDto>> response = new GenericResponse<>("success", message, allUserStats);
+            GenericResponse<List<UserStatsDto>> response = new GenericResponse<>(SUCCESS, message, allUserStats);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            GenericResponse<List<UserStatsDto>> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<List<UserStatsDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -181,11 +183,11 @@ public class UserController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             UserStatsDto userStats = userStatsService.getUserStats(userDetails.getUsername());
             String message = "Retrieved stats for user: " + userDetails.getUsername();
-            GenericResponse<UserStatsDto> response = new GenericResponse<>("success", message, userStats);
+            GenericResponse<UserStatsDto> response = new GenericResponse<>(SUCCESS, message, userStats);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
-            GenericResponse<UserStatsDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<UserStatsDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -195,13 +197,13 @@ public class UserController {
         try {
             userService.resetUserPassword(request);
             String message = "Password reset link has been sent to your email";
-            GenericResponse<Void> response = new GenericResponse<>("success", message, null);
+            GenericResponse<Void> response = new GenericResponse<>(SUCCESS, message, null);
             return ResponseEntity.ok(response);
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
-            GenericResponse<Void> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<Void> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception e) {
-            GenericResponse<Void> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<Void> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -212,13 +214,13 @@ public class UserController {
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             userService.changePassword(userDetails.getUsername(), request);
             String message = "Your password has been successfully changed";
-            GenericResponse<Void> response = new GenericResponse<>("success", message, null);
+            GenericResponse<Void> response = new GenericResponse<>(SUCCESS, message, null);
             return ResponseEntity.ok(response);
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
-            GenericResponse<Void> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<Void> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception e) {
-            GenericResponse<Void> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<Void> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -228,16 +230,16 @@ public class UserController {
         try {
             authService.saveNewPassword(userService.findByUsername(request.getUsername()),request, httpRequest);
             String message = "Your new password has been successfully saved";
-            GenericResponse<Void> response = new GenericResponse<>("success", message, null);
+            GenericResponse<Void> response = new GenericResponse<>(SUCCESS, message, null);
             return ResponseEntity.ok(response);
         } catch (UsernameNotFoundException | EntityNotFoundException e) {
-            GenericResponse<Void> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<Void> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (UnauthorizedUserException e) {
-            GenericResponse<Void> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<Void> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
-            GenericResponse<Void> response = new GenericResponse<>("error", "An unexpected error occurred", null);
+            GenericResponse<Void> response = new GenericResponse<>(ERROR, UNEXPECTED_ERROR, null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

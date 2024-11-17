@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.ERROR;
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.SUCCESS;
+
 /**
  * Rest controller for managing user goals.
  */
@@ -47,14 +50,14 @@ public class GoalController {
         try {
             GoalDto createdGoal = goalService.createGoal(createGoalRequest, userDetails.getUsername());
             String message = "Created goal for the user: " + userDetails.getUsername();
-            GenericResponse<GoalDto> response = new GenericResponse<>("success", message, createdGoal);
+            GenericResponse<GoalDto> response = new GenericResponse<>(SUCCESS, message, createdGoal);
             return ResponseEntity.ok(response);
 
         } catch (EntityNotFoundException | UsernameNotFoundException e) {
-            GenericResponse<GoalDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<GoalDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception e) {
-            GenericResponse<GoalDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<GoalDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -71,14 +74,14 @@ public class GoalController {
         try {
             GoalDto goalDto = goalService.getGoalByUser(userDetails.getUsername());
             String message = "Found goal for the user: " + userDetails.getUsername();
-            GenericResponse<GoalDto> response = new GenericResponse<>("success", message, goalDto);
+            GenericResponse<GoalDto> response = new GenericResponse<>(SUCCESS, message, goalDto);
             return ResponseEntity.ok(response);
 
         } catch (EntityNotFoundException | UsernameNotFoundException e) {
-            GenericResponse<GoalDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<GoalDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception e) {
-            GenericResponse<GoalDto> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<GoalDto> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

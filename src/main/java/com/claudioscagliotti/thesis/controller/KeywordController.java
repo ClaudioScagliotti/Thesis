@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.ERROR;
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.SUCCESS;
+
 /**
  * Rest controller for managing keywords.
  */
@@ -45,17 +48,17 @@ public class KeywordController {
             userService.checkIsAdmin();
             KeywordResponse keywordResponse = client.searchKeywords(keyword);
             String message = "Found " + keywordResponse.totalResults() + " keywords";
-            GenericResponse<KeywordResponse> response = new GenericResponse<>("success", message, keywordResponse);
+            GenericResponse<KeywordResponse> response = new GenericResponse<>(SUCCESS, message, keywordResponse);
             return ResponseEntity.ok(response);
 
         } catch (ExternalApiException e) {
-            GenericResponse<KeywordResponse> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<KeywordResponse> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         } catch (UnauthorizedUserException e) {
-            GenericResponse<KeywordResponse> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<KeywordResponse> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
-            GenericResponse<KeywordResponse> response = new GenericResponse<>("error", e.getMessage(), null);
+            GenericResponse<KeywordResponse> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
