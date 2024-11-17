@@ -13,12 +13,16 @@ public class MailConfig {
 
     @Value("${google.mail.username}")
     private String mail;
+
     @Value("${google.app.password}")
     private String password;
+
     @Value("${google.mail.host}")
     private String host;
+
     @Value("${google.mail.port}")
     private Integer port;
+
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();

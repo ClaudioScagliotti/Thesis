@@ -9,14 +9,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 /**
  * SecurityConfig configures web security for the application, including authentication,
  * authorization, session management, and CSRF protection.
@@ -29,12 +30,13 @@ public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomLogoutHandler logoutHandler;
+
     /**
      * Constructs the SecurityConfig with necessary dependencies.
      *
-     * @param userDetailsServiceImpl Custom implementation of UserDetailsServiceImpl for user details management.
+     * @param userDetailsServiceImpl  Custom implementation of UserDetailsServiceImpl for user details management.
      * @param jwtAuthenticationFilter JwtAuthenticationFilter for JWT token handling.
-     * @param logoutHandler CustomLogoutHandler for handling logout actions.
+     * @param logoutHandler           CustomLogoutHandler for handling logout actions.
      */
     public SecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl,
                           JwtAuthenticationFilter jwtAuthenticationFilter,
@@ -43,6 +45,7 @@ public class SecurityConfig {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.logoutHandler = logoutHandler;
     }
+
     /**
      * Configures the security filter chain.
      *
@@ -55,7 +58,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        req->req.requestMatchers("user/login/**",
+                        req -> req.requestMatchers("user/login/**",
                                         "user/register/**",
                                         "user/refresh_token/**",
                                         "user/password-reset-request/**",
@@ -65,15 +68,15 @@ public class SecurityConfig {
                                 .anyRequest()
                                 .authenticated()
                 ).userDetailsService(userDetailsServiceImpl)
-                .sessionManagement(session->session
+                .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(
-                        e->e.accessDeniedHandler(
-                                        (request, response, accessDeniedException)->response.setStatus(403)
+                        e -> e.accessDeniedHandler(
+                                        (request, response, accessDeniedException) -> response.setStatus(403)
                                 )
                                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                .logout(l->l
+                .logout(l -> l
                         .logoutUrl("/logout")
                         .addLogoutHandler(logoutHandler)
                         .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext()
@@ -81,6 +84,7 @@ public class SecurityConfig {
                 .build();
 
     }
+
     /**
      * Provides a PasswordEncoder bean using BCrypt hashing.
      *
@@ -90,6 +94,7 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     /**
      * Provides an AuthenticationManager bean.
      *

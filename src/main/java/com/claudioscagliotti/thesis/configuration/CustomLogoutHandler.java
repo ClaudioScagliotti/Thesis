@@ -11,12 +11,12 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 /**
  * CustomLogoutHandler implements the LogoutHandler interface to handle logout operations
  * by marking bearer tokens as logged out in the database.
- *
+ * <p>
  * This handler extracts the bearer token from the Authorization header of the HTTP request,
  * queries the TokenRepository to find the corresponding TokenEntity, and updates its
  * loggedOut status to true. This ensures that the token is invalidated upon user logout,
  * preventing further use for authentication.
- *
+ * <p>
  * Example usage:
  * When a user initiates a logout request, this handler is invoked to process the request,
  * ensuring that the user's token is marked as logged out in the token repository.
