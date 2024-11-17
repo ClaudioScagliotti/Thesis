@@ -12,8 +12,11 @@ import java.util.List;
 
 @Repository
 public interface BadgeRepository extends JpaRepository<BadgeEntity, Long> {
+
     List<BadgeEntity> findByUserEntityListContaining(UserEntity userEntity);
+
     @Query("SELECT COUNT(b) FROM BadgeEntity b JOIN b.userEntityList u WHERE u.id = :userId")
     Integer countByUserId(@Param("userId") Long userId);
+
     List<BadgeEntity> findByGenreToUnlock(GenreEntity genreEntity);
 }

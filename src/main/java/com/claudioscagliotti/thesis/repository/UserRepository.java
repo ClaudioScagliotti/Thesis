@@ -16,16 +16,12 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByUsername(String username);
+
     Optional<UserEntity> findByUsernameAndEmail(String username, String email);
     @Modifying
     @Transactional
     @Query("UPDATE UserEntity u SET u.goalEntity.id = :newGoalId WHERE u.id = :userId")
     void updateUserGoal(@Param("userId") Long userId, @Param("newGoalId") Long newGoalId);
-
-    @Modifying
-    @Transactional
-    @Query(value = "DELETE FROM app_user_course WHERE app_user_id = :userId", nativeQuery = true)
-    void deleteUserCourses(@Param("userId") Long userId);
 
     @Query("SELECT u.goalEntity FROM UserEntity u WHERE u.username = :username")
     GoalEntity getGoalEntityByUsername(@Param("username") String username);

@@ -13,7 +13,9 @@ import java.util.List;
 
 @Repository
 public interface QuizRepository extends JpaRepository<QuizEntity, Long> {
+
     List<QuizEntity> findAllByAdviceId(@Param("adviceId") Long adviceId);
+
     List<QuizEntity> findAllByLessonId(@Param("lessonId") Long lessonId);
 
     @Modifying

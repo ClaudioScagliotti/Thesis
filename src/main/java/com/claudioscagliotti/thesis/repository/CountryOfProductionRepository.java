@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CountryOfProductionRepository extends JpaRepository<CountryOfProductionEntity, Long> {
     CountryOfProductionEntity getCountryOfProductionByCountryCode(String countryCode);
-    
 }

@@ -18,7 +18,10 @@ public interface TokenRepository extends JpaRepository<TokenEntity, Long> {
             WHERE u.id = :userId AND t.loggedOut = false
             """)
     List<TokenEntity> findAllAccessTokensByUser(@Param("userId") Long userId);
+
     Optional<TokenEntity> findByAccessToken(String token);
+
     Optional<TokenEntity> findByRefreshToken(String token);
+
     Optional<TokenEntity> findByResetPasswordToken(String token);
 }
