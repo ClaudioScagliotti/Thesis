@@ -1,0 +1,156 @@
+package com.claudioscagliotti.thesis.service.impl;
+
+import com.claudioscagliotti.thesis.dto.response.BadgeDto;
+import com.claudioscagliotti.thesis.enumeration.RoleplayProfileEnum;
+import com.claudioscagliotti.thesis.model.UserEntity;
+import com.claudioscagliotti.thesis.service.RoleplayProfileService;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+
+@Service
+public class RoleplayProfileServiceImpl implements RoleplayProfileService {
+
+    private final BadgeServiceImpl badgeService;
+
+    private static final Map<RoleplayProfileEnum, Integer> profileUnlockThresholds = new HashMap<>();
+    private static final Set<RoleplayProfileEnum> specificBadgeUnlockProfiles = new HashSet<>();
+
+    static {
+        profileUnlockThresholds.put(RoleplayProfileEnum.SPIELBERG, 1);
+        profileUnlockThresholds.put(RoleplayProfileEnum.CHAPLIN, 2);
+        profileUnlockThresholds.put(RoleplayProfileEnum.MELIES, 3);
+        profileUnlockThresholds.put(RoleplayProfileEnum.EASTWOOD, 4);
+        profileUnlockThresholds.put(RoleplayProfileEnum.TRUFFAUT, 5);
+        profileUnlockThresholds.put(RoleplayProfileEnum.SORRENTINO, 6);
+        profileUnlockThresholds.put(RoleplayProfileEnum.SCORSESE, 7);
+        profileUnlockThresholds.put(RoleplayProfileEnum.COPPOLA, 8);
+        profileUnlockThresholds.put(RoleplayProfileEnum.TARANTINO, 9);
+        profileUnlockThresholds.put(RoleplayProfileEnum.KUBRICK, 10);
+
+
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.FINCHER);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.FELLINI);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.FORD);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.KUROSAWA);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.HITCHCOCK);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.ALLEN);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.WES_ANDERSON);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.NOLAN);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.BURTON);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.LEONE);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.ARGENTO);
+        specificBadgeUnlockProfiles.add(RoleplayProfileEnum.LUCAS);
+    }
+
+    public RoleplayProfileServiceImpl(BadgeServiceImpl badgeService) {
+        this.badgeService = badgeService;
+    }
+
+    /**
+     * Checks if the user has unlocked the specified roleplay profile based on their badges.
+     *
+     * @param userEntity the user entity
+     * @param roleplayProfileEnum the roleplay profile to check
+     * @return true if the roleplay profile is unlocked, false otherwise
+     */
+    public boolean checkUnlockedRole(UserEntity userEntity, RoleplayProfileEnum roleplayProfileEnum) {
+        Integer badgeCount = badgeService.getBadgeCountByUserId(userEntity.getId());
+        List<BadgeDto> allBadgeByUsername = badgeService.getAllBadgeByUsername(userEntity.getUsername());
+
+        if (profileUnlockThresholds.containsKey(roleplayProfileEnum)) {
+            // Check the number of badges required for the profile
+            int requiredBadgeCount = profileUnlockThresholds.get(roleplayProfileEnum);
+            return badgeCount >= requiredBadgeCount;
+        } else if (specificBadgeUnlockProfiles.contains(roleplayProfileEnum)) {
+
+            return getSpecificBadgeId(roleplayProfileEnum,allBadgeByUsername);
+        }
+        return false;
+    }
+
+    /**
+     * Retrieves a list of all unlocked roleplay profiles for the user.
+     *
+     * @param userEntity the user entity
+     * @return a list of unlocked roleplay profiles
+     */
+    public List<RoleplayProfileEnum> getAllUnlockedProfiles(UserEntity userEntity) {
+        List<RoleplayProfileEnum> unlockedProfiles = new ArrayList<>();
+        for (RoleplayProfileEnum profile : profileUnlockThresholds.keySet()) {
+            if (checkUnlockedRole(userEntity, profile)) {
+                unlockedProfiles.add(profile);
+            }
+        }
+        for (RoleplayProfileEnum profile : specificBadgeUnlockProfiles) {
+            if (checkUnlockedRole(userEntity, profile)) {
+                unlockedProfiles.add(profile);
+            }
+        }
+        return unlockedProfiles;
+    }
+
+    /**
+     * Placeholder method for retrieving specific badge IDs associated with roleplay profiles.
+     *
+     * @param roleplayProfileEnum the roleplay profile
+     * @return true if the role is unlocked and false il it is locked
+     */
+    private boolean getSpecificBadgeId(RoleplayProfileEnum roleplayProfileEnum, List<BadgeDto> allBadgeByUser) {
+        switch (roleplayProfileEnum) {
+            case FINCHER -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "crime beginner".equals(badgeDto.getName()));
+            }
+            case FELLINI -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "fantasy beginner".equals(badgeDto.getName()));
+            }
+            case FORD -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "western expert".equals(badgeDto.getName()));
+            }
+            case LEONE -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "western beginner".equals(badgeDto.getName()));
+            }
+            case KUROSAWA -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "drama beginner".equals(badgeDto.getName()));
+            }
+            case HITCHCOCK -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "thriller beginner".equals(badgeDto.getName()));
+            }
+            case ARGENTO -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "horror beginner".equals(badgeDto.getName()));
+            }
+            case WES_ANDERSON -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "comedy beginner".equals(badgeDto.getName()));
+            }
+            case ALLEN -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "comedy expert".equals(badgeDto.getName()));
+            }
+            case NOLAN -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "science fiction beginner".equals(badgeDto.getName()));
+            }
+            case LUCAS -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "adventure beginner".equals(badgeDto.getName()));
+            }
+            case BURTON -> {
+                return allBadgeByUser.stream()
+                        .anyMatch(badgeDto -> "mystery beginner".equals(badgeDto.getName()));
+            }
+            default -> {
+                return false;
+            }
+        }
+    }
+
+}
+

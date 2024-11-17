@@ -11,9 +11,9 @@ import com.claudioscagliotti.thesis.exception.InvalidApiKeyException;
 import com.claudioscagliotti.thesis.exception.UnknownRoleException;
 import com.claudioscagliotti.thesis.exception.UnlockedRoleException;
 import com.claudioscagliotti.thesis.model.UserEntity;
-import com.claudioscagliotti.thesis.service.ChatSessionService;
-import com.claudioscagliotti.thesis.service.RoleplayProfileService;
-import com.claudioscagliotti.thesis.service.UserService;
+import com.claudioscagliotti.thesis.service.impl.ChatSessionServiceImpl;
+import com.claudioscagliotti.thesis.service.impl.RoleplayProfileServiceImpl;
+import com.claudioscagliotti.thesis.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -49,9 +49,9 @@ public class OpenAiApiClient {
     private int N_RECENT_MESSAGES;
     private final RestTemplate restTemplate;
     private final String apiUrl;
-    private final ChatSessionService chatSessionService;
-    private final RoleplayProfileService roleplayProfileService;
-    private final UserService userService;
+    private final ChatSessionServiceImpl chatSessionService;
+    private final RoleplayProfileServiceImpl roleplayProfileService;
+    private final UserServiceImpl userService;
     @Value("${openai.model}")
     private String model;
 
@@ -86,7 +86,7 @@ public class OpenAiApiClient {
     public OpenAiApiClient(
             @Qualifier("openaiRestTemplate") RestTemplate restTemplate,
             @Value("${openai.api.url}") String apiUrl,
-            ChatSessionService chatSessionService, RoleplayProfileService roleplayProfileService, UserService userService) {
+            ChatSessionServiceImpl chatSessionService, RoleplayProfileServiceImpl roleplayProfileService, UserServiceImpl userService) {
         this.restTemplate = restTemplate;
         this.apiUrl = apiUrl;
         this.chatSessionService = chatSessionService;

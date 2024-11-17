@@ -2,49 +2,18 @@ package com.claudioscagliotti.thesis.service;
 
 import com.claudioscagliotti.thesis.dto.response.CourseDto;
 import com.claudioscagliotti.thesis.exception.SubscriptionUserException;
-import com.claudioscagliotti.thesis.mapper.CourseMapper;
-import com.claudioscagliotti.thesis.model.CourseEntity;
-import com.claudioscagliotti.thesis.model.GoalTypeEntity;
-import com.claudioscagliotti.thesis.model.UserEntity;
-import com.claudioscagliotti.thesis.repository.CourseRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Service class responsible for managing courses and subscriptions for users.
- */
-@Service
-public class CourseService {
-
-    private final CourseRepository courseRepository;
-    private final CourseMapper courseMapper;
-    private final UserService userService;
-
-    /**
-     * Constructor to initialize CourseService with repositories and mappers.
-     *
-     * @param courseRepository The repository for CourseEntity.
-     * @param courseMapper     The mapper for converting CourseEntity to CourseDto.
-     * @param userService      The service for managing user operations.
-     */
-    public CourseService(CourseRepository courseRepository, CourseMapper courseMapper, UserService userService) {
-        this.courseRepository = courseRepository;
-        this.courseMapper = courseMapper;
-        this.userService = userService;
-    }
-
+public interface CourseService {
     /**
      * Retrieves the list of courses that the user is subscribed to.
      *
      * @param username The username of the user.
      * @return List of CourseDto representing subscribed courses.
      */
-    public List<CourseDto> subscribedCourses(String username) {
-        UserEntity userEntity = userService.findByUsername(username);
-        return courseMapper.toCourseDto(userEntity.getCourseEntityList());
-    }
+    List<CourseDto> subscribedCourses(String username);
 
     /**
      * Retrieves a list of courses suggested based on the user's goal type.
@@ -52,17 +21,7 @@ public class CourseService {
      * @param username The username of the user.
      * @return List of CourseDto representing suggested courses.
      */
-    public List<CourseDto> suggestCourses(String username) {
-        UserEntity userEntity = userService.findByUsername(username);
-
-        GoalTypeEntity goalType = userEntity.getGoalEntity().getGoalType();
-        List<CourseEntity> courseEntityList = courseRepository.findAllByGoalType(goalType);
-        if(courseEntityList.size()==0){
-            throw new EntityNotFoundException("There are not courses avaliable for this goal type!");
-        }
-
-        return courseMapper.toCourseDto(courseEntityList);
-    }
+    List<CourseDto> suggestCourses(String username);
 
     /**
      * Subscribes the user to a course identified by courseId.
@@ -73,41 +32,7 @@ public class CourseService {
      * @throws EntityNotFoundException   If the course with the given courseId is not found.
      * @throws SubscriptionUserException If the user is already subscribed to the course.
      */
-    public CourseDto subscribeCourse(String username, Long courseId) {
-        UserEntity userEntity = userService.findByUsername(username);
-        CourseEntity courseEntity = findCourseById(courseId);
-
-        addCourseToUser(userEntity, courseEntity);
-        userService.saveUser(userEntity);
-        return courseMapper.toCourseDto(courseEntity);
-    }
-
-    /**
-     * Finds a course by its ID.
-     *
-     * @param courseId The ID of the course to find.
-     * @return CourseEntity representing the course found.
-     * @throws EntityNotFoundException If the course with the given courseId is not found.
-     */
-    protected CourseEntity findCourseById(Long courseId) {
-        return courseRepository.findById(courseId)
-                .orElseThrow(() -> new EntityNotFoundException("Course with id: " + courseId + " not found"));
-    }
-
-    /**
-     * Adds a course to the user's subscribed courses.
-     *
-     * @param userEntity   The UserEntity to add the course to.
-     * @param courseEntity The CourseEntity to add.
-     * @throws SubscriptionUserException If the user is already subscribed to the course.
-     */
-    private void addCourseToUser(UserEntity userEntity, CourseEntity courseEntity) {
-        if (!userEntity.getCourseEntityList().contains(courseEntity)) {
-            userEntity.getCourseEntityList().add(courseEntity);
-        } else {
-            throw new SubscriptionUserException("The user with username: " + userEntity.getUsername() + " is already subscribed to course with title: " + courseEntity.getTitle());
-        }
-    }
+    CourseDto subscribeCourse(String username, Long courseId);
 
     /**
      * Unsubscribes the user from a course identified by courseId.
@@ -116,17 +41,7 @@ public class CourseService {
      * @param courseId The ID of the course to unsubscribe.
      * @throws SubscriptionUserException If the user is not subscribed to the course.
      */
-    public void unsubscribeCourse(String username, Long courseId) {
-        UserEntity userEntity = userService.findByUsername(username);
-        CourseEntity courseEntity = findCourseById(courseId);
-
-        if (!checkSubscription(username, courseId)) {
-            throw new SubscriptionUserException("The user " + username + " is not subscribed to the course with title: " + courseEntity.getTitle());
-        } else {
-            userEntity.getCourseEntityList().remove(courseEntity);
-            userService.saveUser(userEntity);
-        }
-    }
+    void unsubscribeCourse(String username, Long courseId);
 
     /**
      * Checks if the user is subscribed to a course identified by courseId.
@@ -135,9 +50,5 @@ public class CourseService {
      * @param courseId The ID of the course to check subscription for.
      * @return true if the user is subscribed to the course, false otherwise.
      */
-    public boolean checkSubscription(String username, Long courseId) {
-        UserEntity userEntity = userService.findByUsername(username);
-        CourseEntity courseEntity = findCourseById(courseId);
-        return userEntity.getCourseEntityList().contains(courseEntity);
-    }
+    boolean checkSubscription(String username, Long courseId);
 }

@@ -2,7 +2,7 @@ package com.claudioscagliotti.thesis.controller;
 
 import com.claudioscagliotti.thesis.dto.response.GenericResponse;
 import com.claudioscagliotti.thesis.dto.request.GoalDto;
-import com.claudioscagliotti.thesis.service.GoalService;
+import com.claudioscagliotti.thesis.service.impl.GoalServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +23,14 @@ import javax.validation.Valid;
 @Validated
 public class GoalController {
 
-    private final GoalService goalService;
+    private final GoalServiceImpl goalService;
 
     /**
      * Constructs a GoalController instance with the provided dependencies.
      *
      * @param goalService The GoalService dependency.
      */
-    public GoalController(GoalService goalService) {
+    public GoalController(GoalServiceImpl goalService) {
         this.goalService = goalService;
     }
 

@@ -3,7 +3,7 @@ package com.claudioscagliotti.thesis.controller;
 import com.claudioscagliotti.thesis.dto.response.CourseDto;
 import com.claudioscagliotti.thesis.dto.response.GenericResponse;
 import com.claudioscagliotti.thesis.exception.SubscriptionUserException;
-import com.claudioscagliotti.thesis.service.CourseService;
+import com.claudioscagliotti.thesis.service.impl.CourseServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +22,14 @@ import java.util.List;
 @RequestMapping("/course")
 public class CourseController {
 
-    private final CourseService courseService;
+    private final CourseServiceImpl courseService;
 
     /**
      * Constructs a CourseController instance with the provided dependencies.
      *
      * @param courseService The CourseService dependency.
      */
-    public CourseController(CourseService courseService) {
+    public CourseController(CourseServiceImpl courseService) {
         this.courseService = courseService;
     }
 

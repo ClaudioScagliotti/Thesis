@@ -3,8 +3,8 @@ package com.claudioscagliotti.thesis.controller;
 import com.claudioscagliotti.thesis.dto.response.BadgeDto;
 import com.claudioscagliotti.thesis.dto.response.GenericResponse;
 import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
-import com.claudioscagliotti.thesis.service.BadgeService;
-import com.claudioscagliotti.thesis.service.UserService;
+import com.claudioscagliotti.thesis.service.impl.BadgeServiceImpl;
+import com.claudioscagliotti.thesis.service.impl.UserServiceImpl;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -24,8 +24,8 @@ import java.util.List;
 @RequestMapping("/badge")
 public class BadgeController {
 
-    private final BadgeService badgeService;
-    private final UserService userService;
+    private final BadgeServiceImpl badgeService;
+    private final UserServiceImpl userService;
 
     /**
      * Constructs a BadgeController instance with the provided dependencies.
@@ -33,7 +33,7 @@ public class BadgeController {
      * @param badgeService The BadgeService dependency.
      * @param userService  The UserService dependency.
      */
-    public BadgeController(BadgeService badgeService, UserService userService) {
+    public BadgeController(BadgeServiceImpl badgeService, UserServiceImpl userService) {
         this.badgeService = badgeService;
         this.userService = userService;
     }

@@ -5,7 +5,7 @@ import com.claudioscagliotti.thesis.dto.tmdb.response.keyword.KeywordResponse;
 import com.claudioscagliotti.thesis.exception.ExternalApiException;
 import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
 import com.claudioscagliotti.thesis.proxy.tmdb.TmdbApiClient;
-import com.claudioscagliotti.thesis.service.UserService;
+import com.claudioscagliotti.thesis.service.impl.UserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/keywords")
 public class KeywordController {
     private final TmdbApiClient client;
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     /**
      * Constructs a KeywordController instance with the provided dependencies.
@@ -28,7 +28,7 @@ public class KeywordController {
      * @param client         The TmdbApiClient dependency.
      * @param userService    The UserService dependency.
      */
-    public KeywordController(TmdbApiClient client, UserService userService) {
+    public KeywordController(TmdbApiClient client, UserServiceImpl userService) {
         this.client = client;
         this.userService = userService;
     }

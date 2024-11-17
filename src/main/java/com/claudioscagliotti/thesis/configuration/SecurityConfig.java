@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.configuration;
 
 import com.claudioscagliotti.thesis.filter.JwtAuthenticationFilter;
-import com.claudioscagliotti.thesis.service.UserDetailsServiceImpl;
+import com.claudioscagliotti.thesis.service.impl.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;

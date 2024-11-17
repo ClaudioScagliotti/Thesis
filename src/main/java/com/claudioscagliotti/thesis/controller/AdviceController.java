@@ -4,7 +4,7 @@ import com.claudioscagliotti.thesis.dto.response.AdviceDto;
 import com.claudioscagliotti.thesis.dto.response.GenericResponse;
 import com.claudioscagliotti.thesis.exception.NoAdviceAvailableException;
 import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
-import com.claudioscagliotti.thesis.service.AdviceService;
+import com.claudioscagliotti.thesis.service.impl.AdviceServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +23,14 @@ import java.util.List;
 @RequestMapping("/advice")
 public class AdviceController {
 
-    private final AdviceService adviceService;
+    private final AdviceServiceImpl adviceService;
 
     /**
      * Constructs an AdviceController instance with the provided dependencies.
      *
      * @param adviceService The AdviceService dependency.
      */
-    public AdviceController(AdviceService adviceService) {
+    public AdviceController(AdviceServiceImpl adviceService) {
         this.adviceService = adviceService;
     }
 

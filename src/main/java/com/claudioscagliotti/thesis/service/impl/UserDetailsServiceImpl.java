@@ -1,4 +1,4 @@
-package com.claudioscagliotti.thesis.service;
+package com.claudioscagliotti.thesis.service.impl;
 
 import com.claudioscagliotti.thesis.model.UserEntity;
 import com.claudioscagliotti.thesis.repository.UserRepository;

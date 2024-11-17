@@ -10,9 +10,9 @@ import com.claudioscagliotti.thesis.dto.response.GenericResponse;
 import com.claudioscagliotti.thesis.dto.response.UserStatsDto;
 import com.claudioscagliotti.thesis.enumeration.RoleEnum;
 import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
-import com.claudioscagliotti.thesis.service.AuthenticationService;
-import com.claudioscagliotti.thesis.service.UserService;
-import com.claudioscagliotti.thesis.service.UserStatsService;
+import com.claudioscagliotti.thesis.service.impl.AuthenticationServiceImpl;
+import com.claudioscagliotti.thesis.service.impl.UserServiceImpl;
+import com.claudioscagliotti.thesis.service.impl.UserStatsServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,9 +34,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    private final AuthenticationService authService;
-    private final UserStatsService userStatsService;
-    private final UserService userService;
+    private final AuthenticationServiceImpl authService;
+    private final UserStatsServiceImpl userStatsService;
+    private final UserServiceImpl userService;
     private final CustomLogoutHandler customLogoutHandler;
 
     /**
@@ -47,7 +47,7 @@ public class UserController {
      * @param userService         The UserService dependency.
      * @param customLogoutHandler The CustomLogoutHandler dependency.
      */
-    public UserController(AuthenticationService authService, UserStatsService userStatsService, UserService userService, CustomLogoutHandler customLogoutHandler) {
+    public UserController(AuthenticationServiceImpl authService, UserStatsServiceImpl userStatsService, UserServiceImpl userService, CustomLogoutHandler customLogoutHandler) {
         this.authService = authService;
         this.userStatsService = userStatsService;
         this.userService = userService;

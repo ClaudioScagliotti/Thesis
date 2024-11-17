@@ -7,6 +7,7 @@ import com.claudioscagliotti.thesis.repository.CountryOfProductionRepository;
 import com.claudioscagliotti.thesis.repository.GenreRepository;
 import com.claudioscagliotti.thesis.repository.GoalRepository;
 import com.claudioscagliotti.thesis.repository.GoalTypeRepository;
+import com.claudioscagliotti.thesis.service.impl.GoalServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ import java.util.Optional;
 @Transactional
 class GoalServiceTest {
     @Autowired
-    GoalService goalService;
+    GoalServiceImpl goalService;
     @Autowired
     private GoalRepository goalRepository;
     @Autowired

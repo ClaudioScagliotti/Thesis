@@ -5,7 +5,7 @@ import com.claudioscagliotti.thesis.dto.response.GenericResponse;
 import com.claudioscagliotti.thesis.dto.response.QuizDto;
 import com.claudioscagliotti.thesis.exception.SubscriptionUserException;
 import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
-import com.claudioscagliotti.thesis.service.QuizService;
+import com.claudioscagliotti.thesis.service.impl.QuizServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -26,14 +26,14 @@ import java.util.List;
 @RequestMapping("/quiz")
 public class QuizController {
 
-    private final QuizService quizService;
+    private final QuizServiceImpl quizService;
 
     /**
      * Constructs a QuizController instance with the provided QuizService dependency.
      *
      * @param quizService The QuizService dependency.
      */
-    public QuizController(QuizService quizService) {
+    public QuizController(QuizServiceImpl quizService) {
         this.quizService = quizService;
     }
 
@@ -106,7 +106,6 @@ public class QuizController {
     @PostMapping
     public ResponseEntity<GenericResponse<List<QuizDto>>> completeQuiz(@Valid @RequestBody List<QuizRequest> quizRequest) throws JsonProcessingException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         try {
             List<QuizDto> quizDtoList = quizService.completeQuiz(quizRequest);

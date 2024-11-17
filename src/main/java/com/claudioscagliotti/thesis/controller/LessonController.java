@@ -5,8 +5,8 @@ import com.claudioscagliotti.thesis.dto.response.LessonDto;
 import com.claudioscagliotti.thesis.dto.response.LessonProgressDto;
 import com.claudioscagliotti.thesis.exception.CompletedCourseException;
 import com.claudioscagliotti.thesis.exception.SubscriptionUserException;
-import com.claudioscagliotti.thesis.service.LessonProgressService;
-import com.claudioscagliotti.thesis.service.LessonService;
+import com.claudioscagliotti.thesis.service.impl.LessonProgressServiceImpl;
+import com.claudioscagliotti.thesis.service.impl.LessonServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +25,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/lesson")
 public class LessonController {
-    private final LessonService lessonService;
-    private final LessonProgressService lessonProgressService;
+    private final LessonServiceImpl lessonService;
+    private final LessonProgressServiceImpl lessonProgressService;
 
     /**
      * Constructs a LessonController instance with the provided dependencies.
@@ -34,7 +34,7 @@ public class LessonController {
      * @param lessonService         The LessonService dependency.
      * @param lessonProgressService The LessonProgressService dependency.
      */
-    public LessonController(LessonService lessonService, LessonProgressService lessonProgressService) {
+    public LessonController(LessonServiceImpl lessonService, LessonProgressServiceImpl lessonProgressService) {
         this.lessonService = lessonService;
         this.lessonProgressService = lessonProgressService;
     }

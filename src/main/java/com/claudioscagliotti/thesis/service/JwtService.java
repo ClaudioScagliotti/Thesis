@@ -1,47 +1,12 @@
 package com.claudioscagliotti.thesis.service;
 
 import com.claudioscagliotti.thesis.model.UserEntity;
-import com.claudioscagliotti.thesis.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKey;
-import java.util.Date;
 import java.util.function.Function;
 
-/**
- * Service class for JWT token generation and validation.
- */
-@Service
-public class JwtService {
-
-    @Value("${jwt.secret}")
-    private String secretKey;
-
-    @Value("${jwt.expiration}")
-    private long accessTokenExpire;
-
-    @Value("${jwt.refresh.expiration}")
-    private long refreshTokenExpire;
-
-    @Value("${jwt.reset.expiration}")
-    private long resetTokenExpire;
-
-    private final TokenRepository tokenRepository;
-
-    /**
-     * Constructs a JwtService with the specified TokenRepository.
-     *
-     * @param tokenRepository The TokenRepository used to interact with token data.
-     */
-    public JwtService(TokenRepository tokenRepository) {
-        this.tokenRepository = tokenRepository;
-    }
+public interface JwtService {
 
     /**
      * Generates an access token for the given user entity.
@@ -49,9 +14,7 @@ public class JwtService {
      * @param user The UserEntity for which the access token is generated.
      * @return The generated access token as a string.
      */
-    public String generateAccessToken(UserEntity user) {
-        return generateToken(user, accessTokenExpire, "access_token");
-    }
+    String generateAccessToken(UserEntity user);
 
     /**
      * Generates a refresh token for the given user entity.
@@ -59,9 +22,7 @@ public class JwtService {
      * @param user The UserEntity for which the refresh token is generated.
      * @return The generated refresh token as a string.
      */
-    public String generateRefreshToken(UserEntity user) {
-        return generateToken(user, refreshTokenExpire, "refresh_token");
-    }
+    String generateRefreshToken(UserEntity user);
 
     /**
      * Generates a reset token for the given user entity.
@@ -69,52 +30,7 @@ public class JwtService {
      * @param user The UserEntity for which the reset token is generated.
      * @return The generated reset token as a string.
      */
-    public String generateResetToken(UserEntity user) {
-        return generateToken(user, resetTokenExpire, "reset_password_token");
-    }
-
-
-    /**
-     * Generates a JWT token for the specified user entity and expiration time.
-     *
-     * @param user       The UserEntity for which the token is generated.
-     * @param expireTime The expiration time of the token in milliseconds.
-     * @param claimType  The claim type to include in the token (e.g., "access_token").
-     * @return The generated JWT token as a string.
-     */
-    private String generateToken(UserEntity user, long expireTime, String claimType) {
-        return Jwts.builder()
-                .setSubject(user.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expireTime))
-                .claim("type", claimType)
-                .signWith(getSigningKey())
-                .compact();
-    }
-
-    /**
-     * Retrieves the signing key from the secret key.
-     *
-     * @return The SecretKey used for signing JWT tokens.
-     */
-    private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64URL.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    /**
-     * Extracts all claims from the JWT token.
-     *
-     * @param token The JWT token from which claims are extracted.
-     * @return The Claims object containing all parsed claims.
-     */
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
+    String generateResetToken(UserEntity user);
 
     /**
      * Extracts the username from the JWT token.
@@ -122,9 +38,7 @@ public class JwtService {
      * @param token The JWT token from which the username is extracted.
      * @return The username extracted from the token.
      */
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
+    String extractUsername(String token);
 
     /**
      * Checks if the provided JWT token is valid for the specified UserDetails.
@@ -133,15 +47,7 @@ public class JwtService {
      * @param user  The UserDetails object representing the user to validate against.
      * @return true if the token is valid, false otherwise.
      */
-    public boolean isValid(String token, UserDetails user) {
-        String username = extractUsername(token);
-
-        boolean validToken = tokenRepository.findByAccessToken(token)
-                .map(t -> !t.isLoggedOut())
-                .orElse(false);
-
-        return (username.equals(user.getUsername())) && isTokenNotExpired(token) && validToken;
-    }
+    boolean isValid(String token, UserDetails user);
 
     /**
      * Checks if the provided refresh token is valid for the specified UserEntity.
@@ -150,35 +56,16 @@ public class JwtService {
      * @param user  The UserEntity representing the user to validate against.
      * @return true if the refresh token is valid, false otherwise.
      */
-    public boolean isValidRefreshToken(String token, UserEntity user) {
-        String username = extractUsername(token);
-
-        boolean validRefreshToken = tokenRepository.findByRefreshToken(token)
-                .map(t -> !t.isLoggedOut())
-                .orElse(false);
-
-        return (username.equals(user.getUsername())) && isTokenNotExpired(token) && validRefreshToken;
-    }
+    boolean isValidRefreshToken(String token, UserEntity user);
 
     /**
-     * Checks if the provided JWT token has expired.
+     * Validates the reset password token.
      *
-     * @param token The JWT token to check.
-     * @return true if the token has not expired, false if it has expired.
+     * @param token The reset password token to validate.
+     * @param username The username of the user who wants to create a new password.
+     * @return true if the reset token is valid, false otherwise.
      */
-    private boolean isTokenNotExpired(String token) {
-        return !extractExpiration(token).before(new Date());
-    }
-
-    /**
-     * Extracts the expiration date from the JWT token.
-     *
-     * @param token The JWT token from which the expiration date is extracted.
-     * @return The expiration date of the token.
-     */
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
+    boolean isValidResetPasswordToken(String token, String username);
 
     /**
      * Extracts a specific claim from the JWT token using the provided resolver function.
@@ -188,24 +75,5 @@ public class JwtService {
      * @param <T>      The type of the claim being extracted.
      * @return The resolved claim value.
      */
-    public <T> T extractClaim(String token, Function<Claims, T> resolver) {
-        Claims claims = extractAllClaims(token);
-        return resolver.apply(claims);
-    }
-
-    /**
-     * Validates the reset password token.
-     *
-     * @param token The reset password token to validate.
-     * @param username The username of the user who want to create the new password .
-     * @return true if the reset token is valid, false otherwise.
-     */
-    public boolean isValidResetPasswordToken(String token, String username) {
-        String tokenUsername = extractUsername(token);
-        boolean validToken = tokenRepository.findByResetPasswordToken(token)
-                .map(t -> !t.isLoggedOut())
-                .orElse(false);
-
-        return (tokenUsername.equals(username)) &&isTokenNotExpired(token) && validToken;
-    }
+    <T> T extractClaim(String token, Function<Claims, T> resolver);
 }

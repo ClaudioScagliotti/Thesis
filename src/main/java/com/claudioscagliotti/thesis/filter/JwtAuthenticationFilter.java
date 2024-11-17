@@ -1,7 +1,7 @@
 package com.claudioscagliotti.thesis.filter;
 
-import com.claudioscagliotti.thesis.service.JwtService;
-import com.claudioscagliotti.thesis.service.UserDetailsServiceImpl;
+import com.claudioscagliotti.thesis.service.impl.JwtServiceImpl;
+import com.claudioscagliotti.thesis.service.impl.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +32,7 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private final JwtServiceImpl jwtService;
     private final UserDetailsServiceImpl userDetailsService;
 
     /**
@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @param jwtService           Service responsible for JWT operations (token extraction and validation).
      * @param userDetailsService  Service for loading user-specific data.
      */
-    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsServiceImpl userDetailsService) {
+    public JwtAuthenticationFilter(JwtServiceImpl jwtService, UserDetailsServiceImpl userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
     }
