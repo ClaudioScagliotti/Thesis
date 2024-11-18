@@ -280,6 +280,7 @@ CREATE TABLE IF NOT EXISTS public.lesson
     title character varying(255) COLLATE pg_catalog."default",
     content character varying(255) COLLATE pg_catalog."default",
     type character varying(50) COLLATE pg_catalog."default",
+    lesson_order bigint,
     total_cards integer,
     CONSTRAINT lesson_pkey PRIMARY KEY (id),
     CONSTRAINT lesson_course_id_fkey FOREIGN KEY (course_id)

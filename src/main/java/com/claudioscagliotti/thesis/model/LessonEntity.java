@@ -37,6 +37,9 @@ public class LessonEntity {
     @Column(name = "total_cards", nullable = false)
     private Integer totalCards;
 
+    @Column(name = "lesson_order")
+    private Long progressiveId;
+
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuizEntity> quizzes;
 

@@ -28,7 +28,7 @@ public interface LessonProgressRepository extends JpaRepository<LessonProgressEn
             "AND lp.userEntity.id= :userId "+
             "AND lp.status= 'UNCOMPLETED' "+
             "AND lp.completedCards < l.totalCards " +
-            "ORDER BY l.id ASC") // TODO this query do not report the real next lesson if the lessons are not created in sequence. Add a field that can be used as index
+            "ORDER BY l.progressiveId ASC")
     Optional<LessonProgressEntity> getNextUncompletedLessonProgressByCourseId(@Param("courseId") Long courseId,@Param("userId") Long userId);
 
     @Modifying

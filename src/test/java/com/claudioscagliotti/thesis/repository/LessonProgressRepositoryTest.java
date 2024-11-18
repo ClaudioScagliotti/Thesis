@@ -92,12 +92,14 @@ class LessonProgressRepositoryTest {
         lesson1.setTitle("Lesson 1");
         lesson1.setTotalCards(10);
         lesson1.setCourseEntity(course1);
+        lesson1.setProgressiveId(1L);
         lessonRepository.save(lesson1);
 
         lesson2 = new LessonEntity();
         lesson2.setTitle("Lesson 2");
         lesson2.setTotalCards(4);
         lesson2.setCourseEntity(course1);
+        lesson1.setProgressiveId(2L);
         lessonRepository.save(lesson2);
 
         // Creazione del progresso delle lezioni
