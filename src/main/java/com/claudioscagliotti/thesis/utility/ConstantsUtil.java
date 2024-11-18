@@ -9,4 +9,5 @@ public final class ConstantsUtil {
     public static final String ERROR = "error";
     public static final String SUCCESS = "success";
     public static final String UNEXPECTED_ERROR = "An unexpected error occurred";
+    public static final String TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
 }

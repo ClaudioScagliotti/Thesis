@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import static com.claudioscagliotti.thesis.utility.ConstantsUtil.TMDB_API_BASE_URL;
+
 /**
  * TmdbApiClient is a service class responsible for interacting with the TMDB (The Movie Database) API
  * to perform authentication and retrieve movie-related information such as movies, keywords, and genres.
@@ -33,7 +35,6 @@ import org.springframework.web.client.RestTemplate;
  */
 @Service
 public class TmdbApiClient {
-    private static final String TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
     private final RestTemplate restTemplate;
 
     /**
