@@ -44,7 +44,7 @@ public class GenreServiceImpl implements GenreService {
                         .map(GenreEnum::getByName)
                         .map(GenreEnum::getTmdbId)
                         .map(Object::toString)
-                        .collect(Collectors.joining("|")); // TODO manage the joiner
+                        .collect(Collectors.joining("|"));
     }
 
     /**
