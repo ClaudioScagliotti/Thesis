@@ -10,6 +10,7 @@ public record MovieDto(String overview,
                        String title,
                        List<GenreEnum> genreIds,
                        String posterPath,
+                       String backdropPath,
                        String releaseDate,
                        Long tmdbId
 ) {

@@ -312,6 +312,7 @@ CREATE TABLE IF NOT EXISTS public.movie
     original_title character varying(400) COLLATE pg_catalog."default",
     title character varying(400) COLLATE pg_catalog."default",
     poster_path character varying(500) COLLATE pg_catalog."default",
+    backdrop_path character varying(500) COLLATE pg_catalog."default",
     release_date date,
     tmdb_id bigint,
     CONSTRAINT movie_pkey PRIMARY KEY (id)

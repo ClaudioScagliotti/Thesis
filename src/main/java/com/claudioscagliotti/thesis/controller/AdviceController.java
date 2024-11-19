@@ -3,6 +3,7 @@ package com.claudioscagliotti.thesis.controller;
 import com.claudioscagliotti.thesis.dto.response.AdviceDto;
 import com.claudioscagliotti.thesis.dto.response.GenericResponse;
 import com.claudioscagliotti.thesis.exception.NoAdviceAvailableException;
+import com.claudioscagliotti.thesis.exception.NoMovieException;
 import com.claudioscagliotti.thesis.exception.UnauthorizedUserException;
 import com.claudioscagliotti.thesis.service.impl.AdviceServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
@@ -52,7 +53,7 @@ public class AdviceController {
             GenericResponse<List<AdviceDto>> response = new GenericResponse<>(ERROR, message, adviceList);
             return ResponseEntity.ok(response);
 
-        } catch (UsernameNotFoundException | EntityNotFoundException e) {
+        } catch (UsernameNotFoundException | EntityNotFoundException | NoMovieException e) {
             GenericResponse<List<AdviceDto>> response = new GenericResponse<>(ERROR, e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (IllegalArgumentException e) {
